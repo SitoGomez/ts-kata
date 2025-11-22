@@ -11,42 +11,46 @@ describe('Given an integer to get its prime factors', () => {
   describe.each([
     {
       inputInteger: 1,
-      expectedResult: '[]',
+      expectedResult: [],
     },
     {
       inputInteger: 2,
-      expectedResult: '[2]',
+      expectedResult: [2],
     },
     {
       inputInteger: 3,
-      expectedResult: '[3]',
+      expectedResult: [3],
     },
     {
       inputInteger: 4,
-      expectedResult: '[2,2]',
+      expectedResult: [2, 2],
     },
     {
       inputInteger: 5,
-      expectedResult: '[5]',
+      expectedResult: [5],
     },
     {
       inputInteger: 6,
-      expectedResult: '[2,3]',
+      expectedResult: [2, 3],
     },
     {
       inputInteger: 7,
-      expectedResult: '[7]',
+      expectedResult: [7],
     },
     {
       inputInteger: 8,
-      expectedResult: '[2,2,2]',
+      expectedResult: [2, 2, 2],
+    },
+    {
+      inputInteger: 9,
+      expectedResult: [3, 3],
     },
   ])('When the integer is $inputInteger', ({ inputInteger, expectedResult }) => {
-    it(`Then the result should be ${expectedResult}`, () => {
+    it(`Then the result should be ${expectedResult.toString()}`, () => {
       const primeFactorsCalculator = new PrimeFactorsCalculator();
 
       const result = primeFactorsCalculator.getFrom(inputInteger);
-      expect(result).toBe(expectedResult);
+      expect(result).toEqual(expectedResult);
     });
   });
 });
