@@ -1,5 +1,5 @@
 export class PrimeFactorsCalculator {
-  private readonly PRIME_NUMBERS: number[] = [2, 3, 5, 7];
+  private readonly PRIME_NUMBERS: number[] = [2, 3, 5, 7, 13, 17];
 
   public getFrom(inputNumber: number): number[] {
     if (!Number.isInteger(inputNumber)) {
@@ -7,11 +7,6 @@ export class PrimeFactorsCalculator {
     }
 
     const result: number[] = [];
-
-    if (this.PRIME_NUMBERS.includes(inputNumber)) {
-      result.push(inputNumber);
-      return result;
-    }
 
     const lowestPrimeDivisor = this.PRIME_NUMBERS.find((prime) => {
       return inputNumber % prime === 0;
