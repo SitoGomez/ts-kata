@@ -18,6 +18,14 @@ export class PrimeFactorsCalculator {
       result += 5;
     }
 
+    if (inputNumber === 6) {
+      result += 2 + ',' + 3;
+    }
+
+    if (inputNumber === 7) {
+      result += 7;
+    }
+
     return result + ']';
   }
 }
