@@ -6,20 +6,10 @@ export class PrimeFactorsCalculator {
 
     const result: number[] = [];
 
-    for (let potentialPrime = 2; potentialPrime <= inputNumber; potentialPrime++) {
-      const firstPrimeDivisor: number[] = [];
-
-      for (let currentDivisor = 2; currentDivisor <= Math.sqrt(potentialPrime); currentDivisor++) {
-        if (potentialPrime % currentDivisor === 0) {
-          firstPrimeDivisor.push(currentDivisor);
-        }
-      }
-
-      if (!firstPrimeDivisor.length && inputNumber % potentialPrime === 0) {
-        result.push(potentialPrime);
-        result.push(...this.getFrom(inputNumber / potentialPrime));
-
-        //Early return after finding the first prime factor that divides the input number
+    for (let divisor = 2; divisor <= inputNumber; divisor++) {
+      if (inputNumber % divisor === 0) {
+        result.push(divisor);
+        result.push(...this.getFrom(inputNumber / divisor));
         return result;
       }
     }
