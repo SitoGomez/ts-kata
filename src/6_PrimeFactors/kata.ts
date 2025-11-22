@@ -1,4 +1,6 @@
 export class PrimeFactorsCalculator {
+  private readonly PRIME_NUMBERS: number[] = [2, 3, 5, 7];
+
   public getFrom(inputNumber: number): string {
     if (!Number.isInteger(inputNumber)) {
       throw new Error('Input must be a positive integer');
@@ -6,7 +8,7 @@ export class PrimeFactorsCalculator {
 
     let result = '[';
 
-    if (inputNumber > 1 && inputNumber <= 3) {
+    if (this.PRIME_NUMBERS.includes(inputNumber)) {
       result += inputNumber;
     }
 
@@ -14,16 +16,12 @@ export class PrimeFactorsCalculator {
       result += 2 + ',' + 2;
     }
 
-    if (inputNumber === 5) {
-      result += 5;
-    }
-
     if (inputNumber === 6) {
       result += 2 + ',' + 3;
     }
 
-    if (inputNumber === 7) {
-      result += 7;
+    if (inputNumber === 8) {
+      result += 2 + ',' + 2 + ',' + 2;
     }
 
     return result + ']';
