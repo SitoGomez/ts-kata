@@ -53,6 +53,10 @@ describe('Given an integer to get its prime factors', () => {
       inputInteger: 17,
       expectedResult: [17],
     },
+    {
+      inputInteger: 19,
+      expectedResult: [19],
+    },
   ])('When the integer is $inputInteger', ({ inputInteger, expectedResult }) => {
     it(`Then the result should be ${expectedResult.toString()}`, () => {
       const primeFactorsCalculator = new PrimeFactorsCalculator();
