@@ -1,6 +1,20 @@
 export class ABCBlocksBag {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public canMakeWord(_word: string): boolean {
+  public canMakeWord(word: string): boolean {
+    const uniqueChars = new Set<string>();
+    const repeatedChars = new Set<string>();
+
+    for (const char of word) {
+      if (uniqueChars.has(char)) {
+        repeatedChars.add(char);
+      }
+
+      uniqueChars.add(char);
+    }
+
+    if (repeatedChars.size > 0) {
+      return false;
+    }
+
     return true;
   }
 }
