@@ -1,35 +1,54 @@
 import { ABCBlocksBag } from './kata';
 
 describe('Given a set of ABC blocks', () => {
-  describe('When I try to form the word "A"', () => {
-    it('Then I can', () => {
+  describe.each([
+    { word: 'A', expected: true },
+    { word: 'AA', expected: true },
+    {
+      word: 'JJ',
+      expected: false,
+    },
+    {
+      word: 'WW',
+      expected: false,
+    },
+    {
+      word: 'HH',
+      expected: false,
+    },
+    {
+      word: 'UU',
+      expected: false,
+    },
+    {
+      word: 'VV',
+      expected: false,
+    },
+    {
+      word: 'II',
+      expected: false,
+    },
+    {
+      word: 'LL',
+      expected: false,
+    },
+    {
+      word: 'YY',
+      expected: false,
+    },
+    {
+      word: 'ZZ',
+      expected: false,
+    },
+    {
+      word: 'MM',
+      expected: false,
+    },
+  ])('When I try to form the word "$word"', ({ word, expected }) => {
+    it(`Then I ${expected ? 'can' : 'cannot'}`, () => {
       const blocksBag = new ABCBlocksBag();
 
-      expect(blocksBag.canMakeWord('A')).toBe(true);
-    });
-  });
-
-  describe('When I try to form the word "BOOK"', () => {
-    it('Then I cannot', () => {
-      const blocksBag = new ABCBlocksBag();
-
-      expect(blocksBag.canMakeWord('BOOK')).toBe(false);
-    });
-  });
-
-  describe('When I try to form the word "COMMON"', () => {
-    it('Then I cannot', () => {
-      const blocksBag = new ABCBlocksBag();
-
-      expect(blocksBag.canMakeWord('COMMON')).toBe(false);
-    });
-  });
-
-  describe('When I try to form the word "JAZZ"', () => {
-    it('Then I cannot', () => {
-      const blocksBag = new ABCBlocksBag();
-
-      expect(blocksBag.canMakeWord('JAZZ')).toBe(false);
+      expect(blocksBag.canMakeWord(word)).toBe(expected);
     });
   });
 });
