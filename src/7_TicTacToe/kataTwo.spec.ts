@@ -87,4 +87,26 @@ describe('Given a game in Tic Tac Toe', () => {
       expect(() => new Play(new Row(row), new Column(column))).toThrow(CellOutOfBoundsError);
     });
   });
+
+  describe('When the player X achieve to have three tokens in a row of cells', () => {
+    it('Then the player X wins the game', () => {
+      const ticTacToe = new TicTacToeGame();
+
+      const playerX = new Player('X');
+      const playerO = Player.buildPlayerO();
+      const firstPlay = new Play(new Row(2), new Column(1));
+      const secondPlay = new Play(new Row(1), new Column(1));
+      const thirdPlay = new Play(new Row(2), new Column(1));
+      const fourthPlay = new Play(new Row(1), new Column(3));
+      const fifthPlay = new Play(new Row(2), new Column(2));
+
+      ticTacToe.play(playerX, firstPlay);
+      ticTacToe.play(playerO, secondPlay);
+      ticTacToe.play(playerX, thirdPlay);
+      ticTacToe.play(playerO, fourthPlay);
+      ticTacToe.play(playerX, fifthPlay);
+
+      expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
+    });
+  });
 });

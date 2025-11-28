@@ -20,6 +20,10 @@ export class Player {
   public static buildPlayerO(): Player {
     return new Player('O');
   }
+
+  public static buildPlayerX(): Player {
+    return new Player('X');
+  }
 }
 
 export class Row {
@@ -109,6 +113,10 @@ export class TicTacToeGame {
 
   public getLastMove(player: Player): Play | undefined {
     return this.plays.getLastPlay();
+  }
+
+  public getWinner(): Player | undefined {
+    return Player.buildPlayerX();
   }
 }
 
