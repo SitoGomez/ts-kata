@@ -1,5 +1,6 @@
 import {
   CellAlreadyFulfilledError,
+  CellOutOfBoundsError,
   InvalidStartingPlayerError,
   Play,
   Player,
@@ -56,6 +57,15 @@ describe('Given a game in Tic Tac Toe', () => {
       ticTacToe.play(playerX, play);
 
       expect(() => ticTacToe.play(playerO, play)).toThrow(CellAlreadyFulfilledError);
+    });
+  });
+
+  /*REVIEW: Esto hace que el tests conozca el detalle de la clase
+  pero no se me ha ocurrido otra forma de testearlo
+  */
+  describe('When the player tries to play in cell 4,1', () => {
+    it('Then the play is invalid', () => {
+      expect(() => new Play(4, 1)).toThrow(CellOutOfBoundsError);
     });
   });
 });

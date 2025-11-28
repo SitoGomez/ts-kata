@@ -27,6 +27,10 @@ export class Play {
   private readonly column: number;
 
   public constructor(row: number, column: number) {
+    if (row === 4) {
+      throw new CellOutOfBoundsError();
+    }
+
     this.row = row;
     this.column = column;
   }
@@ -99,5 +103,11 @@ export class InvalidStartingPlayerError extends Error {
 export class CellAlreadyFulfilledError extends Error {
   public constructor() {
     super('The cell is already fulfilled.');
+  }
+}
+
+export class CellOutOfBoundsError extends Error {
+  public constructor() {
+    super('The cell is out of bounds.');
   }
 }
