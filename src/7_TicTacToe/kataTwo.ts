@@ -41,7 +41,7 @@ export class Column {
   private readonly column: number;
 
   public constructor(column: number) {
-    if (column === 4 || column === -1) {
+    if (column < 1 || column > 3) {
       throw new CellOutOfBoundsError();
     }
 
