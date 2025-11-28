@@ -22,20 +22,36 @@ export class Player {
   }
 }
 
+interface PlayType {
+  row: number;
+  column: number;
+}
+
+class Plays {
+  private plays: PlayType[] = [];
+
+  public add(play: PlayType): void {
+    this.plays.push(play);
+  }
+
+  public guardCellIsEmpty(row: number, column: number): void {
+    if (this.plays.some((play) => play.row === row && play.column === column)) {
+      throw new CellAlreadyFulfilledError();
+    }
+  }
+}
+
 export class TicTacToeGame {
   private lastPlayer: Player | undefined = undefined;
-  private plays: { row: number; column: number }[] = [];
+  private game: Plays = new Plays();
 
   public play(player: Player, row: number, column: number): void {
     this.guardFirstPlayerIsX(player);
     this.guardNotSamePlayerPlayingTwice(player);
-
-    if (this.plays.some((play) => play.row === row && play.column === column)) {
-      throw new CellAlreadyFulfilledError();
-    }
+    this.game.guardCellIsEmpty(row, column);
 
     this.lastPlayer = player;
-    this.plays.push({ row, column });
+    this.game.add({ row, column });
   }
 
   private guardFirstPlayerIsX(player: Player) {
