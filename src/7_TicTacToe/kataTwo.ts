@@ -27,7 +27,7 @@ export class Play {
   private readonly column: number;
 
   public constructor(row: number, column: number) {
-    if (row === 4) {
+    if (row === -1 || row === 4) {
       throw new CellOutOfBoundsError();
     }
 
