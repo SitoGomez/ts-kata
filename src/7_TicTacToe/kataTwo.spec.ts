@@ -80,6 +80,7 @@ describe('Given a game in Tic Tac Toe', () => {
     [-1, 1],
     [5, 1],
     [1, 4],
+    [1, -1],
   ])('When the player tries to play in cell %i,%i', (row, column) => {
     it('Then the play is invalid', () => {
       expect(() => new Play(new Row(row), new Column(column))).toThrow(CellOutOfBoundsError);
