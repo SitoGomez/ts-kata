@@ -22,36 +22,49 @@ export class Player {
   }
 }
 
-interface PlayType {
-  row: number;
-  column: number;
+export class Play {
+  private readonly row: number;
+  private readonly column: number;
+
+  public constructor(row: number, column: number) {
+    this.row = row;
+    this.column = column;
+  }
+
+  public isTheSameAs(other: Play): boolean {
+    return this.row === other.row && this.column === other.column;
+  }
 }
 
 class Plays {
-  private plays: PlayType[] = [];
+  private plays: Play[] = [];
 
-  public add(play: PlayType): void {
+  public add(play: Play): void {
     this.plays.push(play);
   }
 
-  public guardCellIsEmpty(row: number, column: number): void {
-    if (this.plays.some((play) => play.row === row && play.column === column)) {
+  public guardPlayAlreadyPerformed(play: Play): void {
+    if (this.plays.some((existingPlay) => existingPlay.isTheSameAs(play))) {
       throw new CellAlreadyFulfilledError();
     }
+  }
+
+  public getLastPlay(): Play | undefined {
+    return this.plays[this.plays.length - 1];
   }
 }
 
 export class TicTacToeGame {
   private lastPlayer: Player | undefined = undefined;
-  private game: Plays = new Plays();
+  private plays: Plays = new Plays();
 
-  public play(player: Player, row: number, column: number): void {
+  public play(player: Player, play: Play): void {
     this.guardFirstPlayerIsX(player);
     this.guardNotSamePlayerPlayingTwice(player);
-    this.game.guardCellIsEmpty(row, column);
+    this.plays.guardPlayAlreadyPerformed(play);
 
     this.lastPlayer = player;
-    this.game.add({ row, column });
+    this.plays.add(play);
   }
 
   private guardFirstPlayerIsX(player: Player) {
@@ -66,8 +79,8 @@ export class TicTacToeGame {
     }
   }
 
-  public getLastMove(player: Player): [number, number] {
-    return [1, 2];
+  public getLastMove(player: Player): Play | undefined {
+    return this.plays.getLastPlay();
   }
 }
 

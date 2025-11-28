@@ -1,6 +1,7 @@
 import {
   CellAlreadyFulfilledError,
   InvalidStartingPlayerError,
+  Play,
   Player,
   SamePlayerPlaysTwiceError,
   TicTacToeGame,
@@ -12,9 +13,10 @@ describe('Given a game in Tic Tac Toe', () => {
       const ticTacToe = new TicTacToeGame();
 
       const playerX = new Player('X');
-      ticTacToe.play(playerX, 1, 2);
+      const play = new Play(1, 2);
+      ticTacToe.play(playerX, play);
 
-      expect(ticTacToe.getLastMove(playerX)).toEqual([1, 2]);
+      expect(ticTacToe.getLastMove(playerX)?.isTheSameAs(play)).toBeTruthy();
     });
   });
 
@@ -23,10 +25,12 @@ describe('Given a game in Tic Tac Toe', () => {
       const ticTacToe = new TicTacToeGame();
 
       const playerX = new Player('X');
+      const firstPlay = new Play(1, 1);
 
-      ticTacToe.play(playerX, 1, 1);
+      ticTacToe.play(playerX, firstPlay);
 
-      expect(() => ticTacToe.play(playerX, 3, 3)).toThrow(SamePlayerPlaysTwiceError);
+      const secondPlay = new Play(3, 3);
+      expect(() => ticTacToe.play(playerX, secondPlay)).toThrow(SamePlayerPlaysTwiceError);
     });
   });
 
@@ -35,8 +39,9 @@ describe('Given a game in Tic Tac Toe', () => {
       const ticTacToe = new TicTacToeGame();
 
       const playerO = Player.buildPlayerO();
+      const play = new Play(1, 1);
 
-      expect(() => ticTacToe.play(playerO, 1, 1)).toThrow(InvalidStartingPlayerError);
+      expect(() => ticTacToe.play(playerO, play)).toThrow(InvalidStartingPlayerError);
     });
   });
 
@@ -46,10 +51,11 @@ describe('Given a game in Tic Tac Toe', () => {
 
       const playerX = new Player('X');
       const playerO = Player.buildPlayerO();
+      const play = new Play(2, 3);
 
-      ticTacToe.play(playerX, 2, 3);
+      ticTacToe.play(playerX, play);
 
-      expect(() => ticTacToe.play(playerO, 2, 3)).toThrow(CellAlreadyFulfilledError);
+      expect(() => ticTacToe.play(playerO, play)).toThrow(CellAlreadyFulfilledError);
     });
   });
 });
