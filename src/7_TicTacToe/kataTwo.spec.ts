@@ -7,7 +7,7 @@ import {
 
 describe('Given a game in Tic Tac Toe', () => {
   describe('When the first player places an X in an empty cell', () => {
-    it('Then the cell should contain an X', () => {
+    it('Then the cell should be fulfilled', () => {
       const ticTacToe = new TicTacToeGame();
 
       const playerX = new Player('X');
