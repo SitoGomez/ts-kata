@@ -63,21 +63,13 @@ describe('Given a game in Tic Tac Toe', () => {
   /*REVIEW: Esto hace que el tests conozca el detalle de la clase
   pero no se me ha ocurrido otra forma de testearlo
   */
-  describe('When the player tries to play in cell 4,1', () => {
+  describe.each([
+    [4, 1],
+    [-1, 1],
+    [5, 1],
+  ])('When the player tries to play in cell %i,%i', (row, column) => {
     it('Then the play is invalid', () => {
-      expect(() => new Play(4, 1)).toThrow(CellOutOfBoundsError);
-    });
-  });
-
-  describe('When the player tries to play in cell -1,1', () => {
-    it('Then the play is invalid', () => {
-      expect(() => new Play(-1, 1)).toThrow(CellOutOfBoundsError);
-    });
-  });
-
-  describe('When the player tries to play in cell 5,1', () => {
-    it('Then the play is invalid', () => {
-      expect(() => new Play(5, 1)).toThrow(CellOutOfBoundsError);
+      expect(() => new Play(row, column)).toThrow(CellOutOfBoundsError);
     });
   });
 });

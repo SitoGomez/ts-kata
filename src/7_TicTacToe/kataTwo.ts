@@ -26,8 +26,11 @@ export class Play {
   private readonly row: number;
   private readonly column: number;
 
+  private readonly MIN_ROW_COLUMN = 1;
+  private readonly MAX_ROW_COLUMN = 3;
+
   public constructor(row: number, column: number) {
-    if (row === -1 || row === 4 || row === 5) {
+    if (row < this.MIN_ROW_COLUMN || row > this.MAX_ROW_COLUMN) {
       throw new CellOutOfBoundsError();
     }
 
