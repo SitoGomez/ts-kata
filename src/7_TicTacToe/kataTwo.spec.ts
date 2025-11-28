@@ -4,6 +4,7 @@ import {
   InvalidStartingPlayerError,
   Play,
   Player,
+  Row,
   SamePlayerPlaysTwiceError,
   TicTacToeGame,
 } from './kataTwo';
@@ -14,7 +15,8 @@ describe('Given a game in Tic Tac Toe', () => {
       const ticTacToe = new TicTacToeGame();
 
       const playerX = new Player('X');
-      const play = new Play(1, 2);
+      const row = new Row(1);
+      const play = new Play(row, 2);
       ticTacToe.play(playerX, play);
 
       expect(ticTacToe.getLastMove(playerX)?.isTheSameAs(play)).toBeTruthy();
@@ -26,11 +28,13 @@ describe('Given a game in Tic Tac Toe', () => {
       const ticTacToe = new TicTacToeGame();
 
       const playerX = new Player('X');
-      const firstPlay = new Play(1, 1);
+      const firstRow = new Row(1);
+      const firstPlay = new Play(firstRow, 1);
 
       ticTacToe.play(playerX, firstPlay);
 
-      const secondPlay = new Play(3, 3);
+      const secondRow = new Row(3);
+      const secondPlay = new Play(secondRow, 3);
       expect(() => ticTacToe.play(playerX, secondPlay)).toThrow(SamePlayerPlaysTwiceError);
     });
   });
@@ -40,7 +44,8 @@ describe('Given a game in Tic Tac Toe', () => {
       const ticTacToe = new TicTacToeGame();
 
       const playerO = Player.buildPlayerO();
-      const play = new Play(1, 1);
+      const row = new Row(1);
+      const play = new Play(row, 1);
 
       expect(() => ticTacToe.play(playerO, play)).toThrow(InvalidStartingPlayerError);
     });
@@ -52,7 +57,8 @@ describe('Given a game in Tic Tac Toe', () => {
 
       const playerX = new Player('X');
       const playerO = Player.buildPlayerO();
-      const play = new Play(2, 3);
+      const row = new Row(2);
+      const play = new Play(row, 3);
 
       ticTacToe.play(playerX, play);
 
@@ -69,7 +75,7 @@ describe('Given a game in Tic Tac Toe', () => {
     [5, 1],
   ])('When the player tries to play in cell %i,%i', (row, column) => {
     it('Then the play is invalid', () => {
-      expect(() => new Play(row, column)).toThrow(CellOutOfBoundsError);
+      expect(() => new Play(new Row(row), column)).toThrow(CellOutOfBoundsError);
     });
   });
 });

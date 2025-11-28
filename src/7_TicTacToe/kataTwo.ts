@@ -22,18 +22,26 @@ export class Player {
   }
 }
 
-export class Play {
+export class Row {
   private readonly row: number;
-  private readonly column: number;
 
   private readonly MIN_ROW_COLUMN = 1;
   private readonly MAX_ROW_COLUMN = 3;
 
-  public constructor(row: number, column: number) {
+  public constructor(row: number) {
     if (row < this.MIN_ROW_COLUMN || row > this.MAX_ROW_COLUMN) {
       throw new CellOutOfBoundsError();
     }
 
+    this.row = row;
+  }
+}
+
+export class Play {
+  private readonly row: Row;
+  private readonly column: number;
+
+  public constructor(row: Row, column: number) {
     this.row = row;
     this.column = column;
   }
