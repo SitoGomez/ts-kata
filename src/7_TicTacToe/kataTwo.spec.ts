@@ -33,7 +33,7 @@ describe('Given a game in Tic Tac Toe', () => {
     it('Then the play is invalid', () => {
       const ticTacToe = new TicTacToeGame();
 
-      const playerO = new Player('O');
+      const playerO = Player.buildPlayerO();
 
       expect(() => ticTacToe.play(playerO, 1, 1)).toThrow(InvalidStartingPlayerError);
     });

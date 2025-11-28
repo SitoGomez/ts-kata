@@ -16,6 +16,10 @@ export class Player {
   public isTheSameAs(other: Player): boolean {
     return this.token === other.token;
   }
+
+  public static buildPlayerO(): Player {
+    return new Player('O');
+  }
 }
 
 export class TicTacToeGame {
@@ -29,7 +33,7 @@ export class TicTacToeGame {
   }
 
   private guardFirstPlayerIsX(player: Player) {
-    if (!this.lastPlayer && player.isTheSameAs(new Player('O'))) {
+    if (!this.lastPlayer && player.isTheSameAs(Player.buildPlayerO())) {
       throw new InvalidStartingPlayerError();
     }
   }
