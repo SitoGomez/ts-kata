@@ -37,16 +37,24 @@ export class Row {
   }
 }
 
-export class Play {
-  private readonly row: Row;
+export class Column {
   private readonly column: number;
 
-  public constructor(row: Row, column: number) {
-    this.row = row;
-
+  public constructor(column: number) {
     if (column === 4) {
       throw new CellOutOfBoundsError();
     }
+
+    this.column = column;
+  }
+}
+
+export class Play {
+  private readonly row: Row;
+  private readonly column: Column;
+
+  public constructor(row: Row, column: Column) {
+    this.row = row;
 
     this.column = column;
   }
