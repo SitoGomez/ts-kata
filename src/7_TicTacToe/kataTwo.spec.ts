@@ -1,4 +1,5 @@
 import {
+  CellAlreadyFulfilledError,
   InvalidStartingPlayerError,
   Player,
   SamePlayerPlaysTwiceError,
@@ -36,6 +37,19 @@ describe('Given a game in Tic Tac Toe', () => {
       const playerO = Player.buildPlayerO();
 
       expect(() => ticTacToe.play(playerO, 1, 1)).toThrow(InvalidStartingPlayerError);
+    });
+  });
+
+  describe('When the player O plays in a already fulfilled cell', () => {
+    it('Then the play is invalid', () => {
+      const ticTacToe = new TicTacToeGame();
+
+      const playerX = new Player('X');
+      const playerO = Player.buildPlayerO();
+
+      ticTacToe.play(playerX, 2, 3);
+
+      expect(() => ticTacToe.play(playerO, 2, 3)).toThrow(CellAlreadyFulfilledError);
     });
   });
 });

@@ -24,12 +24,18 @@ export class Player {
 
 export class TicTacToeGame {
   private lastPlayer: Player | undefined = undefined;
+  private plays: { row: number; column: number }[] = [];
 
   public play(player: Player, row: number, column: number): void {
     this.guardFirstPlayerIsX(player);
     this.guardNotSamePlayerPlayingTwice(player);
 
+    if (this.plays.some((play) => play.row === row && play.column === column)) {
+      throw new CellAlreadyFulfilledError();
+    }
+
     this.lastPlayer = player;
+    this.plays.push({ row, column });
   }
 
   private guardFirstPlayerIsX(player: Player) {
@@ -58,5 +64,11 @@ export class SamePlayerPlaysTwiceError extends Error {
 export class InvalidStartingPlayerError extends Error {
   public constructor() {
     super('The player O cannot play first.');
+  }
+}
+
+export class CellAlreadyFulfilledError extends Error {
+  public constructor() {
+    super('The cell is already fulfilled.');
   }
 }
