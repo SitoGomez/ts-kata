@@ -1,18 +1,18 @@
 import {
-  CellAlreadyFulfilledError,
-  CellOutOfBoundsError,
   Column,
   InvalidStartingPlayerError,
   Play,
   Player,
   Row,
   SamePlayerPlaysTwiceError,
+  SquareAlreadyFulfilledError,
+  SquareOutOfBoundsError,
   TicTacToeGame,
 } from './kataTwo';
 
 describe('Given a game in Tic Tac Toe', () => {
-  describe('When the first player places an X in an empty cell', () => {
-    it('Then the cell should be fulfilled', () => {
+  describe('When the first player places an X in an empty square', () => {
+    it('Then the square should be fulfilled', () => {
       const ticTacToe = new TicTacToeGame();
 
       const playerX = new Player('X');
@@ -56,7 +56,7 @@ describe('Given a game in Tic Tac Toe', () => {
     });
   });
 
-  describe('When the player O plays in a already fulfilled cell', () => {
+  describe('When the player O plays in a already fulfilled square', () => {
     it('Then the play is invalid', () => {
       const ticTacToe = new TicTacToeGame();
 
@@ -68,7 +68,7 @@ describe('Given a game in Tic Tac Toe', () => {
 
       ticTacToe.play(playerX, play);
 
-      expect(() => ticTacToe.play(playerO, play)).toThrow(CellAlreadyFulfilledError);
+      expect(() => ticTacToe.play(playerO, play)).toThrow(SquareAlreadyFulfilledError);
     });
   });
 
@@ -82,13 +82,13 @@ describe('Given a game in Tic Tac Toe', () => {
     [1, 4],
     [1, 0],
     [1, 5],
-  ])('When the player tries to play in cell %i,%i', (row, column) => {
+  ])('When the player tries to play in square %i,%i', (row, column) => {
     it('Then the play is invalid', () => {
-      expect(() => new Play(new Row(row), new Column(column))).toThrow(CellOutOfBoundsError);
+      expect(() => new Play(new Row(row), new Column(column))).toThrow(SquareOutOfBoundsError);
     });
   });
 
-  describe('When the player X achieve to have three tokens in a row of cells', () => {
+  describe('When the player X achieve to have three tokens in a row of squares', () => {
     it('Then the player X wins the game', () => {
       const ticTacToe = new TicTacToeGame();
 

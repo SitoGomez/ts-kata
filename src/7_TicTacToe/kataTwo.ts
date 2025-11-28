@@ -34,7 +34,7 @@ export class Row {
 
   public constructor(row: number) {
     if (row < this.MIN_ROW_COLUMN || row > this.MAX_ROW_COLUMN) {
-      throw new CellOutOfBoundsError();
+      throw new SquareOutOfBoundsError();
     }
 
     this.row = row;
@@ -46,7 +46,7 @@ export class Column {
 
   public constructor(column: number) {
     if (column < 1 || column > 3) {
-      throw new CellOutOfBoundsError();
+      throw new SquareOutOfBoundsError();
     }
 
     this.column = column;
@@ -77,7 +77,7 @@ class Plays {
 
   public guardPlayAlreadyPerformed(play: Play): void {
     if (this.plays.some((existingPlay) => existingPlay.isTheSameAs(play))) {
-      throw new CellAlreadyFulfilledError();
+      throw new SquareAlreadyFulfilledError();
     }
   }
 
@@ -132,14 +132,14 @@ export class InvalidStartingPlayerError extends Error {
   }
 }
 
-export class CellAlreadyFulfilledError extends Error {
+export class SquareAlreadyFulfilledError extends Error {
   public constructor() {
-    super('The cell is already fulfilled.');
+    super('The square is already fulfilled.');
   }
 }
 
-export class CellOutOfBoundsError extends Error {
+export class SquareOutOfBoundsError extends Error {
   public constructor() {
-    super('The cell is out of bounds.');
+    super('The square is out of bounds.');
   }
 }
