@@ -43,6 +43,11 @@ export class Play {
 
   public constructor(row: Row, column: number) {
     this.row = row;
+
+    if (column === 4) {
+      throw new CellOutOfBoundsError();
+    }
+
     this.column = column;
   }
 
