@@ -88,6 +88,10 @@ export class Play {
     return this.row.isTheSameAs(other.row) && this.column.isTheSameAs(other.column);
   }
 
+  public isPerformedByTheSamePlayerAs(other: Play): boolean {
+    return this.player.isTheSameAs(other.player);
+  }
+
   public isPerformedByPlayer(player: Player): boolean {
     return this.player.isTheSameAs(player);
   }
@@ -103,6 +107,8 @@ class Plays {
   public add(nextPlay: Play): void {
     this.guardFirstPlayerIsX(nextPlay);
     this.guardPlayAlreadyPerformed(nextPlay);
+    this.guardNotSamePlayerPlayingTwice(nextPlay);
+
     this.plays.push(nextPlay);
   }
 
@@ -115,6 +121,12 @@ class Plays {
   public guardPlayAlreadyPerformed(nextPlay: Play): void {
     if (this.plays.some((existingPlay) => existingPlay.isOnTheSameSquareAs(nextPlay))) {
       throw new SquareAlreadyFulfilledError();
+    }
+  }
+
+  private guardNotSamePlayerPlayingTwice(nextPlay: Play): void {
+    if (this.getLastPlay()?.isPerformedByTheSamePlayerAs(nextPlay)) {
+      throw new SamePlayerPlaysTwiceError();
     }
   }
 
@@ -148,20 +160,10 @@ class Plays {
 }
 
 export class TicTacToeGame {
-  private lastPlayer: Player | undefined = undefined;
   private plays: Plays = new Plays();
 
-  public play(player: Player, play: Play): void {
-    this.guardNotSamePlayerPlayingTwice(player);
-
-    this.lastPlayer = player;
+  public play(play: Play): void {
     this.plays.add(play);
-  }
-
-  private guardNotSamePlayerPlayingTwice(player: Player) {
-    if (this.lastPlayer?.isTheSameAs(player)) {
-      throw new SamePlayerPlaysTwiceError();
-    }
   }
 
   public getLastPlay(): Play | undefined {
