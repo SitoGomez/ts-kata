@@ -182,7 +182,7 @@ export class WinRules {
           play.wasOnRowAndPerformedByPlayer(player, new Row(currentRow)),
         );
 
-        if (horizontalRows.length === 3) {
+        if (horizontalRows.length === this.MAX_ROWS_IN_GRID) {
           return player;
         }
       }
