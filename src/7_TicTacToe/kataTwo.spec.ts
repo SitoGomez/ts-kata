@@ -5,6 +5,7 @@ import {
   Player,
   Row,
   SamePlayerPlaysTwiceError,
+  Square,
   SquareAlreadyFulfilledError,
   SquareOutOfBoundsError,
   TicTacToeGame,
@@ -18,7 +19,8 @@ describe('Given a game in Tic Tac Toe', () => {
       const playerX = Player.buildPlayerX();
       const row = new Row(1);
       const column = new Column(2);
-      const play = new Play(playerX, row, column);
+      const square = new Square(row, column);
+      const play = new Play(playerX, square);
       ticTacToe.play(play);
 
       expect(ticTacToe.getLastPlay()?.isTheSameAs(play)).toBeTruthy();
@@ -32,13 +34,15 @@ describe('Given a game in Tic Tac Toe', () => {
       const playerX = Player.buildPlayerX();
       const firstRow = new Row(1);
       const firstColumn = new Column(1);
-      const firstPlay = new Play(playerX, firstRow, firstColumn);
+      const firstSquare = new Square(firstRow, firstColumn);
+      const firstPlay = new Play(playerX, firstSquare);
 
       ticTacToe.play(firstPlay);
 
       const secondRow = new Row(3);
       const secondColumn = new Column(3);
-      const secondPlay = new Play(playerX, secondRow, secondColumn);
+      const secondSquare = new Square(secondRow, secondColumn);
+      const secondPlay = new Play(playerX, secondSquare);
       expect(() => ticTacToe.play(secondPlay)).toThrow(SamePlayerPlaysTwiceError);
     });
   });
@@ -50,7 +54,8 @@ describe('Given a game in Tic Tac Toe', () => {
       const playerO = Player.buildPlayerO();
       const row = new Row(1);
       const column = new Column(1);
-      const play = new Play(playerO, row, column);
+      const square = new Square(row, column);
+      const play = new Play(playerO, square);
 
       expect(() => ticTacToe.play(play)).toThrow(InvalidStartingPlayerError);
     });
@@ -64,13 +69,12 @@ describe('Given a game in Tic Tac Toe', () => {
       const playerO = Player.buildPlayerO();
       const row = new Row(2);
       const column = new Column(3);
-      const play = new Play(playerX, row, column);
+      const square = new Square(row, column);
+      const play = new Play(playerX, square);
 
       ticTacToe.play(play);
 
-      expect(() => ticTacToe.play(new Play(playerO, row, column))).toThrow(
-        SquareAlreadyFulfilledError,
-      );
+      expect(() => ticTacToe.play(new Play(playerO, square))).toThrow(SquareAlreadyFulfilledError);
     });
   });
 
@@ -86,9 +90,9 @@ describe('Given a game in Tic Tac Toe', () => {
     [1, 5],
   ])('When the player tries to play in square %i,%i', (row, column) => {
     it('Then the play is invalid', () => {
-      expect(() => new Play(Player.buildPlayerX(), new Row(row), new Column(column))).toThrow(
-        SquareOutOfBoundsError,
-      );
+      expect(
+        () => new Play(Player.buildPlayerX(), new Square(new Row(row), new Column(column))),
+      ).toThrow(SquareOutOfBoundsError);
     });
   });
 
@@ -100,11 +104,16 @@ describe('Given a game in Tic Tac Toe', () => {
 
       const playerX = Player.buildPlayerX();
       const playerO = Player.buildPlayerO();
-      const firstPlay = new Play(playerX, firstRow, new Column(1));
-      const secondPlay = new Play(playerO, new Row(2), new Column(1));
-      const thirdPlay = new Play(playerX, firstRow, new Column(2));
-      const fourthPlay = new Play(playerO, new Row(2), new Column(3));
-      const fifthPlay = new Play(playerX, firstRow, new Column(3));
+      const firstSquare = new Square(firstRow, new Column(1));
+      const firstPlay = new Play(playerX, firstSquare);
+      const secondSquare = new Square(new Row(2), new Column(1));
+      const secondPlay = new Play(playerO, secondSquare);
+      const thirdSquare = new Square(firstRow, new Column(2));
+      const thirdPlay = new Play(playerX, thirdSquare);
+      const fourthSquare = new Square(new Row(2), new Column(3));
+      const fourthPlay = new Play(playerO, fourthSquare);
+      const fifthSquare = new Square(firstRow, new Column(3));
+      const fifthPlay = new Play(playerX, fifthSquare);
       ticTacToe.play(firstPlay);
       ticTacToe.play(secondPlay);
       ticTacToe.play(thirdPlay);
@@ -122,12 +131,18 @@ describe('Given a game in Tic Tac Toe', () => {
 
       const playerX = Player.buildPlayerX();
       const playerO = Player.buildPlayerO();
-      const firstPlay = new Play(playerX, new Row(2), new Column(1));
-      const secondPlay = new Play(playerO, firstRow, new Column(1));
-      const thirdPlay = new Play(playerX, new Row(2), new Column(2));
-      const fourthPlay = new Play(playerO, firstRow, new Column(2));
-      const fifthPlay = new Play(playerX, new Row(3), new Column(3));
-      const sixthPlay = new Play(playerO, firstRow, new Column(3));
+      const firstSquare = new Square(new Row(2), new Column(1));
+      const firstPlay = new Play(playerX, firstSquare);
+      const secondSquare = new Square(firstRow, new Column(1));
+      const secondPlay = new Play(playerO, secondSquare);
+      const thirdSquare = new Square(new Row(2), new Column(2));
+      const thirdPlay = new Play(playerX, thirdSquare);
+      const fourthSquare = new Square(firstRow, new Column(2));
+      const fourthPlay = new Play(playerO, fourthSquare);
+      const fifthSquare = new Square(new Row(3), new Column(3));
+      const fifthPlay = new Play(playerX, fifthSquare);
+      const sixthSquare = new Square(firstRow, new Column(3));
+      const sixthPlay = new Play(playerO, sixthSquare);
 
       ticTacToe.play(firstPlay);
       ticTacToe.play(secondPlay);
@@ -147,11 +162,16 @@ describe('Given a game in Tic Tac Toe', () => {
 
       const playerX = Player.buildPlayerX();
       const playerO = Player.buildPlayerO();
-      const firstPlay = new Play(playerX, secondRow, new Column(1));
-      const secondPlay = new Play(playerO, new Row(1), new Column(1));
-      const thirdPlay = new Play(playerX, secondRow, new Column(2));
-      const fourthPlay = new Play(playerO, new Row(1), new Column(2));
-      const fifthPlay = new Play(playerX, secondRow, new Column(3));
+      const firstSquare = new Square(secondRow, new Column(1));
+      const firstPlay = new Play(playerX, firstSquare);
+      const secondSquare = new Square(new Row(1), new Column(1));
+      const secondPlay = new Play(playerO, secondSquare);
+      const thirdSquare = new Square(secondRow, new Column(2));
+      const thirdPlay = new Play(playerX, thirdSquare);
+      const fourthSquare = new Square(new Row(1), new Column(2));
+      const fourthPlay = new Play(playerO, fourthSquare);
+      const fifthSquare = new Square(secondRow, new Column(3));
+      const fifthPlay = new Play(playerX, fifthSquare);
       ticTacToe.play(firstPlay);
       ticTacToe.play(secondPlay);
       ticTacToe.play(thirdPlay);

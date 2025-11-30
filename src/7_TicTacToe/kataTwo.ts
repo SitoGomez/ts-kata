@@ -64,28 +64,39 @@ export class Column {
   }
 }
 
-export class Play {
-  private readonly player: Player;
+export class Square {
   private readonly row: Row;
   private readonly column: Column;
 
-  public constructor(player: Player, row: Row, column: Column) {
-    this.player = player;
+  public constructor(row: Row, column: Column) {
     this.row = row;
-
     this.column = column;
   }
 
+  public isTheSameAs(other: Square): boolean {
+    return this.row.isTheSameAs(other.row) && this.column.isTheSameAs(other.column);
+  }
+
+  public isInRow(row: Row): boolean {
+    return this.row.isTheSameAs(row);
+  }
+}
+
+export class Play {
+  private readonly player: Player;
+  private readonly square: Square;
+
+  public constructor(player: Player, square: Square) {
+    this.player = player;
+    this.square = square;
+  }
+
   public isTheSameAs(other: Play): boolean {
-    return (
-      this.player.isTheSameAs(other.player) &&
-      this.row === other.row &&
-      this.column === other.column
-    );
+    return this.player.isTheSameAs(other.player) && this.square.isTheSameAs(other.square);
   }
 
   public isOnTheSameSquareAs(other: Play): boolean {
-    return this.row.isTheSameAs(other.row) && this.column.isTheSameAs(other.column);
+    return this.square.isTheSameAs(other.square);
   }
 
   public isPerformedByTheSamePlayerAs(other: Play): boolean {
@@ -97,7 +108,7 @@ export class Play {
   }
 
   public wasOnRowAndPerformedByPlayer(player: Player, row: Row): boolean {
-    return this.row.isTheSameAs(row) && this.player.isTheSameAs(player);
+    return this.square.isInRow(row) && this.player.isTheSameAs(player);
   }
 }
 
