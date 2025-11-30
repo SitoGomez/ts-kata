@@ -147,6 +147,14 @@ class Plays {
       return Player.buildPlayerX();
     }
 
+    const horizontalSecondRowPlaysByPlayerX = this.plays.filter((play) =>
+      play.wasOnRowAndPerformedByPlayer(Player.buildPlayerX(), new Row(2)),
+    );
+
+    if (horizontalSecondRowPlaysByPlayerX.length === 3) {
+      return Player.buildPlayerX();
+    }
+
     const horizontalFirstRowPlaysByPlayerO = this.plays.filter((play) =>
       play.wasOnRowAndPerformedByPlayer(Player.buildPlayerO(), new Row(1)),
     );

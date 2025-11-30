@@ -138,4 +138,26 @@ describe('Given a game in Tic Tac Toe', () => {
       expect(ticTacToe.getWinner()?.isTheSameAs(playerO)).toBeTruthy();
     });
   });
+
+  describe('When the player X achieve to have three tokens in the second row of squares', () => {
+    it('Then the player X wins the game', () => {
+      const ticTacToe = new TicTacToeGame();
+
+      const secondRow = new Row(2);
+
+      const playerX = Player.buildPlayerX();
+      const playerO = Player.buildPlayerO();
+      const firstPlay = new Play(playerX, secondRow, new Column(1));
+      const secondPlay = new Play(playerO, new Row(1), new Column(1));
+      const thirdPlay = new Play(playerX, secondRow, new Column(2));
+      const fourthPlay = new Play(playerO, new Row(1), new Column(2));
+      const fifthPlay = new Play(playerX, secondRow, new Column(3));
+      ticTacToe.play(firstPlay);
+      ticTacToe.play(secondPlay);
+      ticTacToe.play(thirdPlay);
+      ticTacToe.play(fourthPlay);
+      ticTacToe.play(fifthPlay);
+      expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
+    });
+  });
 });
