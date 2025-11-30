@@ -29,11 +29,11 @@ export class Player {
 export class Row {
   private readonly row: number;
 
-  private readonly MIN_ROW_COLUMN = 1;
-  private readonly MAX_ROW_COLUMN = 3;
+  private readonly MIN_ROW_VALUE = 1;
+  private readonly MAX_ROW_VALUE = 3;
 
   public constructor(row: number) {
-    if (row < this.MIN_ROW_COLUMN || row > this.MAX_ROW_COLUMN) {
+    if (row < this.MIN_ROW_VALUE || row > this.MAX_ROW_VALUE) {
       throw new SquareOutOfBoundsError();
     }
 
@@ -48,11 +48,11 @@ export class Row {
 export class Column {
   private readonly column: number;
 
-  private readonly MIN_ROW_COLUMN = 1;
-  private readonly MAX_ROW_COLUMN = 3;
+  private readonly MIN_COLUMN_VALUE = 1;
+  private readonly MAX_COLUMN_VALUE = 3;
 
   public constructor(column: number) {
-    if (column < this.MIN_ROW_COLUMN || column > this.MAX_ROW_COLUMN) {
+    if (column < this.MIN_COLUMN_VALUE || column > this.MAX_COLUMN_VALUE) {
       throw new SquareOutOfBoundsError();
     }
 
