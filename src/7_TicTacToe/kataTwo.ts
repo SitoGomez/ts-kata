@@ -124,7 +124,7 @@ class Plays {
   }
 
   private guardFirstPlayerIsX(nextPlay: Play): void {
-    if (this.plays.length === 0 && nextPlay.isPerformedByPlayer(Player.buildPlayerO())) {
+    if (!this.plays.length && nextPlay.isPerformedByPlayer(Player.buildPlayerO())) {
       throw new InvalidStartingPlayerError();
     }
   }
@@ -146,7 +146,7 @@ class Plays {
   }
 
   public getWinner(): Player | undefined {
-    if (this.plays.length === 0) {
+    if (!this.plays.length) {
       return undefined;
     }
 
