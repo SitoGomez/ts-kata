@@ -111,7 +111,7 @@ export class TicTacToeGame {
     }
   }
 
-  public getLastMove(player: Player): Play | undefined {
+  public getLastPlay(): Play | undefined {
     return this.plays.getLastPlay();
   }
 

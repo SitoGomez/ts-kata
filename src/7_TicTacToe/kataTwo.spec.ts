@@ -21,7 +21,7 @@ describe('Given a game in Tic Tac Toe', () => {
       const play = new Play(row, column);
       ticTacToe.play(playerX, play);
 
-      expect(ticTacToe.getLastMove(playerX)?.isTheSameAs(play)).toBeTruthy();
+      expect(ticTacToe.getLastPlay()?.isTheSameAs(play)).toBeTruthy();
     });
   });
 
