@@ -44,8 +44,11 @@ export class Row {
 export class Column {
   private readonly column: number;
 
+  private readonly MIN_ROW_COLUMN = 1;
+  private readonly MAX_ROW_COLUMN = 3;
+
   public constructor(column: number) {
-    if (column < 1 || column > 3) {
+    if (column < this.MIN_ROW_COLUMN || column > this.MAX_ROW_COLUMN) {
       throw new SquareOutOfBoundsError();
     }
 
