@@ -80,6 +80,10 @@ export class Play {
     );
   }
 
+  public isPerformedByPlayer(player: Player): boolean {
+    return this.player.isTheSameAs(player);
+  }
+
   public wasOnRowAndPerformedByPlayer(player: Player, row: Row): boolean {
     return this.row.isTheSameAs(row) && this.player.isTheSameAs(player);
   }
@@ -88,8 +92,15 @@ export class Play {
 class Plays {
   private plays: Play[] = [];
 
-  public add(play: Play): void {
-    this.plays.push(play);
+  public add(nextPlay: Play): void {
+    this.guardFirstPlayerIsX(nextPlay);
+    this.plays.push(nextPlay);
+  }
+
+  private guardFirstPlayerIsX(nextPlay: Play): void {
+    if (this.plays.length === 0 && nextPlay.isPerformedByPlayer(Player.buildPlayerO())) {
+      throw new InvalidStartingPlayerError();
+    }
   }
 
   public guardPlayAlreadyPerformed(play: Play): void {
@@ -132,7 +143,7 @@ export class TicTacToeGame {
   private plays: Plays = new Plays();
 
   public play(player: Player, play: Play): void {
-    this.guardFirstPlayerIsX(player);
+    // this.guardFirstPlayerIsX(player);
     this.guardNotSamePlayerPlayingTwice(player);
     this.plays.guardPlayAlreadyPerformed(play);
 
