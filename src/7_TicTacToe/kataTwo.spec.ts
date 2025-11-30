@@ -88,17 +88,19 @@ describe('Given a game in Tic Tac Toe', () => {
     });
   });
 
-  describe('When the player X achieve to have three tokens in a row of squares', () => {
+  describe('When the player X achieve to have three tokens in the first row of squares', () => {
     it('Then the player X wins the game', () => {
       const ticTacToe = new TicTacToeGame();
 
+      const firstRow = new Row(1);
+
       const playerX = new Player('X');
       const playerO = Player.buildPlayerO();
-      const firstPlay = new Play(new Row(2), new Column(1));
-      const secondPlay = new Play(new Row(1), new Column(1));
-      const thirdPlay = new Play(new Row(2), new Column(1));
-      const fourthPlay = new Play(new Row(1), new Column(3));
-      const fifthPlay = new Play(new Row(2), new Column(2));
+      const firstPlay = new Play(firstRow, new Column(1));
+      const secondPlay = new Play(new Row(2), new Column(1));
+      const thirdPlay = new Play(firstRow, new Column(2));
+      const fourthPlay = new Play(new Row(2), new Column(3));
+      const fifthPlay = new Play(firstRow, new Column(3));
 
       ticTacToe.play(playerX, firstPlay);
       ticTacToe.play(playerO, secondPlay);
