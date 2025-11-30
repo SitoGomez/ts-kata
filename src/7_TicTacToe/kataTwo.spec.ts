@@ -15,7 +15,7 @@ describe('Given a game in Tic Tac Toe', () => {
     it('Then the square should be fulfilled', () => {
       const ticTacToe = new TicTacToeGame();
 
-      const playerX = new Player('X');
+      const playerX = Player.buildPlayerX();
       const row = new Row(1);
       const column = new Column(2);
       const play = new Play(row, column);
@@ -29,7 +29,7 @@ describe('Given a game in Tic Tac Toe', () => {
     it('Then the play is invalid', () => {
       const ticTacToe = new TicTacToeGame();
 
-      const playerX = new Player('X');
+      const playerX = Player.buildPlayerX();
       const firstRow = new Row(1);
       const firstColumn = new Column(1);
       const firstPlay = new Play(firstRow, firstColumn);
@@ -60,7 +60,7 @@ describe('Given a game in Tic Tac Toe', () => {
     it('Then the play is invalid', () => {
       const ticTacToe = new TicTacToeGame();
 
-      const playerX = new Player('X');
+      const playerX = Player.buildPlayerX();
       const playerO = Player.buildPlayerO();
       const row = new Row(2);
       const column = new Column(3);
@@ -94,7 +94,7 @@ describe('Given a game in Tic Tac Toe', () => {
 
       const firstRow = new Row(1);
 
-      const playerX = new Player('X');
+      const playerX = Player.buildPlayerX();
       const playerO = Player.buildPlayerO();
       const firstPlay = new Play(firstRow, new Column(1));
       const secondPlay = new Play(new Row(2), new Column(1));
