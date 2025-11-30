@@ -112,33 +112,44 @@ export class Play {
   }
 }
 
-class Plays {
-  private plays: Play[] = [];
-
-  public add(nextPlay: Play): void {
-    this.guardFirstPlayerIsX(nextPlay);
-    this.guardPlayAlreadyPerformed(nextPlay);
-    this.guardNotSamePlayerPlayingTwice(nextPlay);
-
-    this.plays.push(nextPlay);
-  }
-
-  private guardFirstPlayerIsX(nextPlay: Play): void {
-    if (!this.plays.length && nextPlay.isPerformedByPlayer(Player.buildPlayerO())) {
+//REVIEW: This class doesn't have state, for me is an smell
+class PlayRules {
+  public guardFirstPlayerIsX(plays: Play[], nextPlay: Play): void {
+    if (!plays.length && nextPlay.isPerformedByPlayer(Player.buildPlayerO())) {
       throw new InvalidStartingPlayerError();
     }
   }
 
-  public guardPlayAlreadyPerformed(nextPlay: Play): void {
-    if (this.plays.some((existingPlay) => existingPlay.isOnTheSameSquareAs(nextPlay))) {
+  public guardPlayAlreadyPerformed(plays: Play[], nextPlay: Play): void {
+    if (plays.some((existingPlay) => existingPlay.isOnTheSameSquareAs(nextPlay))) {
       throw new SquareAlreadyFulfilledError();
     }
   }
 
-  private guardNotSamePlayerPlayingTwice(nextPlay: Play): void {
-    if (this.getLastPlay()?.isPerformedByTheSamePlayerAs(nextPlay)) {
+  public guardNotSamePlayerPlayingTwice(plays: Play[], nextPlay: Play): void {
+    const lastPlay = plays[plays.length - 1];
+
+    if (lastPlay?.isPerformedByTheSamePlayerAs(nextPlay)) {
       throw new SamePlayerPlaysTwiceError();
     }
+  }
+}
+
+class Plays {
+  private plays: Play[];
+  private readonly playRules: PlayRules;
+
+  public constructor() {
+    this.plays = [];
+    this.playRules = new PlayRules();
+  }
+
+  public add(nextPlay: Play): void {
+    this.playRules.guardFirstPlayerIsX(this.plays, nextPlay);
+    this.playRules.guardNotSamePlayerPlayingTwice(this.plays, nextPlay);
+    this.playRules.guardPlayAlreadyPerformed(this.plays, nextPlay);
+
+    this.plays.push(nextPlay);
   }
 
   public getLastPlay(): Play | undefined {
