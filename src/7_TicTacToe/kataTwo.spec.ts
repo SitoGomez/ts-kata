@@ -18,7 +18,7 @@ describe('Given a game in Tic Tac Toe', () => {
       const playerX = Player.buildPlayerX();
       const row = new Row(1);
       const column = new Column(2);
-      const play = new Play(row, column);
+      const play = new Play(playerX, row, column);
       ticTacToe.play(playerX, play);
 
       expect(ticTacToe.getLastPlay()?.isTheSameAs(play)).toBeTruthy();
@@ -32,13 +32,13 @@ describe('Given a game in Tic Tac Toe', () => {
       const playerX = Player.buildPlayerX();
       const firstRow = new Row(1);
       const firstColumn = new Column(1);
-      const firstPlay = new Play(firstRow, firstColumn);
+      const firstPlay = new Play(playerX, firstRow, firstColumn);
 
       ticTacToe.play(playerX, firstPlay);
 
       const secondRow = new Row(3);
       const secondColumn = new Column(3);
-      const secondPlay = new Play(secondRow, secondColumn);
+      const secondPlay = new Play(playerX, secondRow, secondColumn);
       expect(() => ticTacToe.play(playerX, secondPlay)).toThrow(SamePlayerPlaysTwiceError);
     });
   });
@@ -50,7 +50,7 @@ describe('Given a game in Tic Tac Toe', () => {
       const playerO = Player.buildPlayerO();
       const row = new Row(1);
       const column = new Column(1);
-      const play = new Play(row, column);
+      const play = new Play(playerO, row, column);
 
       expect(() => ticTacToe.play(playerO, play)).toThrow(InvalidStartingPlayerError);
     });
@@ -64,7 +64,7 @@ describe('Given a game in Tic Tac Toe', () => {
       const playerO = Player.buildPlayerO();
       const row = new Row(2);
       const column = new Column(3);
-      const play = new Play(row, column);
+      const play = new Play(playerX, row, column);
 
       ticTacToe.play(playerX, play);
 
@@ -84,7 +84,9 @@ describe('Given a game in Tic Tac Toe', () => {
     [1, 5],
   ])('When the player tries to play in square %i,%i', (row, column) => {
     it('Then the play is invalid', () => {
-      expect(() => new Play(new Row(row), new Column(column))).toThrow(SquareOutOfBoundsError);
+      expect(() => new Play(Player.buildPlayerX(), new Row(row), new Column(column))).toThrow(
+        SquareOutOfBoundsError,
+      );
     });
   });
 
@@ -96,12 +98,11 @@ describe('Given a game in Tic Tac Toe', () => {
 
       const playerX = Player.buildPlayerX();
       const playerO = Player.buildPlayerO();
-      const firstPlay = new Play(firstRow, new Column(1));
-      const secondPlay = new Play(new Row(2), new Column(1));
-      const thirdPlay = new Play(firstRow, new Column(2));
-      const fourthPlay = new Play(new Row(2), new Column(3));
-      const fifthPlay = new Play(firstRow, new Column(3));
-
+      const firstPlay = new Play(playerX, firstRow, new Column(1));
+      const secondPlay = new Play(playerO, new Row(2), new Column(1));
+      const thirdPlay = new Play(playerX, firstRow, new Column(2));
+      const fourthPlay = new Play(playerO, new Row(2), new Column(3));
+      const fifthPlay = new Play(playerX, firstRow, new Column(3));
       ticTacToe.play(playerX, firstPlay);
       ticTacToe.play(playerO, secondPlay);
       ticTacToe.play(playerX, thirdPlay);
@@ -109,6 +110,32 @@ describe('Given a game in Tic Tac Toe', () => {
       ticTacToe.play(playerX, fifthPlay);
 
       expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
+    });
+  });
+
+  describe('When the player O achieve to have three tokens in the first row of squares', () => {
+    it('Then the player O wins the game', () => {
+      const ticTacToe = new TicTacToeGame();
+
+      const firstRow = new Row(1);
+
+      const playerX = Player.buildPlayerX();
+      const playerO = Player.buildPlayerO();
+      const firstPlay = new Play(playerX, new Row(2), new Column(1));
+      const secondPlay = new Play(playerO, firstRow, new Column(1));
+      const thirdPlay = new Play(playerX, new Row(2), new Column(2));
+      const fourthPlay = new Play(playerO, firstRow, new Column(2));
+      const fifthPlay = new Play(playerX, new Row(3), new Column(3));
+      const sixthPlay = new Play(playerO, firstRow, new Column(3));
+
+      ticTacToe.play(playerX, firstPlay);
+      ticTacToe.play(playerO, secondPlay);
+      ticTacToe.play(playerX, thirdPlay);
+      ticTacToe.play(playerO, fourthPlay);
+      ticTacToe.play(playerX, fifthPlay);
+      ticTacToe.play(playerO, sixthPlay);
+
+      expect(ticTacToe.getWinner()?.isTheSameAs(playerO)).toBeTruthy();
     });
   });
 });

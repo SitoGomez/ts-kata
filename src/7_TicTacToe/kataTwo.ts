@@ -39,6 +39,10 @@ export class Row {
 
     this.row = row;
   }
+
+  public isTheSameAs(other: Row): boolean {
+    return this.row === other.row;
+  }
 }
 
 export class Column {
@@ -57,17 +61,27 @@ export class Column {
 }
 
 export class Play {
+  private readonly player: Player;
   private readonly row: Row;
   private readonly column: Column;
 
-  public constructor(row: Row, column: Column) {
+  public constructor(player: Player, row: Row, column: Column) {
+    this.player = player;
     this.row = row;
 
     this.column = column;
   }
 
   public isTheSameAs(other: Play): boolean {
-    return this.row === other.row && this.column === other.column;
+    return (
+      this.player.isTheSameAs(other.player) &&
+      this.row === other.row &&
+      this.column === other.column
+    );
+  }
+
+  public wasOnRowAndPerformedByPlayer(player: Player, row: Row): boolean {
+    return this.row.isTheSameAs(row) && this.player.isTheSameAs(player);
   }
 }
 
@@ -86,6 +100,30 @@ class Plays {
 
   public getLastPlay(): Play | undefined {
     return this.plays[this.plays.length - 1];
+  }
+
+  public getWinner(): Player | undefined {
+    if (this.plays.length === 0) {
+      return undefined;
+    }
+
+    const horizontalFirstRowPlaysByPlayerX = this.plays.filter((play) =>
+      play.wasOnRowAndPerformedByPlayer(Player.buildPlayerX(), new Row(1)),
+    );
+
+    if (horizontalFirstRowPlaysByPlayerX.length === 3) {
+      return Player.buildPlayerX();
+    }
+
+    const horizontalFirstRowPlaysByPlayerO = this.plays.filter((play) =>
+      play.wasOnRowAndPerformedByPlayer(Player.buildPlayerO(), new Row(1)),
+    );
+
+    if (horizontalFirstRowPlaysByPlayerO.length === 3) {
+      return Player.buildPlayerO();
+    }
+
+    return undefined;
   }
 }
 
@@ -119,7 +157,7 @@ export class TicTacToeGame {
   }
 
   public getWinner(): Player | undefined {
-    return Player.buildPlayerX();
+    return this.plays.getWinner();
   }
 }
 
