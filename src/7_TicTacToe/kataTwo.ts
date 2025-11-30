@@ -156,14 +156,29 @@ class Plays {
     return this.plays[this.plays.length - 1];
   }
 
-  public getWinner(): Player | undefined {
-    if (!this.plays.length) {
+  public getAllPlays(): Play[] {
+    return this.plays;
+  }
+}
+
+export class WinRules {
+  private readonly MIN_ROWS_IN_GRID = 1;
+  private readonly MAX_ROWS_IN_GRID = 3;
+
+  private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
+
+  public getHorizontalWinByPlayer(plays: Play[]): Player | undefined {
+    if (!plays.length) {
       return undefined;
     }
 
-    for (let currentRow = 1; currentRow < 3; currentRow++) {
-      for (const player of [Player.buildPlayerX(), Player.buildPlayerO()]) {
-        const horizontalRows = this.plays.filter((play) =>
+    for (
+      let currentRow = this.MIN_ROWS_IN_GRID;
+      currentRow <= this.MAX_ROWS_IN_GRID;
+      currentRow++
+    ) {
+      for (const player of this.players) {
+        const horizontalRows = plays.filter((play) =>
           play.wasOnRowAndPerformedByPlayer(player, new Row(currentRow)),
         );
 
@@ -189,7 +204,7 @@ export class TicTacToeGame {
   }
 
   public getWinner(): Player | undefined {
-    return this.plays.getWinner();
+    return new WinRules().getHorizontalWinByPlayer(this.plays.getAllPlays());
   }
 }
 
