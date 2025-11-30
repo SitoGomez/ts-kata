@@ -139,28 +139,16 @@ class Plays {
       return undefined;
     }
 
-    const horizontalFirstRowPlaysByPlayerX = this.plays.filter((play) =>
-      play.wasOnRowAndPerformedByPlayer(Player.buildPlayerX(), new Row(1)),
-    );
+    for (let currentRow = 1; currentRow < 3; currentRow++) {
+      for (const player of [Player.buildPlayerX(), Player.buildPlayerO()]) {
+        const horizontalRows = this.plays.filter((play) =>
+          play.wasOnRowAndPerformedByPlayer(player, new Row(currentRow)),
+        );
 
-    if (horizontalFirstRowPlaysByPlayerX.length === 3) {
-      return Player.buildPlayerX();
-    }
-
-    const horizontalSecondRowPlaysByPlayerX = this.plays.filter((play) =>
-      play.wasOnRowAndPerformedByPlayer(Player.buildPlayerX(), new Row(2)),
-    );
-
-    if (horizontalSecondRowPlaysByPlayerX.length === 3) {
-      return Player.buildPlayerX();
-    }
-
-    const horizontalFirstRowPlaysByPlayerO = this.plays.filter((play) =>
-      play.wasOnRowAndPerformedByPlayer(Player.buildPlayerO(), new Row(1)),
-    );
-
-    if (horizontalFirstRowPlaysByPlayerO.length === 3) {
-      return Player.buildPlayerO();
+        if (horizontalRows.length === 3) {
+          return player;
+        }
+      }
     }
 
     return undefined;
