@@ -118,6 +118,10 @@ export class Play {
   public wasOnColumnAndPerformedByPlayer(player: Player, column: Column): boolean {
     return this.square.isInColumn(column) && this.player.isTheSameAs(player);
   }
+
+  public isOnSquareAndPerformedByPlayer(square: Square, player: Player): boolean {
+    return this.square.isTheSameAs(square) && this.player.isTheSameAs(player);
+  }
 }
 
 //REVIEW: This class doesn't have state, for me is an smell
@@ -169,7 +173,7 @@ class Plays {
   }
 }
 
-export class WinRules {
+export class GameResultRules {
   private readonly MIN_ROWS_IN_GRID = 1;
   private readonly MAX_ROWS_IN_GRID = 3;
   private readonly MIN_COLUMNS_IN_GRID = 1;
@@ -177,7 +181,29 @@ export class WinRules {
 
   private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
 
-  public getHorizontalWinByPlayer(plays: Play[]): Player | undefined {
+  public calculateGameResult(plays: Play[]): Player | undefined {
+    const horizontalWinner = this.getHorizontalWinByPlayer(plays);
+
+    if (horizontalWinner) {
+      return horizontalWinner;
+    }
+
+    const verticalWinner = this.getVerticalWinByPlayer(plays);
+
+    if (verticalWinner) {
+      return verticalWinner;
+    }
+
+    const diagonalWinner = this.getDiagonalWinByPlayer(plays);
+
+    if (diagonalWinner) {
+      return diagonalWinner;
+    }
+
+    return undefined;
+  }
+
+  private getHorizontalWinByPlayer(plays: Play[]): Player | undefined {
     if (!plays.length) {
       return undefined;
     }
@@ -201,7 +227,7 @@ export class WinRules {
     return undefined;
   }
 
-  public getVerticalWinByPlayer(plays: Play[]): Player | undefined {
+  private getVerticalWinByPlayer(plays: Play[]): Player | undefined {
     if (!plays.length) {
       return undefined;
     }
@@ -224,6 +250,48 @@ export class WinRules {
 
     return undefined;
   }
+
+  private getDiagonalWinByPlayer(plays: Play[]): Player | undefined {
+    if (!plays.length) {
+      return undefined;
+    }
+
+    for (const player of this.players) {
+      if (this.leftTopToRightBottomDiagonalWinByPlayer(plays, player)) {
+        return player;
+      }
+
+      if (this.rightTopToLeftBottomDiagonalWinByPlayer(plays, player)) {
+        return player;
+      }
+    }
+
+    return undefined;
+  }
+
+  private leftTopToRightBottomDiagonalWinByPlayer(plays: Play[], player: Player): boolean {
+    const leftTopToRightBottomDiagonalSquares: Square[] = [
+      new Square(new Row(1), new Column(1)),
+      new Square(new Row(2), new Column(2)),
+      new Square(new Row(3), new Column(3)),
+    ];
+
+    return leftTopToRightBottomDiagonalSquares.every((square) =>
+      plays.some((play) => play.isOnSquareAndPerformedByPlayer(square, player)),
+    );
+  }
+
+  private rightTopToLeftBottomDiagonalWinByPlayer(plays: Play[], player: Player): boolean {
+    const rightTopToLeftBottomDiagonalSquares: Square[] = [
+      new Square(new Row(1), new Column(3)),
+      new Square(new Row(2), new Column(2)),
+      new Square(new Row(3), new Column(1)),
+    ];
+
+    return rightTopToLeftBottomDiagonalSquares.every((square) =>
+      plays.some((play) => play.isOnSquareAndPerformedByPlayer(square, player)),
+    );
+  }
 }
 
 export class TicTacToeGame {
@@ -238,21 +306,7 @@ export class TicTacToeGame {
   }
 
   public getWinner(): Player | undefined {
-    const winRules = new WinRules();
-
-    const horizontalWinner = winRules.getHorizontalWinByPlayer(this.plays.getAllPlays());
-
-    if (horizontalWinner) {
-      return horizontalWinner;
-    }
-
-    const verticalWinner = winRules.getVerticalWinByPlayer(this.plays.getAllPlays());
-
-    if (verticalWinner) {
-      return verticalWinner;
-    }
-
-    return undefined;
+    return new GameResultRules().calculateGameResult(this.plays.getAllPlays());
   }
 }
 

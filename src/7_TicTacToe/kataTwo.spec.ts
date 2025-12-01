@@ -208,4 +208,54 @@ describe('Given a game in Tic Tac Toe', () => {
       expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
     });
   });
+
+  describe('When the player X achieve to have three tokens diagonally left top to right bottom', () => {
+    it('Then the player X wins the game', () => {
+      const ticTacToe = new TicTacToeGame();
+
+      const playerX = Player.buildPlayerX();
+      const playerO = Player.buildPlayerO();
+      const firstSquare = new Square(new Row(1), new Column(1));
+      const firstPlay = new Play(playerX, firstSquare);
+      const secondSquare = new Square(new Row(1), new Column(2));
+      const secondPlay = new Play(playerO, secondSquare);
+      const thirdSquare = new Square(new Row(2), new Column(2));
+      const thirdPlay = new Play(playerX, thirdSquare);
+      const fourthSquare = new Square(new Row(1), new Column(3));
+      const fourthPlay = new Play(playerO, fourthSquare);
+      const fifthSquare = new Square(new Row(3), new Column(3));
+      const fifthPlay = new Play(playerX, fifthSquare);
+      ticTacToe.play(firstPlay);
+      ticTacToe.play(secondPlay);
+      ticTacToe.play(thirdPlay);
+      ticTacToe.play(fourthPlay);
+      ticTacToe.play(fifthPlay);
+      expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
+    });
+  });
+
+  describe('When the player X achieve to have three tokens diagonally right top to left bottom', () => {
+    it('Then the player X wins the game', () => {
+      const ticTacToe = new TicTacToeGame();
+
+      const playerX = Player.buildPlayerX();
+      const playerO = Player.buildPlayerO();
+      const firstSquare = new Square(new Row(1), new Column(3));
+      const firstPlay = new Play(playerX, firstSquare);
+      const secondSquare = new Square(new Row(1), new Column(2));
+      const secondPlay = new Play(playerO, secondSquare);
+      const thirdSquare = new Square(new Row(2), new Column(2));
+      const thirdPlay = new Play(playerX, thirdSquare);
+      const fourthSquare = new Square(new Row(1), new Column(1));
+      const fourthPlay = new Play(playerO, fourthSquare);
+      const fifthSquare = new Square(new Row(3), new Column(1));
+      const fifthPlay = new Play(playerX, fifthSquare);
+      ticTacToe.play(firstPlay);
+      ticTacToe.play(secondPlay);
+      ticTacToe.play(thirdPlay);
+      ticTacToe.play(fourthPlay);
+      ticTacToe.play(fifthPlay);
+      expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
+    });
+  });
 });
