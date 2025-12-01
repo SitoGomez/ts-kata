@@ -258,4 +258,21 @@ describe('Given a game in Tic Tac Toe', () => {
       expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
     });
   });
+
+  describe("When the game didn't have a winner yet", () => {
+    it('Then the winner should be undefined', () => {
+      const ticTacToe = new TicTacToeGame();
+
+      const playerX = Player.buildPlayerX();
+      const playerO = Player.buildPlayerO();
+      const firstSquare = new Square(new Row(1), new Column(1));
+      const firstPlay = new Play(playerX, firstSquare);
+      const secondSquare = new Square(new Row(1), new Column(2));
+      const secondPlay = new Play(playerO, secondSquare);
+      ticTacToe.play(firstPlay);
+      ticTacToe.play(secondPlay);
+
+      expect(ticTacToe.getWinner()).toBeUndefined();
+    });
+  });
 });
