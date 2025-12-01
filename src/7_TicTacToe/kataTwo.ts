@@ -80,6 +80,10 @@ export class Square {
   public isInRow(row: Row): boolean {
     return this.row.isTheSameAs(row);
   }
+
+  public isInColumn(column: Column): boolean {
+    return this.column.isTheSameAs(column);
+  }
 }
 
 export class Play {
@@ -109,6 +113,10 @@ export class Play {
 
   public wasOnRowAndPerformedByPlayer(player: Player, row: Row): boolean {
     return this.square.isInRow(row) && this.player.isTheSameAs(player);
+  }
+
+  public wasOnColumnAndPerformedByPlayer(player: Player, column: Column): boolean {
+    return this.square.isInColumn(column) && this.player.isTheSameAs(player);
   }
 }
 
@@ -164,6 +172,8 @@ class Plays {
 export class WinRules {
   private readonly MIN_ROWS_IN_GRID = 1;
   private readonly MAX_ROWS_IN_GRID = 3;
+  private readonly MIN_COLUMNS_IN_GRID = 1;
+  private readonly MAX_COLUMNS_IN_GRID = 3;
 
   private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
 
@@ -190,6 +200,30 @@ export class WinRules {
 
     return undefined;
   }
+
+  public getVerticalWinByPlayer(plays: Play[]): Player | undefined {
+    if (!plays.length) {
+      return undefined;
+    }
+
+    for (
+      let currentColumn = this.MIN_COLUMNS_IN_GRID;
+      currentColumn <= this.MAX_COLUMNS_IN_GRID;
+      currentColumn++
+    ) {
+      for (const player of this.players) {
+        const verticalColumns = plays.filter((play) =>
+          play.wasOnColumnAndPerformedByPlayer(player, new Column(currentColumn)),
+        );
+
+        if (verticalColumns.length === this.MAX_COLUMNS_IN_GRID) {
+          return player;
+        }
+      }
+    }
+
+    return undefined;
+  }
 }
 
 export class TicTacToeGame {
@@ -204,7 +238,21 @@ export class TicTacToeGame {
   }
 
   public getWinner(): Player | undefined {
-    return new WinRules().getHorizontalWinByPlayer(this.plays.getAllPlays());
+    const winRules = new WinRules();
+
+    const horizontalWinner = winRules.getHorizontalWinByPlayer(this.plays.getAllPlays());
+
+    if (horizontalWinner) {
+      return horizontalWinner;
+    }
+
+    const verticalWinner = winRules.getVerticalWinByPlayer(this.plays.getAllPlays());
+
+    if (verticalWinner) {
+      return verticalWinner;
+    }
+
+    return undefined;
   }
 }
 
