@@ -1,3 +1,5 @@
+//TODO: Pragmatic vs Purist approaches
+
 type PlayerToken = 'X' | 'O';
 
 export class Player {
@@ -86,6 +88,7 @@ export class Square {
   }
 }
 
+//Factory methods
 export class Play {
   private readonly player: Player;
   private readonly square: Square;
@@ -122,9 +125,11 @@ export class Play {
   public isOnSquareAndPerformedByPlayer(square: Square, player: Player): boolean {
     return this.square.isTheSameAs(square) && this.player.isTheSameAs(player);
   }
+
+  //Más genéricas pueden ser más reutilizables
 }
 
-//REVIEW: This class doesn't have state, for me is an smell
+//REVIEW: This class doesn't have state, for me is an smell -> Function
 class PlayRules {
   public guardFirstPlayerIsX(plays: Play[], nextPlay: Play): void {
     if (!plays.length && nextPlay.isPerformedByPlayer(Player.buildPlayerO())) {
@@ -182,6 +187,8 @@ export class GameResultRules {
   private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
 
   public calculateGameResult(plays: Play[]): Player | undefined {
+    //Usar collection de plays y preguntarle por filas, columnas y diagonales
+    //Feature Envy Code Smell
     const horizontalWinner = this.getHorizontalWinByPlayer(plays);
 
     if (horizontalWinner) {
@@ -203,6 +210,7 @@ export class GameResultRules {
     return undefined;
   }
 
+  //Strategy patten - Colección de strategias como first class colection
   private getHorizontalWinByPlayer(plays: Play[]): Player | undefined {
     if (!plays.length) {
       return undefined;
