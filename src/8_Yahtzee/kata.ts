@@ -6,7 +6,8 @@ export type CategoryType =
   | 'Fives'
   | 'Sixes'
   | 'Pair'
-  | 'TwoPairs';
+  | 'TwoPairs'
+  | 'ThreeOfAKind';
 
 export class Category {
   private readonly value: CategoryType;
@@ -48,7 +49,7 @@ class CategoriesEquivalency {
 export type Dice = 1 | 2 | 3 | 4 | 5 | 6;
 
 export class Roll {
-  private readonly dice: Dice[];
+  private readonly dices: Dice[];
   private readonly categoriesEquivalency = new CategoriesEquivalency();
 
   public constructor(
@@ -58,22 +59,26 @@ export class Roll {
     fourthDice: Dice,
     fifthDice: Dice,
   ) {
-    this.dice = [firstDice, secondDice, thirdDice, fourthDice, fifthDice];
+    this.dices = [firstDice, secondDice, thirdDice, fourthDice, fifthDice];
   }
 
   public getByCategoryCount(category: Category): number {
-    return this.dice.filter((dice) => dice === this.categoriesEquivalency.getByCategory(category))
+    return this.dices.filter((dice) => dice === this.categoriesEquivalency.getByCategory(category))
       .length;
   }
 
   public getDuplicate(): Dice {
-    return this.dice.find((dice, index) => this.dice.indexOf(dice) !== index)!;
+    return this.dices.find((dice, index) => this.dices.indexOf(dice) !== index)!;
   }
 
   public getTwoPairs(): [Dice, Dice] {
-    const duplicates = this.dice.filter((dice, index) => this.dice.indexOf(dice) !== index);
+    const duplicates = this.dices.filter((dice, index) => this.dices.indexOf(dice) !== index);
 
     return [duplicates[0]!, duplicates[1]!];
+  }
+
+  public getThreeOfAKind(): Dice {
+    return this.dices.find((n) => this.dices.filter((x) => x === n).length === 3)!;
   }
 }
 
@@ -88,6 +93,10 @@ export class YahtzeeGame {
   }
 
   public getScore(): number {
+    if (this.category?.isEquals(new Category('ThreeOfAKind'))) {
+      return this.roll!.getThreeOfAKind() * 3;
+    }
+
     if (this.category?.isEquals(new Category('TwoPairs'))) {
       return this.roll!.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
     }

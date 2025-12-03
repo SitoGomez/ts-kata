@@ -252,6 +252,36 @@ describe('Yahtzee', () => {
       category: 'TwoPairs',
       expectedScore: 22,
     },
+    {
+      roll: [1, 1, 1, 2, 3],
+      category: 'ThreeOfAKind',
+      expectedScore: 3,
+    },
+    {
+      roll: [2, 2, 2, 3, 4],
+      category: 'ThreeOfAKind',
+      expectedScore: 6,
+    },
+    {
+      roll: [3, 3, 3, 2, 4],
+      category: 'ThreeOfAKind',
+      expectedScore: 9,
+    },
+    {
+      roll: [4, 4, 4, 2, 3],
+      category: 'ThreeOfAKind',
+      expectedScore: 12,
+    },
+    {
+      roll: [5, 5, 5, 2, 3],
+      category: 'ThreeOfAKind',
+      expectedScore: 15,
+    },
+    {
+      roll: [6, 6, 6, 2, 3],
+      category: 'ThreeOfAKind',
+      expectedScore: 18,
+    },
   ])('Given a roll with $roll in $category category', ({ roll, category, expectedScore }) => {
     it(`then the score should be ${expectedScore}`, () => {
       const yahtzeeGame = new YahtzeeGame();
