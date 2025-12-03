@@ -1,4 +1,12 @@
-export type CategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes' | 'Pair';
+export type CategoryType =
+  | 'Ones'
+  | 'Twos'
+  | 'Threes'
+  | 'Fours'
+  | 'Fives'
+  | 'Sixes'
+  | 'Pair'
+  | 'TwoPairs';
 
 export class Category {
   private readonly value: CategoryType;
@@ -59,6 +67,12 @@ export class Roll {
   public getDuplicate(): Dice {
     return this.dice.find((dice, index) => this.dice.indexOf(dice) !== index)!;
   }
+
+  public getTwoPairs(): [Dice, Dice] {
+    const duplicates = this.dice.filter((dice, index) => this.dice.indexOf(dice) !== index);
+
+    return [duplicates[0]!, duplicates[1]!];
+  }
 }
 
 export class YahtzeeGame {
@@ -72,7 +86,11 @@ export class YahtzeeGame {
   }
 
   public getScore(): number {
-    if (this.category!.isEquals(new Category('Pair'))) {
+    if (this.category?.isEquals(new Category('TwoPairs'))) {
+      return this.roll!.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
+    }
+
+    if (this.category?.isEquals(new Category('Pair'))) {
       return this.roll!.getDuplicate() * 2;
     }
 

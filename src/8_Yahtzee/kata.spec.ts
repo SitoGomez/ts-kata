@@ -182,6 +182,76 @@ describe('Yahtzee', () => {
       category: 'Pair',
       expectedScore: 12,
     },
+    {
+      roll: [1, 1, 2, 2, 5],
+      category: 'TwoPairs',
+      expectedScore: 6,
+    },
+    {
+      roll: [1, 1, 3, 3, 5],
+      category: 'TwoPairs',
+      expectedScore: 8,
+    },
+    {
+      roll: [1, 1, 4, 4, 5],
+      category: 'TwoPairs',
+      expectedScore: 10,
+    },
+    {
+      roll: [1, 1, 5, 5, 2],
+      category: 'TwoPairs',
+      expectedScore: 12,
+    },
+    {
+      roll: [1, 1, 6, 6, 2],
+      category: 'TwoPairs',
+      expectedScore: 14,
+    },
+    {
+      roll: [2, 2, 3, 3, 4],
+      category: 'TwoPairs',
+      expectedScore: 10,
+    },
+    {
+      roll: [2, 2, 5, 5, 4],
+      category: 'TwoPairs',
+      expectedScore: 14,
+    },
+    {
+      roll: [2, 2, 6, 6, 4],
+      category: 'TwoPairs',
+      expectedScore: 16,
+    },
+    {
+      roll: [3, 3, 4, 4, 5],
+      category: 'TwoPairs',
+      expectedScore: 14,
+    },
+    {
+      roll: [3, 3, 5, 5, 4],
+      category: 'TwoPairs',
+      expectedScore: 16,
+    },
+    {
+      roll: [3, 3, 6, 6, 4],
+      category: 'TwoPairs',
+      expectedScore: 18,
+    },
+    {
+      roll: [4, 4, 5, 5, 6],
+      category: 'TwoPairs',
+      expectedScore: 18,
+    },
+    {
+      roll: [4, 4, 6, 6, 5],
+      category: 'TwoPairs',
+      expectedScore: 20,
+    },
+    {
+      roll: [5, 5, 6, 6, 4],
+      category: 'TwoPairs',
+      expectedScore: 22,
+    },
   ])('Given a roll with $roll in $category category', ({ roll, category, expectedScore }) => {
     it(`then the score should be ${expectedScore}`, () => {
       const yahtzeeGame = new YahtzeeGame();
