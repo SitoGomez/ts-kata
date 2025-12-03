@@ -20,8 +20,10 @@ export class Category {
   }
 }
 
+type CategoryValue = 1 | 2 | 3 | 4 | 5 | 6;
+
 class CategoriesEquivalency {
-  private readonly categoriesEquivalency = new Map<Category, number>([
+  private readonly categoriesEquivalency = new Map<Category, CategoryValue>([
     [new Category('Ones'), 1],
     [new Category('Twos'), 2],
     [new Category('Threes'), 3],
