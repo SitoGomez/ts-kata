@@ -102,6 +102,31 @@ describe('Yahtzee', () => {
       category: 'Fours',
       expectedScore: 20,
     },
+    {
+      roll: [5, 1, 2, 3, 4],
+      category: 'Fives',
+      expectedScore: 5,
+    },
+    {
+      roll: [5, 5, 2, 3, 4],
+      category: 'Fives',
+      expectedScore: 10,
+    },
+    {
+      roll: [5, 5, 5, 3, 4],
+      category: 'Fives',
+      expectedScore: 15,
+    },
+    {
+      roll: [5, 5, 5, 5, 4],
+      category: 'Fives',
+      expectedScore: 20,
+    },
+    {
+      roll: [5, 5, 5, 5, 5],
+      category: 'Fives',
+      expectedScore: 25,
+    },
   ])('Given a roll with $roll in $category category', ({ roll, category, expectedScore }) => {
     it(`then the score should be ${expectedScore}`, () => {
       const yahtzeeGame = new YahtzeeGame();
