@@ -5,6 +5,7 @@ class Categories {
     ['Ones', 1],
     ['Twos', 2],
     ['Threes', 3],
+    ['Fours', 4],
   ]);
 
   public getValue(category: CategoryType): number | undefined {
