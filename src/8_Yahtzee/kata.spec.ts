@@ -1,4 +1,4 @@
-import { CategoryType, Dice, Roll, YahtzeeGame } from './kata';
+import { Category, CategoryType, Dice, Roll, YahtzeeGame } from './kata';
 
 describe('Yahtzee', () => {
   describe.each([
@@ -188,7 +188,7 @@ describe('Yahtzee', () => {
 
       yahtzeeGame.assignCategory(
         new Roll(...(roll as [Dice, Dice, Dice, Dice, Dice])),
-        category as CategoryType,
+        new Category(category as CategoryType),
       );
 
       const score = yahtzeeGame.getScore();

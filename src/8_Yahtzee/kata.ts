@@ -1,17 +1,37 @@
 export type CategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes' | 'Pair';
 
-class Categories {
-  private readonly categoriesEquivalency = new Map<CategoryType, number>([
-    ['Ones', 1],
-    ['Twos', 2],
-    ['Threes', 3],
-    ['Fours', 4],
-    ['Fives', 5],
-    ['Sixes', 6],
+export class Category {
+  private readonly value: CategoryType;
+
+  public constructor(category: CategoryType) {
+    this.value = category;
+  }
+
+  public isEquals(category: Category): boolean {
+    return this.value === category.value;
+  }
+}
+
+class CategoriesEquivalency {
+  private readonly categoriesEquivalency = new Map<Category, number>([
+    [new Category('Ones'), 1],
+    [new Category('Twos'), 2],
+    [new Category('Threes'), 3],
+    [new Category('Fours'), 4],
+    [new Category('Fives'), 5],
+    [new Category('Sixes'), 6],
   ]);
 
-  public getValue(category: CategoryType): number | undefined {
-    return this.categoriesEquivalency.get(category);
+  public getByCategory(category: Category): number | undefined {
+    let value: number | undefined = undefined;
+
+    this.categoriesEquivalency.forEach((categoryValue, categoryRecord) => {
+      if (categoryRecord.isEquals(category)) {
+        value = categoryValue;
+      }
+    });
+
+    return value;
   }
 }
 
@@ -19,7 +39,7 @@ export type Dice = 1 | 2 | 3 | 4 | 5 | 6;
 
 export class Roll {
   private readonly dice: Dice[];
-  private readonly categoriesEquivalency = new Categories();
+  private readonly categoriesEquivalency = new CategoriesEquivalency();
 
   public constructor(
     firstDice: Dice,
@@ -31,8 +51,8 @@ export class Roll {
     this.dice = [firstDice, secondDice, thirdDice, fourthDice, fifthDice];
   }
 
-  public getByCategoryCount(category: CategoryType): number {
-    return this.dice.filter((dice) => dice === this.categoriesEquivalency.getValue(category))
+  public getByCategoryCount(category: Category): number {
+    return this.dice.filter((dice) => dice === this.categoriesEquivalency.getByCategory(category))
       .length;
   }
 
@@ -43,20 +63,20 @@ export class Roll {
 
 export class YahtzeeGame {
   private roll: Roll | undefined = undefined;
-  private category: CategoryType | undefined = undefined;
-  private readonly categoriesEquivalency = new Categories();
+  private category: Category | undefined = undefined;
+  private readonly categoriesEquivalency = new CategoriesEquivalency();
 
-  public assignCategory(roll: Roll, category: CategoryType): void {
+  public assignCategory(roll: Roll, category: Category): void {
     this.roll = roll;
     this.category = category;
   }
 
   public getScore(): number {
-    if (this.category === 'Pair') {
+    if (this.category!.isEquals(new Category('Pair'))) {
       return this.roll!.getDuplicate() * 2;
     }
 
-    const categoryValue = this.categoriesEquivalency.getValue(this.category!);
+    const categoryValue = this.categoriesEquivalency.getByCategory(this.category!);
 
     if (!categoryValue) {
       return 0;
