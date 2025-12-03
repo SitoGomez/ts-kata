@@ -1,4 +1,4 @@
-export type CategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives';
+export type CategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes';
 
 class Categories {
   private readonly categoriesEquivalency = new Map<CategoryType, number>([
@@ -7,6 +7,7 @@ class Categories {
     ['Threes', 3],
     ['Fours', 4],
     ['Fives', 5],
+    ['Sixes', 6],
   ]);
 
   public getValue(category: CategoryType): number | undefined {
