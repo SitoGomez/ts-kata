@@ -1,4 +1,4 @@
-export type CategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes';
+export type CategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes' | 'Pair';
 
 class Categories {
   private readonly categoriesEquivalency = new Map<CategoryType, number>([
@@ -35,6 +35,10 @@ export class Roll {
     return this.dice.filter((dice) => dice === this.categoriesEquivalency.getValue(category))
       .length;
   }
+
+  public getDuplicate(): Dice {
+    return this.dice.find((dice, index) => this.dice.indexOf(dice) !== index)!;
+  }
 }
 
 export class YahtzeeGame {
@@ -48,6 +52,10 @@ export class YahtzeeGame {
   }
 
   public getScore(): number {
+    if (this.category === 'Pair') {
+      return this.roll!.getDuplicate() * 2;
+    }
+
     const categoryValue = this.categoriesEquivalency.getValue(this.category!);
 
     if (!categoryValue) {
