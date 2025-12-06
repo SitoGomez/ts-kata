@@ -123,24 +123,50 @@ export class Play {
   }
 }
 
-class PlayRules {
-  public guardFirstPlayerIsX(plays: Plays, nextPlay: Play): void {
+interface PlayRulesStrategy {
+  validate(plays: Plays, nextPlay: Play): void;
+}
+
+class GuardFirstPlayerIsX implements PlayRulesStrategy {
+  public validate(plays: Plays, nextPlay: Play): void {
     if (!plays.getTotalPlaysCount() && nextPlay.isPerformedByPlayer(Player.buildPlayerO())) {
       throw new InvalidStartingPlayerError();
     }
   }
+}
 
-  public guardPlayAlreadyPerformed(plays: Plays, nextPlay: Play): void {
-    if (plays.getPlayOnTheSameSquare(nextPlay)) {
-      throw new SquareAlreadyFulfilledError();
-    }
-  }
-
-  public guardNotSamePlayerPlayingTwice(plays: Plays, nextPlay: Play): void {
+class GuardNotSamePlayerPlayingTwice implements PlayRulesStrategy {
+  public validate(plays: Plays, nextPlay: Play): void {
     const lastPlay = plays.getLastPlay();
 
     if (lastPlay?.isPerformedByTheSamePlayerAs(nextPlay)) {
       throw new SamePlayerPlaysTwiceError();
+    }
+  }
+}
+
+class GuardPlayAlreadyPerformed implements PlayRulesStrategy {
+  public validate(plays: Plays, nextPlay: Play): void {
+    if (plays.getPlayOnTheSameSquare(nextPlay)) {
+      throw new SquareAlreadyFulfilledError();
+    }
+  }
+}
+
+class PlayRules {
+  private readonly rules: PlayRulesStrategy[];
+
+  public constructor() {
+    this.rules = [
+      new GuardFirstPlayerIsX(),
+      new GuardNotSamePlayerPlayingTwice(),
+      new GuardPlayAlreadyPerformed(),
+    ];
+  }
+
+  public validatePlay(plays: Plays, nextPlay: Play): void {
+    for (const rule of this.rules) {
+      rule.validate(plays, nextPlay);
     }
   }
 }
@@ -155,9 +181,7 @@ class Plays {
   }
 
   public add(nextPlay: Play): void {
-    this.playRules.guardFirstPlayerIsX(this, nextPlay);
-    this.playRules.guardNotSamePlayerPlayingTwice(this, nextPlay);
-    this.playRules.guardPlayAlreadyPerformed(this, nextPlay);
+    this.playRules.validatePlay(this, nextPlay);
 
     this.plays.push(nextPlay);
   }
@@ -182,32 +206,30 @@ class Plays {
     return this.plays.filter((play) => play.isOnColumnAndPerformedByPlayer(player, column));
   }
 
+  private getDiagonalPlays(diagonalSquares: Square[], player: Player): Play[] {
+    return this.plays.filter((play) =>
+      diagonalSquares.some((square) => play.isOnSquareAndPerformedByPlayer(square, player)),
+    );
+  }
+
   public getLeftTopToRightBottomDiagonalByPlayer(player: Player): Play[] {
-    const leftTopToRightBottomDiagonalSquares: Square[] = [
+    const diagonal = [
       new Square(new Row(1), new Column(1)),
       new Square(new Row(2), new Column(2)),
       new Square(new Row(3), new Column(3)),
     ];
 
-    return this.plays.filter((play) =>
-      leftTopToRightBottomDiagonalSquares.find((square) =>
-        play.isOnSquareAndPerformedByPlayer(square, player),
-      ),
-    );
+    return this.getDiagonalPlays(diagonal, player);
   }
 
-  public rightTopToLeftBottomDiagonalWinByPlayer(player: Player): Play[] {
-    const rightTopToLeftBottomDiagonalSquares: Square[] = [
+  public getRightTopToLeftBottomDiagonalByPlayer(player: Player): Play[] {
+    const diagonal = [
       new Square(new Row(1), new Column(3)),
       new Square(new Row(2), new Column(2)),
       new Square(new Row(3), new Column(1)),
     ];
 
-    return this.plays.filter((play) =>
-      rightTopToLeftBottomDiagonalSquares.find((square) =>
-        play.isOnSquareAndPerformedByPlayer(square, player),
-      ),
-    );
+    return this.getDiagonalPlays(diagonal, player);
   }
 }
 
@@ -289,7 +311,7 @@ export class DiagonalWinByPlayer implements IGameResultRuleStrategy {
 
     for (const player of this.players) {
       const diagonalLeftTopToRightBottom = plays.getLeftTopToRightBottomDiagonalByPlayer(player);
-      const diagonalRightTopToLeftBottom = plays.rightTopToLeftBottomDiagonalWinByPlayer(player);
+      const diagonalRightTopToLeftBottom = plays.getRightTopToLeftBottomDiagonalByPlayer(player);
 
       if (
         diagonalLeftTopToRightBottom.length === this.FULFILLED_SQUARES_TO_WIN ||
