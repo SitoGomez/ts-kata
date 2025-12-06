@@ -259,7 +259,7 @@ export class GameResult {
   }
 }
 
-export class HorizontalWinByPlayer implements IGameResultRuleStrategy {
+export class HorizontalWinStrategy implements IGameResultRuleStrategy {
   private readonly MIN_ROWS_IN_GRID = 1;
   private readonly MAX_ROWS_IN_GRID = 3;
 
@@ -286,7 +286,7 @@ export class HorizontalWinByPlayer implements IGameResultRuleStrategy {
   }
 }
 
-export class VerticalWinByPlayer implements IGameResultRuleStrategy {
+export class VerticalWinStrategy implements IGameResultRuleStrategy {
   private readonly MIN_COLUMNS_IN_GRID = 1;
   private readonly MAX_COLUMNS_IN_GRID = 3;
 
@@ -313,7 +313,7 @@ export class VerticalWinByPlayer implements IGameResultRuleStrategy {
   }
 }
 
-export class DiagonalWinByPlayer implements IGameResultRuleStrategy {
+export class DiagonalWinStrategy implements IGameResultRuleStrategy {
   private readonly FULFILLED_SQUARES_TO_WIN = 3;
 
   private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
@@ -335,7 +335,7 @@ export class DiagonalWinByPlayer implements IGameResultRuleStrategy {
   }
 }
 
-export class DrawGameResult implements IGameResultRuleStrategy {
+export class DrawStrategy implements IGameResultRuleStrategy {
   private readonly MAX_PLAYS_IN_GAME = 9;
 
   public calculateResult(plays: Plays): GameResult | undefined {
@@ -352,10 +352,10 @@ class GameResultRules {
 
   public constructor() {
     this.gameResultStrategies = [
-      new HorizontalWinByPlayer(),
-      new VerticalWinByPlayer(),
-      new DiagonalWinByPlayer(),
-      new DrawGameResult(),
+      new HorizontalWinStrategy(),
+      new VerticalWinStrategy(),
+      new DiagonalWinStrategy(),
+      new DrawStrategy(),
     ];
   }
 
