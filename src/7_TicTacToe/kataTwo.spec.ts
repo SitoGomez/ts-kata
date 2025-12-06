@@ -78,9 +78,6 @@ describe('Given a game in Tic Tac Toe', () => {
     });
   });
 
-  /*REVIEW: Esto hace que el tests conozca el detalle de la clase
-  pero no se me ha ocurrido otra forma de testearlo
-  */
   describe.each([
     [4, 1],
     [0, 1],

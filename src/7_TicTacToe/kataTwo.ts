@@ -131,14 +131,14 @@ export class Play {
 
 //REVIEW: This class doesn't have state, for me is an smell -> Function
 class PlayRules {
-  public guardFirstPlayerIsX(plays: Play[], nextPlay: Play): void {
-    if (!plays.length && nextPlay.isPerformedByPlayer(Player.buildPlayerO())) {
+  public guardFirstPlayerIsX(plays: Plays, nextPlay: Play): void {
+    if (!plays.getPlaysCount() && nextPlay.isPerformedByPlayer(Player.buildPlayerO())) {
       throw new InvalidStartingPlayerError();
     }
   }
 
-  public guardPlayAlreadyPerformed(plays: Play[], nextPlay: Play): void {
-    if (plays.some((existingPlay) => existingPlay.isOnTheSameSquareAs(nextPlay))) {
+  public guardPlayAlreadyPerformed(plays: Plays, nextPlay: Play): void {
+    if (plays.getPlayOnTheSameSquare(nextPlay)) {
       throw new SquareAlreadyFulfilledError();
     }
   }
@@ -162,9 +162,9 @@ class Plays {
   }
 
   public add(nextPlay: Play): void {
-    this.playRules.guardFirstPlayerIsX(this.plays, nextPlay);
+    this.playRules.guardFirstPlayerIsX(this, nextPlay);
     this.playRules.guardNotSamePlayerPlayingTwice(this.plays, nextPlay);
-    this.playRules.guardPlayAlreadyPerformed(this.plays, nextPlay);
+    this.playRules.guardPlayAlreadyPerformed(this, nextPlay);
 
     this.plays.push(nextPlay);
   }
@@ -175,6 +175,14 @@ class Plays {
 
   public getAllPlays(): Play[] {
     return this.plays;
+  }
+
+  public getPlaysCount(): number {
+    return this.plays.length;
+  }
+
+  public getPlayOnTheSameSquare(play: Play): Play | undefined {
+    return this.plays.find((existingPlay) => existingPlay.isOnTheSameSquareAs(play));
   }
 }
 
