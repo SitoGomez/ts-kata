@@ -129,10 +129,9 @@ export class Play {
   //Más genéricas pueden ser más reutilizables
 }
 
-//REVIEW: This class doesn't have state, for me is an smell -> Function
 class PlayRules {
   public guardFirstPlayerIsX(plays: Plays, nextPlay: Play): void {
-    if (!plays.getPlaysCount() && nextPlay.isPerformedByPlayer(Player.buildPlayerO())) {
+    if (!plays.getTotalPlaysCount() && nextPlay.isPerformedByPlayer(Player.buildPlayerO())) {
       throw new InvalidStartingPlayerError();
     }
   }
@@ -173,7 +172,7 @@ class Plays {
     return this.plays[this.plays.length - 1];
   }
 
-  public getPlaysCount(): number {
+  public getTotalPlaysCount(): number {
     return this.plays.length;
   }
 
@@ -197,7 +196,7 @@ class Plays {
     ];
 
     return this.plays.filter((play) =>
-      leftTopToRightBottomDiagonalSquares.some((square) =>
+      leftTopToRightBottomDiagonalSquares.find((square) =>
         play.isOnSquareAndPerformedByPlayer(square, player),
       ),
     );
@@ -211,7 +210,7 @@ class Plays {
     ];
 
     return this.plays.filter((play) =>
-      rightTopToLeftBottomDiagonalSquares.some((square) =>
+      rightTopToLeftBottomDiagonalSquares.find((square) =>
         play.isOnSquareAndPerformedByPlayer(square, player),
       ),
     );
@@ -254,7 +253,7 @@ export class GameResultRules {
 
   //Strategy patten - Colección de strategias como first class colection
   private getHorizontalWinByPlayer(plays: Plays): Player | undefined {
-    if (!plays.getPlaysCount()) {
+    if (!plays.getTotalPlaysCount()) {
       return undefined;
     }
 
@@ -276,7 +275,7 @@ export class GameResultRules {
   }
 
   private getVerticalWinByPlayer(plays: Plays): Player | undefined {
-    if (!plays.getPlaysCount()) {
+    if (!plays.getTotalPlaysCount()) {
       return undefined;
     }
 
@@ -298,7 +297,7 @@ export class GameResultRules {
   }
 
   private getDiagonalWinByPlayer(plays: Plays): Player | undefined {
-    if (!plays.getPlaysCount()) {
+    if (!plays.getTotalPlaysCount()) {
       return undefined;
     }
 
