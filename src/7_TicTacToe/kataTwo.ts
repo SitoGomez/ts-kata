@@ -173,10 +173,6 @@ class Plays {
     return this.plays[this.plays.length - 1];
   }
 
-  public getAllPlays(): Play[] {
-    return this.plays;
-  }
-
   public getPlaysCount(): number {
     return this.plays.length;
   }
@@ -270,7 +266,7 @@ export class GameResultRules {
       for (const player of this.players) {
         const horizontalRows = plays.getRowPlaysByPlayer(new Row(currentRow), player);
 
-        if (horizontalRows.length === this.MAX_ROWS_IN_GRID) {
+        if (horizontalRows.length === this.FULFILLED_SQUARES_TO_WIN) {
           return player;
         }
       }
@@ -292,7 +288,7 @@ export class GameResultRules {
       for (const player of this.players) {
         const verticalColumns = plays.getColumnPlaysByPlayer(new Column(currentColumn), player);
 
-        if (verticalColumns.length === this.MAX_COLUMNS_IN_GRID) {
+        if (verticalColumns.length === this.FULFILLED_SQUARES_TO_WIN) {
           return player;
         }
       }
