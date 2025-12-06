@@ -1,299 +1,313 @@
-import { Category, CategoryType, Dice, Roll, YahtzeeGame } from './kata';
+import {
+  Dice,
+  FivesCategory,
+  FoursCategory,
+  OnesCategory,
+  PairCategory,
+  Roll,
+  SimpleCategory,
+  SixesCategory,
+  ThreeOfAKindCategory,
+  ThreesCategory,
+  TwoPairsCategory,
+  TwosCategory,
+  YahtzeeGame,
+} from './kata';
 
 describe('Yahtzee', () => {
   describe.each([
     {
       roll: [1, 3, 4, 5, 6],
-      category: 'Ones',
+      category: new SimpleCategory(1),
       expectedScore: 1,
     },
     {
       roll: [1, 1, 3, 4, 5],
-      category: 'Ones',
+      category: new OnesCategory(),
       expectedScore: 2,
     },
     {
       roll: [1, 1, 1, 3, 4],
-      category: 'Ones',
+      category: new OnesCategory(),
       expectedScore: 3,
     },
     {
       roll: [1, 1, 1, 1, 3],
-      category: 'Ones',
+      category: new OnesCategory(),
       expectedScore: 4,
     },
     {
       roll: [1, 1, 1, 1, 1],
-      category: 'Ones',
+      category: new OnesCategory(),
       expectedScore: 5,
     },
     {
       roll: [2, 3, 4, 5, 6],
-      category: 'Twos',
+      category: new SimpleCategory(2),
       expectedScore: 2,
     },
     {
       roll: [2, 2, 3, 4, 5],
-      category: 'Twos',
+      category: new TwosCategory(),
       expectedScore: 4,
     },
     {
       roll: [2, 2, 2, 3, 4],
-      category: 'Twos',
+      category: new TwosCategory(),
       expectedScore: 6,
     },
     {
       roll: [2, 2, 2, 2, 3],
-      category: 'Twos',
+      category: new TwosCategory(),
       expectedScore: 8,
     },
     {
       roll: [2, 2, 2, 2, 2],
-      category: 'Twos',
+      category: new TwosCategory(),
       expectedScore: 10,
     },
     {
       roll: [3, 4, 5, 6, 1],
-      category: 'Threes',
+      category: new SimpleCategory(3),
       expectedScore: 3,
     },
     {
       roll: [3, 3, 4, 5, 6],
-      category: 'Threes',
+      category: new ThreesCategory(),
       expectedScore: 6,
     },
     {
       roll: [3, 3, 3, 5, 6],
-      category: 'Threes',
+      category: new ThreesCategory(),
       expectedScore: 9,
     },
     {
       roll: [3, 3, 3, 3, 6],
-      category: 'Threes',
+      category: new ThreesCategory(),
       expectedScore: 12,
     },
     {
       roll: [3, 3, 3, 3, 3],
-      category: 'Threes',
+      category: new ThreesCategory(),
       expectedScore: 15,
     },
     {
       roll: [4, 5, 6, 6, 1],
-      category: 'Fours',
+      category: new FoursCategory(),
       expectedScore: 4,
     },
     {
       roll: [4, 4, 5, 6, 1],
-      category: 'Fours',
+      category: new FoursCategory(),
       expectedScore: 8,
     },
     {
       roll: [4, 4, 4, 6, 1],
-      category: 'Fours',
+      category: new FoursCategory(),
       expectedScore: 12,
     },
     {
       roll: [4, 4, 4, 4, 1],
-      category: 'Fours',
+      category: new FoursCategory(),
       expectedScore: 16,
     },
     {
       roll: [4, 4, 4, 4, 4],
-      category: 'Fours',
+      category: new FoursCategory(),
       expectedScore: 20,
     },
     {
       roll: [5, 1, 2, 3, 4],
-      category: 'Fives',
+      category: new FivesCategory(),
       expectedScore: 5,
     },
     {
       roll: [5, 5, 2, 3, 4],
-      category: 'Fives',
+      category: new FivesCategory(),
       expectedScore: 10,
     },
     {
       roll: [5, 5, 5, 3, 4],
-      category: 'Fives',
+      category: new FivesCategory(),
       expectedScore: 15,
     },
     {
       roll: [5, 5, 5, 5, 4],
-      category: 'Fives',
+      category: new FivesCategory(),
       expectedScore: 20,
     },
     {
       roll: [5, 5, 5, 5, 5],
-      category: 'Fives',
+      category: new FivesCategory(),
       expectedScore: 25,
     },
     {
       roll: [6, 1, 2, 3, 4],
-      category: 'Sixes',
+      category: new SixesCategory(),
       expectedScore: 6,
     },
     {
       roll: [6, 6, 2, 3, 4],
-      category: 'Sixes',
+      category: new SixesCategory(),
       expectedScore: 12,
     },
     {
       roll: [6, 6, 6, 3, 4],
-      category: 'Sixes',
+      category: new SixesCategory(),
       expectedScore: 18,
     },
     {
       roll: [6, 6, 6, 6, 4],
-      category: 'Sixes',
+      category: new SixesCategory(),
       expectedScore: 24,
     },
     {
       roll: [6, 6, 6, 6, 6],
-      category: 'Sixes',
+      category: new SixesCategory(),
       expectedScore: 30,
     },
     {
       roll: [1, 1, 3, 4, 5],
-      category: 'Pair',
+      category: new PairCategory(),
       expectedScore: 2,
     },
     {
       roll: [2, 2, 3, 4, 5],
-      category: 'Pair',
+      category: new PairCategory(),
       expectedScore: 4,
     },
     {
       roll: [3, 3, 2, 4, 5],
-      category: 'Pair',
+      category: new PairCategory(),
       expectedScore: 6,
     },
     {
       roll: [4, 4, 2, 3, 5],
-      category: 'Pair',
+      category: new PairCategory(),
       expectedScore: 8,
     },
     {
       roll: [5, 5, 2, 3, 4],
-      category: 'Pair',
+      category: new PairCategory(),
       expectedScore: 10,
     },
     {
       roll: [6, 6, 2, 3, 4],
-      category: 'Pair',
+      category: new PairCategory(),
       expectedScore: 12,
     },
     {
       roll: [1, 1, 2, 2, 5],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 6,
     },
     {
       roll: [1, 1, 3, 3, 5],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 8,
     },
     {
       roll: [1, 1, 4, 4, 5],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 10,
     },
     {
       roll: [1, 1, 5, 5, 2],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 12,
     },
     {
       roll: [1, 1, 6, 6, 2],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 14,
     },
     {
       roll: [2, 2, 3, 3, 4],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 10,
     },
     {
       roll: [2, 2, 5, 5, 4],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 14,
     },
     {
       roll: [2, 2, 6, 6, 4],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 16,
     },
     {
       roll: [3, 3, 4, 4, 5],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 14,
     },
     {
       roll: [3, 3, 5, 5, 4],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 16,
     },
     {
       roll: [3, 3, 6, 6, 4],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 18,
     },
     {
       roll: [4, 4, 5, 5, 6],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 18,
     },
     {
       roll: [4, 4, 6, 6, 5],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 20,
     },
     {
       roll: [5, 5, 6, 6, 4],
-      category: 'TwoPairs',
+      category: new TwoPairsCategory(),
       expectedScore: 22,
     },
     {
       roll: [1, 1, 1, 2, 3],
-      category: 'ThreeOfAKind',
+      category: new ThreeOfAKindCategory(),
       expectedScore: 3,
     },
     {
       roll: [2, 2, 2, 3, 4],
-      category: 'ThreeOfAKind',
+      category: new ThreeOfAKindCategory(),
       expectedScore: 6,
     },
     {
       roll: [3, 3, 3, 2, 4],
-      category: 'ThreeOfAKind',
+      category: new ThreeOfAKindCategory(),
       expectedScore: 9,
     },
     {
       roll: [4, 4, 4, 2, 3],
-      category: 'ThreeOfAKind',
+      category: new ThreeOfAKindCategory(),
       expectedScore: 12,
     },
     {
       roll: [5, 5, 5, 2, 3],
-      category: 'ThreeOfAKind',
+      category: new ThreeOfAKindCategory(),
       expectedScore: 15,
     },
     {
       roll: [6, 6, 6, 2, 3],
-      category: 'ThreeOfAKind',
+      category: new ThreeOfAKindCategory(),
       expectedScore: 18,
     },
-  ])('Given a roll with $roll in $category category', ({ roll, category, expectedScore }) => {
-    it(`then the score should be ${expectedScore}`, () => {
-      const yahtzeeGame = new YahtzeeGame();
+  ])(
+    'Given a roll with $roll in $category.constructor.name category',
+    ({ roll, category, expectedScore }) => {
+      it(`then the score should be ${expectedScore}`, () => {
+        const yahtzeeGame = new YahtzeeGame();
 
-      yahtzeeGame.assignCategory(
-        new Roll(...(roll as [Dice, Dice, Dice, Dice, Dice])),
-        new Category(category as CategoryType),
-      );
+        yahtzeeGame.assignCategory(new Roll(...(roll as [Dice, Dice, Dice, Dice, Dice])), category);
 
-      const score = yahtzeeGame.getScore();
+        const score = yahtzeeGame.getScore();
 
-      expect(score).toBe(expectedScore);
-    });
-  });
+        expect(score).toBe(expectedScore);
+      });
+    },
+  );
 });
