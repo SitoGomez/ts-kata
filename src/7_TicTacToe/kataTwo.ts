@@ -98,10 +98,6 @@ export class Play {
     this.square = square;
   }
 
-  public isTheSameAs(other: Play): boolean {
-    return this.player.isTheSameAs(other.player) && this.square.isTheSameAs(other.square);
-  }
-
   public isOnTheSameSquareAs(other: Play): boolean {
     return this.square.isTheSameAs(other.square);
   }
@@ -114,19 +110,17 @@ export class Play {
     return this.player.isTheSameAs(player);
   }
 
-  public wasOnRowAndPerformedByPlayer(player: Player, row: Row): boolean {
+  public isOnRowAndPerformedByPlayer(player: Player, row: Row): boolean {
     return this.square.isInRow(row) && this.player.isTheSameAs(player);
   }
 
-  public wasOnColumnAndPerformedByPlayer(player: Player, column: Column): boolean {
+  public isOnColumnAndPerformedByPlayer(player: Player, column: Column): boolean {
     return this.square.isInColumn(column) && this.player.isTheSameAs(player);
   }
 
   public isOnSquareAndPerformedByPlayer(square: Square, player: Player): boolean {
     return this.square.isTheSameAs(square) && this.player.isTheSameAs(player);
   }
-
-  //Más genéricas pueden ser más reutilizables
 }
 
 class PlayRules {
@@ -181,11 +175,11 @@ class Plays {
   }
 
   public getRowPlaysByPlayer(row: Row, player: Player): Play[] {
-    return this.plays.filter((play) => play.wasOnRowAndPerformedByPlayer(player, row));
+    return this.plays.filter((play) => play.isOnRowAndPerformedByPlayer(player, row));
   }
 
   public getColumnPlaysByPlayer(column: Column, player: Player): Play[] {
-    return this.plays.filter((play) => play.wasOnColumnAndPerformedByPlayer(player, column));
+    return this.plays.filter((play) => play.isOnColumnAndPerformedByPlayer(player, column));
   }
 
   public getLeftTopToRightBottomDiagonalByPlayer(player: Player): Play[] {
@@ -217,42 +211,19 @@ class Plays {
   }
 }
 
-export class GameResultRules {
+interface IGameResultRuleStrategy {
+  calculateResult(plays: Plays): Player | undefined;
+}
+
+export class HorizontalWinByPlayer implements IGameResultRuleStrategy {
   private readonly MIN_ROWS_IN_GRID = 1;
   private readonly MAX_ROWS_IN_GRID = 3;
-  private readonly MIN_COLUMNS_IN_GRID = 1;
-  private readonly MAX_COLUMNS_IN_GRID = 3;
 
   private readonly FULFILLED_SQUARES_TO_WIN = 3;
 
   private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
 
-  public calculateGameResult(plays: Plays): Player | undefined {
-    //Usar collection de plays y preguntarle por filas, columnas y diagonales
-    //Feature Envy Code Smell
-    const horizontalWinner = this.getHorizontalWinByPlayer(plays);
-
-    if (horizontalWinner) {
-      return horizontalWinner;
-    }
-
-    const verticalWinner = this.getVerticalWinByPlayer(plays);
-
-    if (verticalWinner) {
-      return verticalWinner;
-    }
-
-    const diagonalWinner = this.getDiagonalWinByPlayer(plays);
-
-    if (diagonalWinner) {
-      return diagonalWinner;
-    }
-
-    return undefined;
-  }
-
-  //Strategy patten - Colección de strategias como first class colection
-  private getHorizontalWinByPlayer(plays: Plays): Player | undefined {
+  public calculateResult(plays: Plays): Player | undefined {
     if (!plays.getTotalPlaysCount()) {
       return undefined;
     }
@@ -273,8 +244,17 @@ export class GameResultRules {
 
     return undefined;
   }
+}
 
-  private getVerticalWinByPlayer(plays: Plays): Player | undefined {
+export class VerticalWinByPlayer implements IGameResultRuleStrategy {
+  private readonly MIN_COLUMNS_IN_GRID = 1;
+  private readonly MAX_COLUMNS_IN_GRID = 3;
+
+  private readonly FULFILLED_SQUARES_TO_WIN = 3;
+
+  private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
+
+  public calculateResult(plays: Plays): Player | undefined {
     if (!plays.getTotalPlaysCount()) {
       return undefined;
     }
@@ -295,8 +275,14 @@ export class GameResultRules {
 
     return undefined;
   }
+}
 
-  private getDiagonalWinByPlayer(plays: Plays): Player | undefined {
+export class DiagonalWinByPlayer implements IGameResultRuleStrategy {
+  private readonly FULFILLED_SQUARES_TO_WIN = 3;
+
+  private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
+
+  public calculateResult(plays: Plays): Player | undefined {
     if (!plays.getTotalPlaysCount()) {
       return undefined;
     }
@@ -317,6 +303,30 @@ export class GameResultRules {
   }
 }
 
+class GameResultRules {
+  private readonly gameResultStrategies: IGameResultRuleStrategy[];
+
+  public constructor() {
+    this.gameResultStrategies = [
+      new HorizontalWinByPlayer(),
+      new VerticalWinByPlayer(),
+      new DiagonalWinByPlayer(),
+    ];
+  }
+
+  public calculateResult(plays: Plays): Player | undefined {
+    for (const strategy of this.gameResultStrategies) {
+      const result = strategy.calculateResult(plays);
+
+      if (result) {
+        return result;
+      }
+    }
+
+    return undefined;
+  }
+}
+
 export class TicTacToeGame {
   private plays: Plays = new Plays();
 
@@ -329,7 +339,7 @@ export class TicTacToeGame {
   }
 
   public getWinner(): Player | undefined {
-    return new GameResultRules().calculateGameResult(this.plays);
+    return new GameResultRules().calculateResult(this.plays);
   }
 }
 

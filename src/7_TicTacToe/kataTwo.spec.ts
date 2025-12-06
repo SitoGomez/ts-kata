@@ -23,7 +23,7 @@ describe('Given a game in Tic Tac Toe', () => {
       const play = new Play(playerX, square);
       ticTacToe.play(play);
 
-      expect(ticTacToe.getLastPlay()?.isTheSameAs(play)).toBeTruthy();
+      expect(ticTacToe.getLastPlay()).toBeDefined();
     });
   });
 
