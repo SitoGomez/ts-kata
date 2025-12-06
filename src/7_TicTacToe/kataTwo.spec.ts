@@ -258,7 +258,7 @@ describe('Given a game in Tic Tac Toe', () => {
   });
 
   describe("When the game didn't have a winner yet", () => {
-    it('Then the winner should be undefined', () => {
+    it('Then the game should be in progress', () => {
       const ticTacToe = new TicTacToeGame();
 
       const playerX = Player.buildPlayerX();
@@ -270,7 +270,7 @@ describe('Given a game in Tic Tac Toe', () => {
       ticTacToe.play(firstPlay);
       ticTacToe.play(secondPlay);
 
-      expect(ticTacToe.getWinner()).toBeUndefined();
+      expect(ticTacToe.getWinner()?.isTheSameAs(GameResult.inProgress())).toBeTruthy();
     });
   });
 

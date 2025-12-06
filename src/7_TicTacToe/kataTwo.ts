@@ -237,7 +237,7 @@ interface IGameResultRuleStrategy {
   calculateResult(plays: Plays): GameResult | undefined;
 }
 
-type GameResultValue = 'X' | 'O' | 'DRAW';
+type GameResultValue = 'X' | 'O' | 'DRAW' | 'IN_PROGRESS';
 
 export class GameResult {
   private readonly resultValue?: GameResultValue;
@@ -254,12 +254,16 @@ export class GameResult {
     return new GameResult('DRAW');
   }
 
+  public static inProgress(): GameResult {
+    return new GameResult('IN_PROGRESS');
+  }
+
   public isTheSameAs(other: GameResult): boolean {
     return this.resultValue === other.resultValue;
   }
 }
 
-export class HorizontalWinStrategy implements IGameResultRuleStrategy {
+class HorizontalWinStrategy implements IGameResultRuleStrategy {
   private readonly MIN_ROWS_IN_GRID = 1;
   private readonly MAX_ROWS_IN_GRID = 3;
 
@@ -286,7 +290,7 @@ export class HorizontalWinStrategy implements IGameResultRuleStrategy {
   }
 }
 
-export class VerticalWinStrategy implements IGameResultRuleStrategy {
+class VerticalWinStrategy implements IGameResultRuleStrategy {
   private readonly MIN_COLUMNS_IN_GRID = 1;
   private readonly MAX_COLUMNS_IN_GRID = 3;
 
@@ -313,7 +317,7 @@ export class VerticalWinStrategy implements IGameResultRuleStrategy {
   }
 }
 
-export class DiagonalWinStrategy implements IGameResultRuleStrategy {
+class DiagonalWinStrategy implements IGameResultRuleStrategy {
   private readonly FULFILLED_SQUARES_TO_WIN = 3;
 
   private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
@@ -335,12 +339,24 @@ export class DiagonalWinStrategy implements IGameResultRuleStrategy {
   }
 }
 
-export class DrawStrategy implements IGameResultRuleStrategy {
+class DrawStrategy implements IGameResultRuleStrategy {
   private readonly MAX_PLAYS_IN_GAME = 9;
 
   public calculateResult(plays: Plays): GameResult | undefined {
     if (plays.getTotalPlaysCount() === this.MAX_PLAYS_IN_GAME) {
       return GameResult.draw();
+    }
+
+    return undefined;
+  }
+}
+
+class InProgressStrategy implements IGameResultRuleStrategy {
+  private readonly MAX_PLAYS_IN_GAME = 9;
+
+  public calculateResult(plays: Plays): GameResult | undefined {
+    if (plays.getTotalPlaysCount() < this.MAX_PLAYS_IN_GAME) {
+      return GameResult.inProgress();
     }
 
     return undefined;
@@ -356,6 +372,7 @@ class GameResultRules {
       new VerticalWinStrategy(),
       new DiagonalWinStrategy(),
       new DrawStrategy(),
+      new InProgressStrategy(),
     ];
   }
 
