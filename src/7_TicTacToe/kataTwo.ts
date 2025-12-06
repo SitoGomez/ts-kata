@@ -234,7 +234,29 @@ class Plays {
 }
 
 interface IGameResultRuleStrategy {
-  calculateResult(plays: Plays): Player | undefined;
+  calculateResult(plays: Plays): GameResult | undefined;
+}
+
+type GameResultValue = 'X' | 'O' | 'DRAW';
+
+export class GameResult {
+  private readonly resultValue?: GameResultValue;
+
+  private constructor(resultValue?: GameResultValue) {
+    this.resultValue = resultValue;
+  }
+
+  public static fromPlayer(player: Player): GameResult {
+    return player.isTheSameAs(Player.buildPlayerX()) ? new GameResult('X') : new GameResult('O');
+  }
+
+  public static draw(): GameResult {
+    return new GameResult('DRAW');
+  }
+
+  public isTheSameAs(other: GameResult): boolean {
+    return this.resultValue === other.resultValue;
+  }
 }
 
 export class HorizontalWinByPlayer implements IGameResultRuleStrategy {
@@ -245,11 +267,7 @@ export class HorizontalWinByPlayer implements IGameResultRuleStrategy {
 
   private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
 
-  public calculateResult(plays: Plays): Player | undefined {
-    if (!plays.getTotalPlaysCount()) {
-      return undefined;
-    }
-
+  public calculateResult(plays: Plays): GameResult | undefined {
     for (
       let currentRow = this.MIN_ROWS_IN_GRID;
       currentRow <= this.MAX_ROWS_IN_GRID;
@@ -259,7 +277,7 @@ export class HorizontalWinByPlayer implements IGameResultRuleStrategy {
         const horizontalRows = plays.getRowPlaysByPlayer(new Row(currentRow), player);
 
         if (horizontalRows.length === this.FULFILLED_SQUARES_TO_WIN) {
-          return player;
+          return GameResult.fromPlayer(player);
         }
       }
     }
@@ -276,11 +294,7 @@ export class VerticalWinByPlayer implements IGameResultRuleStrategy {
 
   private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
 
-  public calculateResult(plays: Plays): Player | undefined {
-    if (!plays.getTotalPlaysCount()) {
-      return undefined;
-    }
-
+  public calculateResult(plays: Plays): GameResult | undefined {
     for (
       let currentColumn = this.MIN_COLUMNS_IN_GRID;
       currentColumn <= this.MAX_COLUMNS_IN_GRID;
@@ -290,7 +304,7 @@ export class VerticalWinByPlayer implements IGameResultRuleStrategy {
         const verticalColumns = plays.getColumnPlaysByPlayer(new Column(currentColumn), player);
 
         if (verticalColumns.length === this.FULFILLED_SQUARES_TO_WIN) {
-          return player;
+          return GameResult.fromPlayer(player);
         }
       }
     }
@@ -304,11 +318,7 @@ export class DiagonalWinByPlayer implements IGameResultRuleStrategy {
 
   private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
 
-  public calculateResult(plays: Plays): Player | undefined {
-    if (!plays.getTotalPlaysCount()) {
-      return undefined;
-    }
-
+  public calculateResult(plays: Plays): GameResult | undefined {
     for (const player of this.players) {
       const diagonalLeftTopToRightBottom = plays.getLeftTopToRightBottomDiagonalByPlayer(player);
       const diagonalRightTopToLeftBottom = plays.getRightTopToLeftBottomDiagonalByPlayer(player);
@@ -317,8 +327,20 @@ export class DiagonalWinByPlayer implements IGameResultRuleStrategy {
         diagonalLeftTopToRightBottom.length === this.FULFILLED_SQUARES_TO_WIN ||
         diagonalRightTopToLeftBottom.length === this.FULFILLED_SQUARES_TO_WIN
       ) {
-        return player;
+        return GameResult.fromPlayer(player);
       }
+    }
+
+    return undefined;
+  }
+}
+
+export class DrawGameResult implements IGameResultRuleStrategy {
+  private readonly MAX_PLAYS_IN_GAME = 9;
+
+  public calculateResult(plays: Plays): GameResult | undefined {
+    if (plays.getTotalPlaysCount() === this.MAX_PLAYS_IN_GAME) {
+      return GameResult.draw();
     }
 
     return undefined;
@@ -333,10 +355,11 @@ class GameResultRules {
       new HorizontalWinByPlayer(),
       new VerticalWinByPlayer(),
       new DiagonalWinByPlayer(),
+      new DrawGameResult(),
     ];
   }
 
-  public calculateResult(plays: Plays): Player | undefined {
+  public calculateResult(plays: Plays): GameResult | undefined {
     for (const strategy of this.gameResultStrategies) {
       const result = strategy.calculateResult(plays);
 
@@ -360,7 +383,7 @@ export class TicTacToeGame {
     return this.plays.getLastPlay();
   }
 
-  public getWinner(): Player | undefined {
+  public getWinner(): GameResult | undefined {
     return new GameResultRules().calculateResult(this.plays);
   }
 }

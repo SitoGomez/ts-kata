@@ -1,5 +1,6 @@
 import {
   Column,
+  GameResult,
   InvalidStartingPlayerError,
   Play,
   Player,
@@ -116,7 +117,7 @@ describe('Given a game in Tic Tac Toe', () => {
       ticTacToe.play(thirdPlay);
       ticTacToe.play(fourthPlay);
       ticTacToe.play(fifthPlay);
-      expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
+      expect(ticTacToe.getWinner()?.isTheSameAs(GameResult.fromPlayer(playerX))).toBeTruthy();
     });
   });
 
@@ -147,7 +148,7 @@ describe('Given a game in Tic Tac Toe', () => {
       ticTacToe.play(fourthPlay);
       ticTacToe.play(fifthPlay);
       ticTacToe.play(sixthPlay);
-      expect(ticTacToe.getWinner()?.isTheSameAs(playerO)).toBeTruthy();
+      expect(ticTacToe.getWinner()?.isTheSameAs(GameResult.fromPlayer(playerO))).toBeTruthy();
     });
   });
 
@@ -174,7 +175,7 @@ describe('Given a game in Tic Tac Toe', () => {
       ticTacToe.play(thirdPlay);
       ticTacToe.play(fourthPlay);
       ticTacToe.play(fifthPlay);
-      expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
+      expect(ticTacToe.getWinner()?.isTheSameAs(GameResult.fromPlayer(playerX))).toBeTruthy();
     });
   });
 
@@ -202,7 +203,7 @@ describe('Given a game in Tic Tac Toe', () => {
       ticTacToe.play(fourthPlay);
       ticTacToe.play(fifthPlay);
 
-      expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
+      expect(ticTacToe.getWinner()?.isTheSameAs(GameResult.fromPlayer(playerX))).toBeTruthy();
     });
   });
 
@@ -227,7 +228,7 @@ describe('Given a game in Tic Tac Toe', () => {
       ticTacToe.play(thirdPlay);
       ticTacToe.play(fourthPlay);
       ticTacToe.play(fifthPlay);
-      expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
+      expect(ticTacToe.getWinner()?.isTheSameAs(GameResult.fromPlayer(playerX))).toBeTruthy();
     });
   });
 
@@ -252,7 +253,7 @@ describe('Given a game in Tic Tac Toe', () => {
       ticTacToe.play(thirdPlay);
       ticTacToe.play(fourthPlay);
       ticTacToe.play(fifthPlay);
-      expect(ticTacToe.getWinner()?.isTheSameAs(playerX)).toBeTruthy();
+      expect(ticTacToe.getWinner()?.isTheSameAs(GameResult.fromPlayer(playerX))).toBeTruthy();
     });
   });
 
@@ -270,6 +271,34 @@ describe('Given a game in Tic Tac Toe', () => {
       ticTacToe.play(secondPlay);
 
       expect(ticTacToe.getWinner()).toBeUndefined();
+    });
+  });
+
+  describe('When all the plays have been performed without a winner', () => {
+    it('Then the game should be a draw', () => {
+      const ticTacToe = new TicTacToeGame();
+
+      const firstPlay = new Play(Player.buildPlayerX(), new Square(new Row(1), new Column(1)));
+      const secondPlay = new Play(Player.buildPlayerO(), new Square(new Row(1), new Column(2)));
+      const thirdPlay = new Play(Player.buildPlayerX(), new Square(new Row(1), new Column(3)));
+      const fourthPlay = new Play(Player.buildPlayerO(), new Square(new Row(2), new Column(1)));
+      const fifthPlay = new Play(Player.buildPlayerX(), new Square(new Row(2), new Column(3)));
+      const sixthPlay = new Play(Player.buildPlayerO(), new Square(new Row(2), new Column(2)));
+      const seventhPlay = new Play(Player.buildPlayerX(), new Square(new Row(3), new Column(1)));
+      const eighthPlay = new Play(Player.buildPlayerO(), new Square(new Row(3), new Column(3)));
+      const ninthPlay = new Play(Player.buildPlayerX(), new Square(new Row(3), new Column(2)));
+
+      ticTacToe.play(firstPlay);
+      ticTacToe.play(secondPlay);
+      ticTacToe.play(thirdPlay);
+      ticTacToe.play(fourthPlay);
+      ticTacToe.play(fifthPlay);
+      ticTacToe.play(sixthPlay);
+      ticTacToe.play(seventhPlay);
+      ticTacToe.play(eighthPlay);
+      ticTacToe.play(ninthPlay);
+
+      expect(ticTacToe.getWinner()?.isTheSameAs(GameResult.draw())).toBeTruthy();
     });
   });
 });
