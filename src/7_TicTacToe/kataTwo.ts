@@ -143,8 +143,8 @@ class PlayRules {
     }
   }
 
-  public guardNotSamePlayerPlayingTwice(plays: Play[], nextPlay: Play): void {
-    const lastPlay = plays[plays.length - 1];
+  public guardNotSamePlayerPlayingTwice(plays: Plays, nextPlay: Play): void {
+    const lastPlay = plays.getLastPlay();
 
     if (lastPlay?.isPerformedByTheSamePlayerAs(nextPlay)) {
       throw new SamePlayerPlaysTwiceError();
@@ -163,7 +163,7 @@ class Plays {
 
   public add(nextPlay: Play): void {
     this.playRules.guardFirstPlayerIsX(this, nextPlay);
-    this.playRules.guardNotSamePlayerPlayingTwice(this.plays, nextPlay);
+    this.playRules.guardNotSamePlayerPlayingTwice(this, nextPlay);
     this.playRules.guardPlayAlreadyPerformed(this, nextPlay);
 
     this.plays.push(nextPlay);
@@ -184,6 +184,42 @@ class Plays {
   public getPlayOnTheSameSquare(play: Play): Play | undefined {
     return this.plays.find((existingPlay) => existingPlay.isOnTheSameSquareAs(play));
   }
+
+  public getRowPlaysByPlayer(row: Row, player: Player): Play[] {
+    return this.plays.filter((play) => play.wasOnRowAndPerformedByPlayer(player, row));
+  }
+
+  public getColumnPlaysByPlayer(column: Column, player: Player): Play[] {
+    return this.plays.filter((play) => play.wasOnColumnAndPerformedByPlayer(player, column));
+  }
+
+  public getLeftTopToRightBottomDiagonalByPlayer(player: Player): Play[] {
+    const leftTopToRightBottomDiagonalSquares: Square[] = [
+      new Square(new Row(1), new Column(1)),
+      new Square(new Row(2), new Column(2)),
+      new Square(new Row(3), new Column(3)),
+    ];
+
+    return this.plays.filter((play) =>
+      leftTopToRightBottomDiagonalSquares.some((square) =>
+        play.isOnSquareAndPerformedByPlayer(square, player),
+      ),
+    );
+  }
+
+  public rightTopToLeftBottomDiagonalWinByPlayer(player: Player): Play[] {
+    const rightTopToLeftBottomDiagonalSquares: Square[] = [
+      new Square(new Row(1), new Column(3)),
+      new Square(new Row(2), new Column(2)),
+      new Square(new Row(3), new Column(1)),
+    ];
+
+    return this.plays.filter((play) =>
+      rightTopToLeftBottomDiagonalSquares.some((square) =>
+        play.isOnSquareAndPerformedByPlayer(square, player),
+      ),
+    );
+  }
 }
 
 export class GameResultRules {
@@ -192,9 +228,11 @@ export class GameResultRules {
   private readonly MIN_COLUMNS_IN_GRID = 1;
   private readonly MAX_COLUMNS_IN_GRID = 3;
 
+  private readonly FULFILLED_SQUARES_TO_WIN = 3;
+
   private readonly players: Player[] = [Player.buildPlayerX(), Player.buildPlayerO()];
 
-  public calculateGameResult(plays: Play[]): Player | undefined {
+  public calculateGameResult(plays: Plays): Player | undefined {
     //Usar collection de plays y preguntarle por filas, columnas y diagonales
     //Feature Envy Code Smell
     const horizontalWinner = this.getHorizontalWinByPlayer(plays);
@@ -219,8 +257,8 @@ export class GameResultRules {
   }
 
   //Strategy patten - Colección de strategias como first class colection
-  private getHorizontalWinByPlayer(plays: Play[]): Player | undefined {
-    if (!plays.length) {
+  private getHorizontalWinByPlayer(plays: Plays): Player | undefined {
+    if (!plays.getPlaysCount()) {
       return undefined;
     }
 
@@ -230,9 +268,7 @@ export class GameResultRules {
       currentRow++
     ) {
       for (const player of this.players) {
-        const horizontalRows = plays.filter((play) =>
-          play.wasOnRowAndPerformedByPlayer(player, new Row(currentRow)),
-        );
+        const horizontalRows = plays.getRowPlaysByPlayer(new Row(currentRow), player);
 
         if (horizontalRows.length === this.MAX_ROWS_IN_GRID) {
           return player;
@@ -243,8 +279,8 @@ export class GameResultRules {
     return undefined;
   }
 
-  private getVerticalWinByPlayer(plays: Play[]): Player | undefined {
-    if (!plays.length) {
+  private getVerticalWinByPlayer(plays: Plays): Player | undefined {
+    if (!plays.getPlaysCount()) {
       return undefined;
     }
 
@@ -254,9 +290,7 @@ export class GameResultRules {
       currentColumn++
     ) {
       for (const player of this.players) {
-        const verticalColumns = plays.filter((play) =>
-          play.wasOnColumnAndPerformedByPlayer(player, new Column(currentColumn)),
-        );
+        const verticalColumns = plays.getColumnPlaysByPlayer(new Column(currentColumn), player);
 
         if (verticalColumns.length === this.MAX_COLUMNS_IN_GRID) {
           return player;
@@ -267,46 +301,24 @@ export class GameResultRules {
     return undefined;
   }
 
-  private getDiagonalWinByPlayer(plays: Play[]): Player | undefined {
-    if (!plays.length) {
+  private getDiagonalWinByPlayer(plays: Plays): Player | undefined {
+    if (!plays.getPlaysCount()) {
       return undefined;
     }
 
     for (const player of this.players) {
-      if (this.leftTopToRightBottomDiagonalWinByPlayer(plays, player)) {
-        return player;
-      }
+      const diagonalLeftTopToRightBottom = plays.getLeftTopToRightBottomDiagonalByPlayer(player);
+      const diagonalRightTopToLeftBottom = plays.rightTopToLeftBottomDiagonalWinByPlayer(player);
 
-      if (this.rightTopToLeftBottomDiagonalWinByPlayer(plays, player)) {
+      if (
+        diagonalLeftTopToRightBottom.length === this.FULFILLED_SQUARES_TO_WIN ||
+        diagonalRightTopToLeftBottom.length === this.FULFILLED_SQUARES_TO_WIN
+      ) {
         return player;
       }
     }
 
     return undefined;
-  }
-
-  private leftTopToRightBottomDiagonalWinByPlayer(plays: Play[], player: Player): boolean {
-    const leftTopToRightBottomDiagonalSquares: Square[] = [
-      new Square(new Row(1), new Column(1)),
-      new Square(new Row(2), new Column(2)),
-      new Square(new Row(3), new Column(3)),
-    ];
-
-    return leftTopToRightBottomDiagonalSquares.every((square) =>
-      plays.some((play) => play.isOnSquareAndPerformedByPlayer(square, player)),
-    );
-  }
-
-  private rightTopToLeftBottomDiagonalWinByPlayer(plays: Play[], player: Player): boolean {
-    const rightTopToLeftBottomDiagonalSquares: Square[] = [
-      new Square(new Row(1), new Column(3)),
-      new Square(new Row(2), new Column(2)),
-      new Square(new Row(3), new Column(1)),
-    ];
-
-    return rightTopToLeftBottomDiagonalSquares.every((square) =>
-      plays.some((play) => play.isOnSquareAndPerformedByPlayer(square, player)),
-    );
   }
 }
 
@@ -322,7 +334,7 @@ export class TicTacToeGame {
   }
 
   public getWinner(): Player | undefined {
-    return new GameResultRules().calculateGameResult(this.plays.getAllPlays());
+    return new GameResultRules().calculateGameResult(this.plays);
   }
 }
 
