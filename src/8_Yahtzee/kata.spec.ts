@@ -322,6 +322,11 @@ describe('Yahtzee', () => {
       category: 'SmallStraight',
       expectedScore: 15,
     },
+    {
+      roll: [2, 3, 4, 5, 6],
+      category: 'LargeStraight',
+      expectedScore: 20,
+    },
   ])(
     'Given a roll with $roll in $category.constructor.name category',
     ({ roll, category, expectedScore }) => {

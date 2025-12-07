@@ -1,5 +1,11 @@
 type SimpleCategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes';
-type SpecialCategoryType = 'Pair' | 'TwoPairs' | 'ThreeOfAKind' | 'FourOfAKind' | 'SmallStraight';
+type SpecialCategoryType =
+  | 'Pair'
+  | 'TwoPairs'
+  | 'ThreeOfAKind'
+  | 'FourOfAKind'
+  | 'SmallStraight'
+  | 'LargeStraight';
 
 export type CategoryType = SimpleCategoryType | SpecialCategoryType;
 
@@ -82,6 +88,12 @@ class SmallStraightStrategy implements CategoryScoreStrategy {
   }
 }
 
+class LargeStraightStrategy implements CategoryScoreStrategy {
+  public calculate(_roll: Roll): number {
+    return 20;
+  }
+}
+
 class CategoryScoreStrategyFactory {
   private readonly simpleCategoryEquivalence = new SimpleCategoryEquivalence();
 
@@ -100,6 +112,8 @@ class CategoryScoreStrategyFactory {
       return new FourOfAKindStrategy();
     } else if (category.isEqual(new Category('SmallStraight'))) {
       return new SmallStraightStrategy();
+    } else if (category.isEqual(new Category('LargeStraight'))) {
+      return new LargeStraightStrategy();
     }
 
     throw new Error('Unknown category');
