@@ -13,18 +13,6 @@ interface CategoryInterface {
   calculateScore(roll: Roll): number;
 }
 
-export class Category {
-  private readonly value: CategoryType;
-
-  public constructor(category: CategoryType) {
-    this.value = category;
-  }
-
-  public isEquals(category: Category): boolean {
-    return this.value === category.value;
-  }
-}
-
 export class SimpleCategory implements CategoryInterface {
   private readonly dice: Dice;
 
@@ -92,14 +80,11 @@ export class Roll {
 export class YahtzeeGame {
   private roll: Roll | undefined = undefined;
   private category: CategoryInterface | undefined = undefined;
-  // private readonly categoriesEquivalency = new CategoriesEquivalency();
 
   public assignCategory(roll: Roll, category: CategoryInterface): void {
     this.roll = roll;
     this.category = category;
   }
-
-  public assignCategoryTwo(roll: Roll, category: Category): void {}
 
   public getScore(): number {
     return this.category!.calculateScore(this.roll!);
