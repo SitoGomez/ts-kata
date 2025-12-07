@@ -206,7 +206,7 @@ class Plays {
     return this.plays.filter((play) => play.isOnColumnAndPerformedByPlayer(player, column));
   }
 
-  private getDiagonalPlays(diagonalSquares: Square[], player: Player): Play[] {
+  private getDiagonalPlaysByPlayer(diagonalSquares: Square[], player: Player): Play[] {
     return this.plays.filter((play) =>
       diagonalSquares.some((square) => play.isOnSquareAndPerformedByPlayer(square, player)),
     );
@@ -219,7 +219,7 @@ class Plays {
       new Square(new Row(3), new Column(3)),
     ];
 
-    return this.getDiagonalPlays(diagonal, player);
+    return this.getDiagonalPlaysByPlayer(diagonal, player);
   }
 
   public getRightTopToLeftBottomDiagonalByPlayer(player: Player): Play[] {
@@ -229,7 +229,7 @@ class Plays {
       new Square(new Row(3), new Column(1)),
     ];
 
-    return this.getDiagonalPlays(diagonal, player);
+    return this.getDiagonalPlaysByPlayer(diagonal, player);
   }
 }
 
