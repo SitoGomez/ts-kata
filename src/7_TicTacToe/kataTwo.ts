@@ -396,10 +396,6 @@ export class TicTacToeGame {
     this.plays.add(play);
   }
 
-  public getLastPlay(): Play | undefined {
-    return this.plays.getLastPlay();
-  }
-
   public getWinner(): GameResult | undefined {
     return new GameResultRules().calculateResult(this.plays);
   }

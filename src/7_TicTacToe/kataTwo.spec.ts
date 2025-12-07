@@ -13,21 +13,6 @@ import {
 } from './kataTwo';
 
 describe('Given a game in Tic Tac Toe', () => {
-  describe('When the first player places an X in an empty square', () => {
-    it('Then the square should be fulfilled', () => {
-      const ticTacToe = new TicTacToeGame();
-
-      const playerX = Player.buildPlayerX();
-      const row = new Row(1);
-      const column = new Column(2);
-      const square = new Square(row, column);
-      const play = new Play(playerX, square);
-      ticTacToe.play(play);
-
-      expect(ticTacToe.getLastPlay()).toBeDefined();
-    });
-  });
-
   describe('When the player X tries to play twice in a row', () => {
     it('Then the play is invalid', () => {
       const ticTacToe = new TicTacToeGame();
