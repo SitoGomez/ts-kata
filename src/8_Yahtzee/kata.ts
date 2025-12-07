@@ -1,5 +1,5 @@
 type SimpleCategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes';
-type SpecialCategoryType = 'Pair' | 'TwoPairs' | 'ThreeOfAKind' | 'FourOfAKind';
+type SpecialCategoryType = 'Pair' | 'TwoPairs' | 'ThreeOfAKind' | 'FourOfAKind' | 'SmallStraight';
 
 export type CategoryType = SimpleCategoryType | SpecialCategoryType;
 
@@ -40,7 +40,7 @@ interface CategoryScoreStrategy {
   calculate(roll: Roll): number;
 }
 
-export class SimpleStrategy implements CategoryScoreStrategy {
+class SimpleStrategy implements CategoryScoreStrategy {
   private readonly dice: Dice;
 
   public constructor(dice: Dice) {
@@ -52,27 +52,33 @@ export class SimpleStrategy implements CategoryScoreStrategy {
   }
 }
 
-export class PairStrategy implements CategoryScoreStrategy {
+class PairStrategy implements CategoryScoreStrategy {
   public calculate(roll: Roll): number {
     return roll.getHighestPair() * 2;
   }
 }
 
-export class TwoPairsStrategy implements CategoryScoreStrategy {
+class TwoPairsStrategy implements CategoryScoreStrategy {
   public calculate(roll: Roll): number {
     return roll.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
   }
 }
 
-export class ThreeOfAKindStrategy implements CategoryScoreStrategy {
+class ThreeOfAKindStrategy implements CategoryScoreStrategy {
   public calculate(roll: Roll): number {
     return roll.getThreeOfAKind() * 3;
   }
 }
 
-export class FourOfAKindStrategy implements CategoryScoreStrategy {
+class FourOfAKindStrategy implements CategoryScoreStrategy {
   public calculate(roll: Roll): number {
     return roll.getHighestPair() * 4;
+  }
+}
+
+class SmallStraightStrategy implements CategoryScoreStrategy {
+  public calculate(_roll: Roll): number {
+    return 15;
   }
 }
 
@@ -92,6 +98,8 @@ class CategoryScoreStrategyFactory {
       return new ThreeOfAKindStrategy();
     } else if (category.isEqual(new Category('FourOfAKind'))) {
       return new FourOfAKindStrategy();
+    } else if (category.isEqual(new Category('SmallStraight'))) {
+      return new SmallStraightStrategy();
     }
 
     throw new Error('Unknown category');
