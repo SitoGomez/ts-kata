@@ -357,6 +357,36 @@ describe('Yahtzee', () => {
       category: 'FullHouse',
       expectedScore: 25,
     },
+    {
+      roll: [1, 1, 1, 1, 1],
+      category: 'Yahtzee',
+      expectedScore: 50,
+    },
+    {
+      roll: [2, 2, 2, 2, 2],
+      category: 'Yahtzee',
+      expectedScore: 50,
+    },
+    {
+      roll: [3, 3, 3, 3, 3],
+      category: 'Yahtzee',
+      expectedScore: 50,
+    },
+    {
+      roll: [4, 4, 4, 4, 4],
+      category: 'Yahtzee',
+      expectedScore: 50,
+    },
+    {
+      roll: [5, 5, 5, 5, 5],
+      category: 'Yahtzee',
+      expectedScore: 50,
+    },
+    {
+      roll: [6, 6, 6, 6, 6],
+      category: 'Yahtzee',
+      expectedScore: 50,
+    },
   ])(
     'Given a roll with $roll in $category.constructor.name category',
     ({ roll, category, expectedScore }) => {
