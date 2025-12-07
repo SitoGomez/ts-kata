@@ -1,17 +1,7 @@
-export type CategoryType =
-  | 'Ones'
-  | 'Twos'
-  | 'Threes'
-  | 'Fours'
-  | 'Fives'
-  | 'Sixes'
-  | 'Pair'
-  | 'TwoPairs'
-  | 'ThreeOfAKind';
+type SimpleCategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes';
+type SpecialCategoryType = 'Pair' | 'TwoPairs' | 'ThreeOfAKind';
 
-interface CategoryScoreStrategy {
-  calculate(roll: Roll): number;
-}
+export type CategoryType = SimpleCategoryType | SpecialCategoryType;
 
 export class Category {
   private readonly value: CategoryType;
@@ -23,6 +13,31 @@ export class Category {
   public isEqual(category: Category): boolean {
     return this.value === category.value;
   }
+}
+
+class SimpleCategoryEquivalence {
+  private readonly equivalences = new Map<Category, Dice>([
+    [new Category('Ones'), 1],
+    [new Category('Twos'), 2],
+    [new Category('Threes'), 3],
+    [new Category('Fours'), 4],
+    [new Category('Fives'), 5],
+    [new Category('Sixes'), 6],
+  ]);
+
+  public byCategory(category: Category): Dice | undefined {
+    for (const [simpleCategory, valueEquivalence] of this.equivalences) {
+      if (simpleCategory.isEqual(category)) {
+        return valueEquivalence;
+      }
+    }
+
+    return undefined;
+  }
+}
+
+interface CategoryScoreStrategy {
+  calculate(roll: Roll): number;
 }
 
 export class SimpleStrategy implements CategoryScoreStrategy {
@@ -56,19 +71,13 @@ export class ThreeOfAKindStrategy implements CategoryScoreStrategy {
 }
 
 class CategoryScoreStrategyFactory {
-  public static fromCategory(category: Category): CategoryScoreStrategy {
-    if (category.isEqual(new Category('Ones'))) {
-      return new SimpleStrategy(1);
-    } else if (category.isEqual(new Category('Twos'))) {
-      return new SimpleStrategy(2);
-    } else if (category.isEqual(new Category('Threes'))) {
-      return new SimpleStrategy(3);
-    } else if (category.isEqual(new Category('Fours'))) {
-      return new SimpleStrategy(4);
-    } else if (category.isEqual(new Category('Fives'))) {
-      return new SimpleStrategy(5);
-    } else if (category.isEqual(new Category('Sixes'))) {
-      return new SimpleStrategy(6);
+  private readonly simpleCategoryEquivalence = new SimpleCategoryEquivalence();
+
+  public byCategory(category: Category): CategoryScoreStrategy {
+    const simpleCategoryEquivalence = this.simpleCategoryEquivalence.byCategory(category);
+
+    if (simpleCategoryEquivalence) {
+      return new SimpleStrategy(simpleCategoryEquivalence);
     } else if (category.isEqual(new Category('Pair'))) {
       return new PairStrategy();
     } else if (category.isEqual(new Category('TwoPairs'))) {
@@ -119,12 +128,14 @@ export class YahtzeeGame {
   private roll: Roll | undefined = undefined;
   private category: Category | undefined = undefined;
 
+  private readonly categoryScoreStrategyFactory = new CategoryScoreStrategyFactory();
+
   public assignCategory(roll: Roll, category: Category): void {
     this.roll = roll;
     this.category = category;
   }
 
   public getScore(): number {
-    return CategoryScoreStrategyFactory.fromCategory(this.category!).calculate(this.roll!);
+    return this.categoryScoreStrategyFactory.byCategory(this.category!).calculate(this.roll!);
   }
 }
