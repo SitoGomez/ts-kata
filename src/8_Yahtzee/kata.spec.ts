@@ -1,16 +1,10 @@
 import {
   Dice,
-  FivesCategory,
-  FoursCategory,
-  OnesCategory,
   PairCategory,
   Roll,
   SimpleCategory,
-  SixesCategory,
   ThreeOfAKindCategory,
-  ThreesCategory,
   TwoPairsCategory,
-  TwosCategory,
   YahtzeeGame,
 } from './kata';
 
@@ -23,22 +17,22 @@ describe('Yahtzee', () => {
     },
     {
       roll: [1, 1, 3, 4, 5],
-      category: new OnesCategory(),
+      category: new SimpleCategory(1),
       expectedScore: 2,
     },
     {
       roll: [1, 1, 1, 3, 4],
-      category: new OnesCategory(),
+      category: new SimpleCategory(1),
       expectedScore: 3,
     },
     {
       roll: [1, 1, 1, 1, 3],
-      category: new OnesCategory(),
+      category: new SimpleCategory(1),
       expectedScore: 4,
     },
     {
       roll: [1, 1, 1, 1, 1],
-      category: new OnesCategory(),
+      category: new SimpleCategory(1),
       expectedScore: 5,
     },
     {
@@ -48,22 +42,22 @@ describe('Yahtzee', () => {
     },
     {
       roll: [2, 2, 3, 4, 5],
-      category: new TwosCategory(),
+      category: new SimpleCategory(2),
       expectedScore: 4,
     },
     {
       roll: [2, 2, 2, 3, 4],
-      category: new TwosCategory(),
+      category: new SimpleCategory(2),
       expectedScore: 6,
     },
     {
       roll: [2, 2, 2, 2, 3],
-      category: new TwosCategory(),
+      category: new SimpleCategory(2),
       expectedScore: 8,
     },
     {
       roll: [2, 2, 2, 2, 2],
-      category: new TwosCategory(),
+      category: new SimpleCategory(2),
       expectedScore: 10,
     },
     {
@@ -73,97 +67,97 @@ describe('Yahtzee', () => {
     },
     {
       roll: [3, 3, 4, 5, 6],
-      category: new ThreesCategory(),
+      category: new SimpleCategory(3),
       expectedScore: 6,
     },
     {
       roll: [3, 3, 3, 5, 6],
-      category: new ThreesCategory(),
+      category: new SimpleCategory(3),
       expectedScore: 9,
     },
     {
       roll: [3, 3, 3, 3, 6],
-      category: new ThreesCategory(),
+      category: new SimpleCategory(3),
       expectedScore: 12,
     },
     {
       roll: [3, 3, 3, 3, 3],
-      category: new ThreesCategory(),
+      category: new SimpleCategory(3),
       expectedScore: 15,
     },
     {
       roll: [4, 5, 6, 6, 1],
-      category: new FoursCategory(),
+      category: new SimpleCategory(4),
       expectedScore: 4,
     },
     {
       roll: [4, 4, 5, 6, 1],
-      category: new FoursCategory(),
+      category: new SimpleCategory(4),
       expectedScore: 8,
     },
     {
       roll: [4, 4, 4, 6, 1],
-      category: new FoursCategory(),
+      category: new SimpleCategory(4),
       expectedScore: 12,
     },
     {
       roll: [4, 4, 4, 4, 1],
-      category: new FoursCategory(),
+      category: new SimpleCategory(4),
       expectedScore: 16,
     },
     {
       roll: [4, 4, 4, 4, 4],
-      category: new FoursCategory(),
+      category: new SimpleCategory(4),
       expectedScore: 20,
     },
     {
       roll: [5, 1, 2, 3, 4],
-      category: new FivesCategory(),
+      category: new SimpleCategory(5),
       expectedScore: 5,
     },
     {
       roll: [5, 5, 2, 3, 4],
-      category: new FivesCategory(),
+      category: new SimpleCategory(5),
       expectedScore: 10,
     },
     {
       roll: [5, 5, 5, 3, 4],
-      category: new FivesCategory(),
+      category: new SimpleCategory(5),
       expectedScore: 15,
     },
     {
       roll: [5, 5, 5, 5, 4],
-      category: new FivesCategory(),
+      category: new SimpleCategory(5),
       expectedScore: 20,
     },
     {
       roll: [5, 5, 5, 5, 5],
-      category: new FivesCategory(),
+      category: new SimpleCategory(5),
       expectedScore: 25,
     },
     {
       roll: [6, 1, 2, 3, 4],
-      category: new SixesCategory(),
+      category: new SimpleCategory(6),
       expectedScore: 6,
     },
     {
       roll: [6, 6, 2, 3, 4],
-      category: new SixesCategory(),
+      category: new SimpleCategory(6),
       expectedScore: 12,
     },
     {
       roll: [6, 6, 6, 3, 4],
-      category: new SixesCategory(),
+      category: new SimpleCategory(6),
       expectedScore: 18,
     },
     {
       roll: [6, 6, 6, 6, 4],
-      category: new SixesCategory(),
+      category: new SimpleCategory(6),
       expectedScore: 24,
     },
     {
       roll: [6, 6, 6, 6, 6],
-      category: new SixesCategory(),
+      category: new SimpleCategory(6),
       expectedScore: 30,
     },
     {

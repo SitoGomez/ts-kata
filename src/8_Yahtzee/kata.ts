@@ -37,42 +37,6 @@ export class SimpleCategory implements CategoryInterface {
   }
 }
 
-export class OnesCategory implements CategoryInterface {
-  public calculateScore(roll: Roll): number {
-    return roll.getByDiceCount(1) * 1;
-  }
-}
-
-export class TwosCategory implements CategoryInterface {
-  public calculateScore(roll: Roll): number {
-    return roll.getByCategoryCount(new Category('Twos')) * 2;
-  }
-}
-
-export class ThreesCategory implements CategoryInterface {
-  public calculateScore(roll: Roll): number {
-    return roll.getByCategoryCount(new Category('Threes')) * 3;
-  }
-}
-
-export class FoursCategory implements CategoryInterface {
-  public calculateScore(roll: Roll): number {
-    return roll.getByCategoryCount(new Category('Fours')) * 4;
-  }
-}
-
-export class FivesCategory implements CategoryInterface {
-  public calculateScore(roll: Roll): number {
-    return roll.getByCategoryCount(new Category('Fives')) * 5;
-  }
-}
-
-export class SixesCategory implements CategoryInterface {
-  public calculateScore(roll: Roll): number {
-    return roll.getByCategoryCount(new Category('Sixes')) * 6;
-  }
-}
-
 export class PairCategory implements CategoryInterface {
   public calculateScore(roll: Roll): number {
     return roll.getDuplicate() * 2;
@@ -91,36 +55,10 @@ export class ThreeOfAKindCategory implements CategoryInterface {
   }
 }
 
-type CategoryValue = 1 | 2 | 3 | 4 | 5 | 6;
-
-class CategoriesEquivalency {
-  private readonly categoriesEquivalency = new Map<Category, CategoryValue>([
-    [new Category('Ones'), 1],
-    [new Category('Twos'), 2],
-    [new Category('Threes'), 3],
-    [new Category('Fours'), 4],
-    [new Category('Fives'), 5],
-    [new Category('Sixes'), 6],
-  ]);
-
-  public getByCategory(category: Category): number | undefined {
-    let value: number | undefined = undefined;
-
-    this.categoriesEquivalency.forEach((categoryValue, categoryRecord) => {
-      if (categoryRecord.isEquals(category)) {
-        value = categoryValue;
-      }
-    });
-
-    return value;
-  }
-}
-
 export type Dice = 1 | 2 | 3 | 4 | 5 | 6;
 
 export class Roll {
   private readonly dices: Dice[];
-  private readonly categoriesEquivalency = new CategoriesEquivalency();
 
   public constructor(
     firstDice: Dice,
@@ -130,11 +68,6 @@ export class Roll {
     fifthDice: Dice,
   ) {
     this.dices = [firstDice, secondDice, thirdDice, fourthDice, fifthDice];
-  }
-
-  public getByCategoryCount(category: Category): number {
-    return this.dices.filter((dice) => dice === this.categoriesEquivalency.getByCategory(category))
-      .length;
   }
 
   public getByDiceCount(dice: Dice): number {
@@ -166,27 +99,9 @@ export class YahtzeeGame {
     this.category = category;
   }
 
+  public assignCategoryTwo(roll: Roll, category: Category): void {}
+
   public getScore(): number {
     return this.category!.calculateScore(this.roll!);
-
-    // if (this.category?.isEquals(new Category('ThreeOfAKind'))) {
-    //   return this.roll!.getThreeOfAKind() * 3;
-    // }
-
-    // if (this.category?.isEquals(new Category('TwoPairs'))) {
-    //   return this.roll!.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
-    // }
-
-    // if (this.category?.isEquals(new Category('Pair'))) {
-    //   return this.roll!.getDuplicate() * 2;
-    // }
-
-    // const categoryValue = this.categoriesEquivalency.getByCategory(this.category!);
-
-    // if (!categoryValue) {
-    //   return 0;
-    // }
-
-    // return this.roll!.getByCategoryCount(this.category!) * categoryValue;
   }
 }
