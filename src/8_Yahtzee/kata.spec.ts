@@ -288,6 +288,31 @@ describe('Yahtzee', () => {
       expectedScore: 18,
     },
     {
+      roll: [1, 1, 1, 1, 4],
+      category: 'FourOfAKind',
+      expectedScore: 4,
+    },
+    {
+      roll: [2, 2, 2, 2, 6],
+      category: 'FourOfAKind',
+      expectedScore: 8,
+    },
+    {
+      roll: [3, 3, 3, 3, 5],
+      category: 'FourOfAKind',
+      expectedScore: 12,
+    },
+    {
+      roll: [4, 4, 4, 4, 1],
+      category: 'FourOfAKind',
+      expectedScore: 16,
+    },
+    {
+      roll: [5, 5, 5, 5, 2],
+      category: 'FourOfAKind',
+      expectedScore: 20,
+    },
+    {
       roll: [6, 6, 6, 6, 3],
       category: 'FourOfAKind',
       expectedScore: 24,
