@@ -28,13 +28,15 @@ export class Player {
   }
 }
 
+type RowValue = 1 | 2 | 3;
+
 export class Row {
-  private readonly row: number;
+  private readonly row: RowValue;
 
   private readonly MIN_ROW_VALUE = 1;
   private readonly MAX_ROW_VALUE = 3;
 
-  public constructor(row: number) {
+  public constructor(row: RowValue) {
     if (row < this.MIN_ROW_VALUE || row > this.MAX_ROW_VALUE) {
       throw new SquareOutOfBoundsError();
     }
@@ -47,13 +49,15 @@ export class Row {
   }
 }
 
+type ColumnValue = 1 | 2 | 3;
+
 export class Column {
-  private readonly column: number;
+  private readonly column: ColumnValue;
 
   private readonly MIN_COLUMN_VALUE = 1;
   private readonly MAX_COLUMN_VALUE = 3;
 
-  public constructor(column: number) {
+  public constructor(column: ColumnValue) {
     if (column < this.MIN_COLUMN_VALUE || column > this.MAX_COLUMN_VALUE) {
       throw new SquareOutOfBoundsError();
     }
@@ -88,7 +92,6 @@ export class Square {
   }
 }
 
-//Factory methods
 export class Play {
   private readonly player: Player;
   private readonly square: Square;
@@ -96,6 +99,10 @@ export class Play {
   public constructor(player: Player, square: Square) {
     this.player = player;
     this.square = square;
+  }
+
+  public static byPlayer(player: PlayerToken, row: RowValue, column: ColumnValue): Play {
+    return new Play(new Player(player), new Square(new Row(row), new Column(column)));
   }
 
   public isOnTheSameSquareAs(other: Play): boolean {
@@ -278,7 +285,7 @@ class HorizontalWinStrategy implements IGameResultRuleStrategy {
       currentRow++
     ) {
       for (const player of this.players) {
-        const horizontalRows = plays.getRowPlaysByPlayer(new Row(currentRow), player);
+        const horizontalRows = plays.getRowPlaysByPlayer(new Row(currentRow as RowValue), player);
 
         if (horizontalRows.length === this.FULFILLED_SQUARES_TO_WIN) {
           return GameResult.fromPlayer(player);
@@ -305,7 +312,10 @@ class VerticalWinStrategy implements IGameResultRuleStrategy {
       currentColumn++
     ) {
       for (const player of this.players) {
-        const verticalColumns = plays.getColumnPlaysByPlayer(new Column(currentColumn), player);
+        const verticalColumns = plays.getColumnPlaysByPlayer(
+          new Column(currentColumn as ColumnValue),
+          player,
+        );
 
         if (verticalColumns.length === this.FULFILLED_SQUARES_TO_WIN) {
           return GameResult.fromPlayer(player);
