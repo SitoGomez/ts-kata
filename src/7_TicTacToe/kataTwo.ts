@@ -79,6 +79,10 @@ export class Square {
     this.column = column;
   }
 
+  public static inLocation(row: RowValue, column: ColumnValue): Square {
+    return new Square(new Row(row), new Column(column));
+  }
+
   public isTheSameAs(other: Square): boolean {
     return this.row.isTheSameAs(other.row) && this.column.isTheSameAs(other.column);
   }
@@ -102,14 +106,14 @@ export class Play {
   }
 
   public static byPlayer(player: PlayerToken, row: RowValue, column: ColumnValue): Play {
-    return new Play(new Player(player), new Square(new Row(row), new Column(column)));
+    return new Play(new Player(player), Square.inLocation(row, column));
   }
 
   public isOnTheSameSquareAs(other: Play): boolean {
     return this.square.isTheSameAs(other.square);
   }
 
-  public isPerformedByTheSamePlayerAs(other: Play): boolean {
+  public isPerformedByTheSamePlayerAsPlay(other: Play): boolean {
     return this.player.isTheSameAs(other.player);
   }
 
@@ -194,7 +198,7 @@ class Plays {
   public isLastPlayPerformedByTheSamePlayer(play: Play): boolean | undefined {
     const lastPlay = this.plays[this.plays.length - 1];
 
-    return lastPlay?.isPerformedByTheSamePlayerAs(play);
+    return lastPlay?.isPerformedByTheSamePlayerAsPlay(play);
   }
 
   public getTotalPlaysCount(): number {
@@ -220,21 +224,13 @@ class Plays {
   }
 
   public getLeftTopToRightBottomDiagonalByPlayer(player: Player): Play[] {
-    const diagonal = [
-      new Square(new Row(1), new Column(1)),
-      new Square(new Row(2), new Column(2)),
-      new Square(new Row(3), new Column(3)),
-    ];
+    const diagonal = [Square.inLocation(1, 1), Square.inLocation(2, 2), Square.inLocation(3, 3)];
 
     return this.getDiagonalPlaysByPlayer(diagonal, player);
   }
 
   public getRightTopToLeftBottomDiagonalByPlayer(player: Player): Play[] {
-    const diagonal = [
-      new Square(new Row(1), new Column(3)),
-      new Square(new Row(2), new Column(2)),
-      new Square(new Row(3), new Column(1)),
-    ];
+    const diagonal = [Square.inLocation(1, 3), Square.inLocation(2, 2), Square.inLocation(3, 1)];
 
     return this.getDiagonalPlaysByPlayer(diagonal, player);
   }
