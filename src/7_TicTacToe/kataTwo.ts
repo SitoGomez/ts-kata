@@ -144,9 +144,7 @@ class GuardFirstPlayerIsX implements PlayRulesStrategy {
 
 class GuardNotSamePlayerPlayingTwice implements PlayRulesStrategy {
   public validate(plays: Plays, nextPlay: Play): void {
-    const lastPlay = plays.getLastPlay();
-
-    if (lastPlay?.isPerformedByTheSamePlayerAs(nextPlay)) {
+    if (plays.isLastPlayPerformedByTheSamePlayer(nextPlay)) {
       throw new SamePlayerPlaysTwiceError();
     }
   }
@@ -193,8 +191,10 @@ class Plays {
     this.plays.push(nextPlay);
   }
 
-  public getLastPlay(): Play | undefined {
-    return this.plays[this.plays.length - 1];
+  public isLastPlayPerformedByTheSamePlayer(play: Play): boolean | undefined {
+    const lastPlay = this.plays[this.plays.length - 1];
+
+    return lastPlay?.isPerformedByTheSamePlayerAs(play);
   }
 
   public getTotalPlaysCount(): number {
