@@ -54,7 +54,7 @@ export class SimpleStrategy implements CategoryScoreStrategy {
 
 export class PairStrategy implements CategoryScoreStrategy {
   public calculate(roll: Roll): number {
-    return roll.getDuplicate() * 2;
+    return roll.getHighestPair() * 2;
   }
 }
 
@@ -72,7 +72,7 @@ export class ThreeOfAKindStrategy implements CategoryScoreStrategy {
 
 export class FourOfAKindStrategy implements CategoryScoreStrategy {
   public calculate(roll: Roll): number {
-    return roll.getDuplicate() * 4;
+    return roll.getHighestPair() * 4;
   }
 }
 
@@ -117,14 +117,18 @@ export class Roll {
     return this.dices.filter((d) => d === dice).length;
   }
 
-  public getDuplicate(): Dice {
-    return this.dices.find((dice, index) => this.dices.indexOf(dice) !== index)!;
+  public getHighestPair(): Dice {
+    const duplicates = new Set(
+      this.dices.filter((dice, index) => this.dices.indexOf(dice) !== index),
+    );
+
+    return Math.max(...duplicates) as Dice;
   }
 
   public getTwoPairs(): [Dice, Dice] {
     const duplicates = this.dices.filter((dice, index) => this.dices.indexOf(dice) !== index);
 
-    return [duplicates[0]!, duplicates[1]!];
+    return duplicates as [Dice, Dice];
   }
 
   public getThreeOfAKind(): Dice {

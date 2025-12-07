@@ -183,6 +183,11 @@ describe('Yahtzee', () => {
       expectedScore: 12,
     },
     {
+      roll: [2, 2, 5, 5, 4],
+      category: 'Pair',
+      expectedScore: 10,
+    },
+    {
       roll: [1, 1, 2, 2, 5],
       category: 'TwoPairs',
       expectedScore: 6,
