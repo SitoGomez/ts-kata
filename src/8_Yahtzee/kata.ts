@@ -9,37 +9,75 @@ export type CategoryType =
   | 'TwoPairs'
   | 'ThreeOfAKind';
 
-interface CategoryInterface {
-  calculateScore(roll: Roll): number;
+interface CategoryScoreStrategy {
+  calculate(roll: Roll): number;
 }
 
-export class SimpleCategory implements CategoryInterface {
+export class Category {
+  private readonly value: CategoryType;
+
+  public constructor(value: CategoryType) {
+    this.value = value;
+  }
+
+  public isEqual(category: Category): boolean {
+    return this.value === category.value;
+  }
+}
+
+export class SimpleStrategy implements CategoryScoreStrategy {
   private readonly dice: Dice;
 
   public constructor(dice: Dice) {
     this.dice = dice;
   }
 
-  public calculateScore(roll: Roll): number {
+  public calculate(roll: Roll): number {
     return this.dice * roll.getByDiceCount(this.dice);
   }
 }
 
-export class PairCategory implements CategoryInterface {
-  public calculateScore(roll: Roll): number {
+export class PairStrategy implements CategoryScoreStrategy {
+  public calculate(roll: Roll): number {
     return roll.getDuplicate() * 2;
   }
 }
 
-export class TwoPairsCategory implements CategoryInterface {
-  public calculateScore(roll: Roll): number {
+export class TwoPairsStrategy implements CategoryScoreStrategy {
+  public calculate(roll: Roll): number {
     return roll.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
   }
 }
 
-export class ThreeOfAKindCategory implements CategoryInterface {
-  public calculateScore(roll: Roll): number {
+export class ThreeOfAKindStrategy implements CategoryScoreStrategy {
+  public calculate(roll: Roll): number {
     return roll.getThreeOfAKind() * 3;
+  }
+}
+
+class CategoryScoreStrategyFactory {
+  public static fromCategory(category: Category): CategoryScoreStrategy {
+    if (category.isEqual(new Category('Ones'))) {
+      return new SimpleStrategy(1);
+    } else if (category.isEqual(new Category('Twos'))) {
+      return new SimpleStrategy(2);
+    } else if (category.isEqual(new Category('Threes'))) {
+      return new SimpleStrategy(3);
+    } else if (category.isEqual(new Category('Fours'))) {
+      return new SimpleStrategy(4);
+    } else if (category.isEqual(new Category('Fives'))) {
+      return new SimpleStrategy(5);
+    } else if (category.isEqual(new Category('Sixes'))) {
+      return new SimpleStrategy(6);
+    } else if (category.isEqual(new Category('Pair'))) {
+      return new PairStrategy();
+    } else if (category.isEqual(new Category('TwoPairs'))) {
+      return new TwoPairsStrategy();
+    } else if (category.isEqual(new Category('ThreeOfAKind'))) {
+      return new ThreeOfAKindStrategy();
+    }
+
+    throw new Error('Unknown category');
   }
 }
 
@@ -79,14 +117,14 @@ export class Roll {
 
 export class YahtzeeGame {
   private roll: Roll | undefined = undefined;
-  private category: CategoryInterface | undefined = undefined;
+  private category: Category | undefined = undefined;
 
-  public assignCategory(roll: Roll, category: CategoryInterface): void {
+  public assignCategory(roll: Roll, category: Category): void {
     this.roll = roll;
     this.category = category;
   }
 
   public getScore(): number {
-    return this.category!.calculateScore(this.roll!);
+    return CategoryScoreStrategyFactory.fromCategory(this.category!).calculate(this.roll!);
   }
 }
