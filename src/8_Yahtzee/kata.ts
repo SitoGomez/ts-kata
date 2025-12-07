@@ -5,7 +5,8 @@ type SpecialCategoryType =
   | 'ThreeOfAKind'
   | 'FourOfAKind'
   | 'SmallStraight'
-  | 'LargeStraight';
+  | 'LargeStraight'
+  | 'FullHouse';
 
 export type CategoryType = SimpleCategoryType | SpecialCategoryType;
 
@@ -94,6 +95,12 @@ class LargeStraightStrategy implements CategoryScoreStrategy {
   }
 }
 
+class FullHouseStrategy implements CategoryScoreStrategy {
+  public calculate(_roll: Roll): number {
+    return 25;
+  }
+}
+
 class CategoryScoreStrategyFactory {
   private readonly simpleCategoryEquivalence = new SimpleCategoryEquivalence();
 
@@ -114,6 +121,8 @@ class CategoryScoreStrategyFactory {
       return new SmallStraightStrategy();
     } else if (category.isEqual(new Category('LargeStraight'))) {
       return new LargeStraightStrategy();
+    } else if (category.isEqual(new Category('FullHouse'))) {
+      return new FullHouseStrategy();
     }
 
     throw new Error('Unknown category');
