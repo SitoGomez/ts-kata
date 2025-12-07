@@ -1,5 +1,5 @@
 type SimpleCategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes';
-type SpecialCategoryType = 'Pair' | 'TwoPairs' | 'ThreeOfAKind';
+type SpecialCategoryType = 'Pair' | 'TwoPairs' | 'ThreeOfAKind' | 'FourOfAKind';
 
 export type CategoryType = SimpleCategoryType | SpecialCategoryType;
 
@@ -70,6 +70,12 @@ export class ThreeOfAKindStrategy implements CategoryScoreStrategy {
   }
 }
 
+export class FourOfAKindStrategy implements CategoryScoreStrategy {
+  public calculate(roll: Roll): number {
+    return roll.getDuplicate() * 4;
+  }
+}
+
 class CategoryScoreStrategyFactory {
   private readonly simpleCategoryEquivalence = new SimpleCategoryEquivalence();
 
@@ -84,6 +90,8 @@ class CategoryScoreStrategyFactory {
       return new TwoPairsStrategy();
     } else if (category.isEqual(new Category('ThreeOfAKind'))) {
       return new ThreeOfAKindStrategy();
+    } else if (category.isEqual(new Category('FourOfAKind'))) {
+      return new FourOfAKindStrategy();
     }
 
     throw new Error('Unknown category');
