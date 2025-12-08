@@ -23,7 +23,7 @@ export class Category {
   }
 }
 
-class SimpleCategoryEquivalence {
+class SimpleCategoryEquivalences {
   private readonly equivalences = new Map<Category, Dice>([
     [new Category('Ones'), 1],
     [new Category('Twos'), 2],
@@ -44,7 +44,25 @@ class SimpleCategoryEquivalence {
   }
 }
 
-class SpecialCategoryEquivalence {
+class AppearancesCategoryEquivalences {
+  private readonly equivalences = new Map<Category, number>([
+    [new Category('Pair'), 2],
+    [new Category('ThreeOfAKind'), 3],
+    [new Category('FourOfAKind'), 4],
+  ]);
+
+  public byCategory(category: Category): number | undefined {
+    for (const [appearancesCategory, valueEquivalence] of this.equivalences) {
+      if (appearancesCategory.isEqual(category)) {
+        return valueEquivalence;
+      }
+    }
+
+    return undefined;
+  }
+}
+
+class SpecialCategoryEquivalences {
   private readonly equivalences = new Map<Category, number>([
     [new Category('SmallStraight'), 15],
     [new Category('LargeStraight'), 20],
@@ -63,25 +81,6 @@ class SpecialCategoryEquivalence {
   }
 }
 
-// class GroupedCategoryEquivalence {
-//   private readonly equivalences = new Map<Category, number>([
-//     [new Category('Pair'), 2],
-//     [new Category('TwoPairs'), 4],
-//     [new Category('ThreeOfAKind'), 3],
-//     [new Category('FourOfAKind'), 4],
-//   ]);
-
-//   public byCategory(category: Category): number | undefined {
-//     for (const [groupedCategory, valueEquivalence] of this.equivalences) {
-//       if (groupedCategory.isEqual(category)) {
-//         return valueEquivalence;
-//       }
-//     }
-
-//     return undefined;
-//   }
-// }
-
 interface CategoryScoreStrategy {
   calculate(roll: Roll): number;
 }
@@ -98,17 +97,23 @@ class SimpleStrategy implements CategoryScoreStrategy {
   }
 }
 
-// class GroupedStrategy implements CategoryScoreStrategy {
-//   private readonly requireAppearances: Dice;
+class TwoPairsStrategy implements CategoryScoreStrategy {
+  public calculate(roll: Roll): number {
+    return roll.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
+  }
+}
 
-//   public constructor(requireAppearances: Dice) {
-//     this.requireAppearances = requireAppearances;
-//   }
+class AppearancesScoreStrategy implements CategoryScoreStrategy {
+  private readonly appearances: number;
 
-//   public calculate(roll: Roll): number {
-//     return this.roll.getByDiceCount(this.requireAppearances);
-//   }
-// }
+  public constructor(appearances: number) {
+    this.appearances = appearances;
+  }
+
+  public calculate(roll: Roll): number {
+    return roll.findHighestRepeatedDice(this.appearances) * this.appearances;
+  }
+}
 
 class SpecialStrategy implements CategoryScoreStrategy {
   private readonly score: number;
@@ -122,55 +127,30 @@ class SpecialStrategy implements CategoryScoreStrategy {
   }
 }
 
-class PairStrategy implements CategoryScoreStrategy {
-  public calculate(roll: Roll): number {
-    return roll.getHighestPair() * 2;
-  }
-}
-
-class TwoPairsStrategy implements CategoryScoreStrategy {
-  public calculate(roll: Roll): number {
-    return roll.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
-  }
-}
-
-class ThreeOfAKindStrategy implements CategoryScoreStrategy {
-  public calculate(roll: Roll): number {
-    return roll.getThreeOfAKind() * 3;
-  }
-}
-
-class FourOfAKindStrategy implements CategoryScoreStrategy {
-  public calculate(roll: Roll): number {
-    return roll.getHighestPair() * 4;
-  }
-}
-
 class CategoryScoreStrategyFactory {
-  private readonly simpleCategoryEquivalence = new SimpleCategoryEquivalence();
-  private readonly specialCategoryEquivalence = new SpecialCategoryEquivalence();
+  private readonly simpleCategoryEquivalences = new SimpleCategoryEquivalences();
+  private readonly appearancesCategoryEquivalences = new AppearancesCategoryEquivalences();
+  private readonly specialCategoryEquivalences = new SpecialCategoryEquivalences();
 
   public byCategory(category: Category): CategoryScoreStrategy {
-    const simpleCategoryEquivalence = this.simpleCategoryEquivalence.byCategory(category);
+    const simpleCategoryEquivalence = this.simpleCategoryEquivalences.byCategory(category);
 
     if (simpleCategoryEquivalence) {
       return new SimpleStrategy(simpleCategoryEquivalence);
-    } else if (category.isEqual(new Category('Pair'))) {
-      return new PairStrategy();
-    } else if (category.isEqual(new Category('TwoPairs'))) {
-      return new TwoPairsStrategy();
-    } else if (category.isEqual(new Category('ThreeOfAKind'))) {
-      return new ThreeOfAKindStrategy();
-    } else if (category.isEqual(new Category('FourOfAKind'))) {
-      return new FourOfAKindStrategy();
     }
-    // const groupedCategoryEquivalence = new GroupedCategoryEquivalence().byCategory(category);
 
-    // if (groupedCategoryEquivalence !== undefined) {
+    if (category.isEqual(new Category('TwoPairs'))) {
+      return new TwoPairsStrategy();
+    }
 
-    // }
+    const appearancesCategoryEquivalence =
+      this.appearancesCategoryEquivalences.byCategory(category);
 
-    const specialCategoryEquivalence = this.specialCategoryEquivalence.byCategory(category);
+    if (appearancesCategoryEquivalence !== undefined) {
+      return new AppearancesScoreStrategy(appearancesCategoryEquivalence);
+    }
+
+    const specialCategoryEquivalence = this.specialCategoryEquivalences.byCategory(category);
 
     if (specialCategoryEquivalence !== undefined) {
       return new SpecialStrategy(specialCategoryEquivalence);
@@ -199,22 +179,22 @@ export class Roll {
     return this.dices.filter((d) => d === dice).length;
   }
 
-  public getHighestPair(): Dice {
-    const duplicates = new Set(
+  public findHighestRepeatedDice(numberOfRepetitions: number): Dice {
+    const uniqueRepeatedDice = new Set(
       this.dices.filter((dice, index) => this.dices.indexOf(dice) !== index),
     );
 
-    return Math.max(...duplicates) as Dice;
+    const matchedDiceWithRepetitions = Array.from(uniqueRepeatedDice).filter((dice) => {
+      return this.dices.filter((n) => n === dice).length === numberOfRepetitions;
+    });
+
+    return Math.max(...matchedDiceWithRepetitions) as Dice;
   }
 
   public getTwoPairs(): [Dice, Dice] {
     const duplicates = this.dices.filter((dice, index) => this.dices.indexOf(dice) !== index);
 
     return duplicates as [Dice, Dice];
-  }
-
-  public getThreeOfAKind(): Dice {
-    return this.dices.find((n) => this.dices.filter((x) => x === n).length === 3)!;
   }
 }
 
