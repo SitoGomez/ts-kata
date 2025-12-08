@@ -44,6 +44,44 @@ class SimpleCategoryEquivalence {
   }
 }
 
+class SpecialCategoryEquivalence {
+  private readonly equivalences = new Map<Category, number>([
+    [new Category('SmallStraight'), 15],
+    [new Category('LargeStraight'), 20],
+    [new Category('FullHouse'), 25],
+    [new Category('Yahtzee'), 50],
+  ]);
+
+  public byCategory(category: Category): number | undefined {
+    for (const [specialCategory, valueEquivalence] of this.equivalences) {
+      if (specialCategory.isEqual(category)) {
+        return valueEquivalence;
+      }
+    }
+
+    return undefined;
+  }
+}
+
+// class GroupedCategoryEquivalence {
+//   private readonly equivalences = new Map<Category, number>([
+//     [new Category('Pair'), 2],
+//     [new Category('TwoPairs'), 4],
+//     [new Category('ThreeOfAKind'), 3],
+//     [new Category('FourOfAKind'), 4],
+//   ]);
+
+//   public byCategory(category: Category): number | undefined {
+//     for (const [groupedCategory, valueEquivalence] of this.equivalences) {
+//       if (groupedCategory.isEqual(category)) {
+//         return valueEquivalence;
+//       }
+//     }
+
+//     return undefined;
+//   }
+// }
+
 interface CategoryScoreStrategy {
   calculate(roll: Roll): number;
 }
@@ -57,6 +95,30 @@ class SimpleStrategy implements CategoryScoreStrategy {
 
   public calculate(roll: Roll): number {
     return this.dice * roll.getByDiceCount(this.dice);
+  }
+}
+
+// class GroupedStrategy implements CategoryScoreStrategy {
+//   private readonly requireAppearances: Dice;
+
+//   public constructor(requireAppearances: Dice) {
+//     this.requireAppearances = requireAppearances;
+//   }
+
+//   public calculate(roll: Roll): number {
+//     return this.roll.getByDiceCount(this.requireAppearances);
+//   }
+// }
+
+class SpecialStrategy implements CategoryScoreStrategy {
+  private readonly score: number;
+
+  public constructor(score: number) {
+    this.score = score;
+  }
+
+  public calculate(_roll: Roll): number {
+    return this.score;
   }
 }
 
@@ -84,32 +146,9 @@ class FourOfAKindStrategy implements CategoryScoreStrategy {
   }
 }
 
-class SmallStraightStrategy implements CategoryScoreStrategy {
-  public calculate(_roll: Roll): number {
-    return 15;
-  }
-}
-
-class LargeStraightStrategy implements CategoryScoreStrategy {
-  public calculate(_roll: Roll): number {
-    return 20;
-  }
-}
-
-class FullHouseStrategy implements CategoryScoreStrategy {
-  public calculate(_roll: Roll): number {
-    return 25;
-  }
-}
-
-class YahtzeeStrategy implements CategoryScoreStrategy {
-  public calculate(_roll: Roll): number {
-    return 50;
-  }
-}
-
 class CategoryScoreStrategyFactory {
   private readonly simpleCategoryEquivalence = new SimpleCategoryEquivalence();
+  private readonly specialCategoryEquivalence = new SpecialCategoryEquivalence();
 
   public byCategory(category: Category): CategoryScoreStrategy {
     const simpleCategoryEquivalence = this.simpleCategoryEquivalence.byCategory(category);
@@ -124,14 +163,17 @@ class CategoryScoreStrategyFactory {
       return new ThreeOfAKindStrategy();
     } else if (category.isEqual(new Category('FourOfAKind'))) {
       return new FourOfAKindStrategy();
-    } else if (category.isEqual(new Category('SmallStraight'))) {
-      return new SmallStraightStrategy();
-    } else if (category.isEqual(new Category('LargeStraight'))) {
-      return new LargeStraightStrategy();
-    } else if (category.isEqual(new Category('FullHouse'))) {
-      return new FullHouseStrategy();
-    } else if (category.isEqual(new Category('Yahtzee'))) {
-      return new YahtzeeStrategy();
+    }
+    // const groupedCategoryEquivalence = new GroupedCategoryEquivalence().byCategory(category);
+
+    // if (groupedCategoryEquivalence !== undefined) {
+
+    // }
+
+    const specialCategoryEquivalence = this.specialCategoryEquivalence.byCategory(category);
+
+    if (specialCategoryEquivalence !== undefined) {
+      return new SpecialStrategy(specialCategoryEquivalence);
     }
 
     throw new Error('Unknown category');
