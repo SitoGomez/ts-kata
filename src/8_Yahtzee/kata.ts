@@ -1,15 +1,13 @@
 type SimpleCategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes';
-type SpecialCategoryType =
-  | 'Pair'
-  | 'TwoPairs'
-  | 'ThreeOfAKind'
-  | 'FourOfAKind'
-  | 'SmallStraight'
-  | 'LargeStraight'
-  | 'FullHouse'
-  | 'Yahtzee';
+type TwoPairsCategoryType = 'TwoPairs';
+type AppearancesCategoryType = 'Pair' | 'ThreeOfAKind' | 'FourOfAKind';
+type SpecialCategoryType = 'SmallStraight' | 'LargeStraight' | 'FullHouse' | 'Yahtzee';
 
-export type CategoryType = SimpleCategoryType | SpecialCategoryType;
+export type CategoryType =
+  | SimpleCategoryType
+  | TwoPairsCategoryType
+  | AppearancesCategoryType
+  | SpecialCategoryType;
 
 export class Category {
   private readonly value: CategoryType;
