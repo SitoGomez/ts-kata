@@ -194,13 +194,20 @@ export class Roll {
   }
 }
 
-class Play {
+export class Play {
   private readonly roll: Roll;
   private readonly category: Category;
 
   public constructor(roll: Roll, category: Category) {
     this.roll = roll;
     this.category = category;
+  }
+
+  public static fromCategoryAndRoll(
+    category: CategoryType,
+    roll: [Dice, Dice, Dice, Dice, Dice],
+  ): Play {
+    return new Play(new Roll(roll[0], roll[1], roll[2], roll[3], roll[4]), new Category(category));
   }
 
   public isOfCategory(otherCategory: Category): boolean {
@@ -264,7 +271,7 @@ class PlaysScoreCalculator {
 }
 
 class EndGameRules {
-  private readonly TOTAL_CATEGORIES = 13;
+  private readonly TOTAL_CATEGORIES = 14;
 
   public isFinished(plays: Plays): boolean {
     if (plays.getFirstPlayForEachCategory().length < this.TOTAL_CATEGORIES) {
@@ -279,8 +286,8 @@ export class YahtzeeGame {
   private plays: Plays = new Plays();
   private endGameRules: EndGameRules = new EndGameRules();
 
-  public assignCategory(roll: Roll, category: Category): void {
-    this.plays.addPlay(new Play(roll, category));
+  public assignPlay(play: Play): void {
+    this.plays.addPlay(play);
   }
 
   public getScore(): number {

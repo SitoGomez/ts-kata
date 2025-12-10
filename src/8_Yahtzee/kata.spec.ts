@@ -1,4 +1,4 @@
-import { Category, CategoryType, Dice, Roll, YahtzeeGame } from './kata';
+import { CategoryType, Dice, Play, YahtzeeGame } from './kata';
 
 describe('Yahtzee', () => {
   describe.each([
@@ -393,9 +393,11 @@ describe('Yahtzee', () => {
       it(`then the score should be ${expectedScore}`, () => {
         const yahtzeeGame = new YahtzeeGame();
 
-        yahtzeeGame.assignCategory(
-          new Roll(...(roll as [Dice, Dice, Dice, Dice, Dice])),
-          new Category(category as CategoryType),
+        yahtzeeGame.assignPlay(
+          Play.fromCategoryAndRoll(
+            category as CategoryType,
+            roll as [Dice, Dice, Dice, Dice, Dice],
+          ),
         );
 
         const score = yahtzeeGame.getScore();
@@ -409,14 +411,11 @@ describe('Yahtzee', () => {
     it('then the second assignment score should be 0', () => {
       const yahtzeeGame = new YahtzeeGame();
 
-      const roll1 = new Roll(1, 1, 2, 3, 4);
-      const category = new Category('Ones');
+      const firstPlay = Play.fromCategoryAndRoll('Ones', [1, 1, 2, 3, 4]);
+      const secondPlay = Play.fromCategoryAndRoll('Ones', [1, 1, 1, 1, 1]);
 
-      yahtzeeGame.assignCategory(roll1, category);
-
-      const roll2 = new Roll(1, 1, 1, 4, 5);
-
-      yahtzeeGame.assignCategory(roll2, category);
+      yahtzeeGame.assignPlay(firstPlay);
+      yahtzeeGame.assignPlay(secondPlay);
 
       const score = yahtzeeGame.getScore();
 
@@ -428,20 +427,20 @@ describe('Yahtzee', () => {
     it('then the game is finished', () => {
       const yahtzeeGame = new YahtzeeGame();
 
-      yahtzeeGame.assignCategory(new Roll(1, 1, 1, 1, 1), new Category('Ones'));
-      yahtzeeGame.assignCategory(new Roll(2, 2, 2, 2, 2), new Category('Twos'));
-      yahtzeeGame.assignCategory(new Roll(3, 3, 3, 3, 3), new Category('Threes'));
-      yahtzeeGame.assignCategory(new Roll(4, 4, 4, 4, 4), new Category('Fours'));
-      yahtzeeGame.assignCategory(new Roll(5, 5, 5, 5, 5), new Category('Fives'));
-      yahtzeeGame.assignCategory(new Roll(6, 6, 6, 6, 6), new Category('Sixes'));
-      yahtzeeGame.assignCategory(new Roll(1, 1, 2, 2, 3), new Category('Pair'));
-      yahtzeeGame.assignCategory(new Roll(1, 1, 2, 2, 3), new Category('TwoPairs'));
-      yahtzeeGame.assignCategory(new Roll(2, 2, 2, 3, 4), new Category('ThreeOfAKind'));
-      yahtzeeGame.assignCategory(new Roll(2, 2, 2, 2, 5), new Category('FourOfAKind'));
-      yahtzeeGame.assignCategory(new Roll(1, 2, 3, 4, 5), new Category('SmallStraight'));
-      yahtzeeGame.assignCategory(new Roll(2, 3, 4, 5, 6), new Category('LargeStraight'));
-      yahtzeeGame.assignCategory(new Roll(2, 2, 2, 3, 3), new Category('FullHouse'));
-      yahtzeeGame.assignCategory(new Roll(6, 6, 6, 6, 6), new Category('Yahtzee'));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Ones', [1, 1, 1, 1, 1]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Twos', [2, 2, 2, 2, 2]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Threes', [3, 3, 3, 3, 3]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Fours', [4, 4, 4, 4, 4]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Fives', [5, 5, 5, 5, 5]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Sixes', [6, 6, 6, 6, 6]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Pair', [6, 6, 2, 3, 4]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('TwoPairs', [5, 5, 6, 6, 4]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('ThreeOfAKind', [3, 3, 3, 2, 4]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('FourOfAKind', [4, 4, 4, 4, 1]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('SmallStraight', [1, 2, 3, 4, 5]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('LargeStraight', [2, 3, 4, 5, 6]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('FullHouse', [5, 5, 5, 6, 6]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Yahtzee', [6, 6, 6, 6, 6]));
 
       expect(yahtzeeGame.isFinished()).toBe(true);
     });
@@ -451,9 +450,19 @@ describe('Yahtzee', () => {
     it('then the game is not finished', () => {
       const yahtzeeGame = new YahtzeeGame();
 
-      yahtzeeGame.assignCategory(new Roll(1, 1, 1, 1, 1), new Category('Ones'));
-      yahtzeeGame.assignCategory(new Roll(2, 2, 2, 2, 2), new Category('Twos'));
-      yahtzeeGame.assignCategory(new Roll(3, 3, 3, 3, 3), new Category('Threes'));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Ones', [1, 1, 1, 1, 1]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Twos', [2, 2, 2, 2, 2]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Threes', [3, 3, 3, 3, 3]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Fours', [4, 4, 4, 4, 4]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Fives', [5, 5, 5, 5, 5]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Sixes', [6, 6, 6, 6, 6]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('Pair', [6, 6, 2, 3, 4]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('TwoPairs', [5, 5, 6, 6, 4]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('ThreeOfAKind', [3, 3, 3, 2, 4]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('FourOfAKind', [4, 4, 4, 4, 1]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('SmallStraight', [1, 2, 3, 4, 5]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('LargeStraight', [2, 3, 4, 5, 6]));
+      yahtzeeGame.assignPlay(Play.fromCategoryAndRoll('FullHouse', [5, 5, 5, 6, 6]));
 
       expect(yahtzeeGame.isFinished()).toBe(false);
     });
