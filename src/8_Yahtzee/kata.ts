@@ -194,20 +194,41 @@ class Roll {
   }
 }
 
+export type PlayerType = string;
+
+class Player {
+  private readonly type: PlayerType;
+
+  public constructor(type: PlayerType) {
+    this.type = type;
+  }
+
+  public isEqualType(type: PlayerType): boolean {
+    return this.type === type;
+  }
+}
+
 export class Play {
   private readonly roll: Roll;
   private readonly category: Category;
+  private readonly player: Player;
 
-  public constructor(roll: Roll, category: Category) {
+  public constructor(roll: Roll, category: Category, player: Player) {
     this.roll = roll;
     this.category = category;
+    this.player = player;
   }
 
-  public static fromCategoryAndRoll(
+  public static fromPlayerCategoryAndRoll(
     category: CategoryType,
     roll: [Dice, Dice, Dice, Dice, Dice],
+    player: PlayerType,
   ): Play {
-    return new Play(new Roll(roll[0], roll[1], roll[2], roll[3], roll[4]), new Category(category));
+    return new Play(
+      new Roll(roll[0], roll[1], roll[2], roll[3], roll[4]),
+      new Category(category),
+      new Player(player),
+    );
   }
 
   public isOfCategory(otherCategory: Category): boolean {
@@ -228,6 +249,10 @@ export class Play {
 
   public getTwoPairs(): [Dice, Dice] {
     return this.roll.getTwoPairs();
+  }
+
+  public isPerformedByPlayer(player: PlayerType): boolean {
+    return this.player.isEqualType(player);
   }
 }
 
@@ -251,6 +276,10 @@ class Plays {
 
     return uniquePlays;
   }
+
+  public getFirstPlayForEachCategoryByPlayer(player: PlayerType): Play[] {
+    return this.getFirstPlayForEachCategory().filter((play) => play.isPerformedByPlayer(player));
+  }
 }
 
 class PlaysScoreCalculator {
@@ -261,8 +290,8 @@ class PlaysScoreCalculator {
     this.plays = plays;
   }
 
-  public calculate(): number {
-    return this.plays.getFirstPlayForEachCategory().reduce((totalScore, play) => {
+  public calculateByPlayer(player: PlayerType): number {
+    return this.plays.getFirstPlayForEachCategoryByPlayer(player).reduce((totalScore, play) => {
       const categoryScoreStrategy = this.categoryScoreStrategyFactory.byPlay(play);
 
       return totalScore + categoryScoreStrategy.calculate(play);
@@ -290,11 +319,11 @@ export class YahtzeeGame {
     this.plays.addPlay(play);
   }
 
-  public getScore(): number {
-    return new PlaysScoreCalculator(this.plays).calculate();
-  }
-
   public isFinished(): boolean {
     return this.endGameRules.isFinished(this.plays);
+  }
+
+  public getScoreByPlayer(player: PlayerType): number {
+    return new PlaysScoreCalculator(this.plays).calculateByPlayer(player);
   }
 }
