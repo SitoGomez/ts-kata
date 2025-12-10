@@ -1,12 +1,12 @@
-type SimpleCategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes';
+type NumberCategoryType = 'Ones' | 'Twos' | 'Threes' | 'Fours' | 'Fives' | 'Sixes';
 type TwoPairsCategoryType = 'TwoPairs';
-type AppearancesCategoryType = 'Pair' | 'ThreeOfAKind' | 'FourOfAKind';
+type OfAKindCategoryType = 'Pair' | 'ThreeOfAKind' | 'FourOfAKind';
 type SpecialCategoryType = 'SmallStraight' | 'LargeStraight' | 'FullHouse' | 'Yahtzee';
 
 export type CategoryType =
-  | SimpleCategoryType
+  | NumberCategoryType
   | TwoPairsCategoryType
-  | AppearancesCategoryType
+  | OfAKindCategoryType
   | SpecialCategoryType;
 
 export class Category {
@@ -21,7 +21,7 @@ export class Category {
   }
 }
 
-class SimpleCategoryEquivalences {
+class NumberCategoryEquivalences {
   private readonly equivalences = new Map<Category, Dice>([
     [new Category('Ones'), 1],
     [new Category('Twos'), 2],
@@ -32,8 +32,8 @@ class SimpleCategoryEquivalences {
   ]);
 
   public byCategory(category: Category): Dice | undefined {
-    for (const [simpleCategory, valueEquivalence] of this.equivalences) {
-      if (simpleCategory.isEqual(category)) {
+    for (const [numberCategory, valueEquivalence] of this.equivalences) {
+      if (numberCategory.isEqual(category)) {
         return valueEquivalence;
       }
     }
@@ -42,7 +42,7 @@ class SimpleCategoryEquivalences {
   }
 }
 
-class AppearancesCategoryEquivalences {
+class OfAKindCategoryEquivalences {
   private readonly equivalences = new Map<Category, number>([
     [new Category('Pair'), 2],
     [new Category('ThreeOfAKind'), 3],
@@ -50,8 +50,8 @@ class AppearancesCategoryEquivalences {
   ]);
 
   public byCategory(category: Category): number | undefined {
-    for (const [appearancesCategory, valueEquivalence] of this.equivalences) {
-      if (appearancesCategory.isEqual(category)) {
+    for (const [ofAKindCategory, valueEquivalence] of this.equivalences) {
+      if (ofAKindCategory.isEqual(category)) {
         return valueEquivalence;
       }
     }
@@ -83,7 +83,7 @@ interface CategoryScoreStrategy {
   calculate(roll: Roll): number;
 }
 
-class SimpleStrategy implements CategoryScoreStrategy {
+class NumberStrategy implements CategoryScoreStrategy {
   private readonly dice: Dice;
 
   public constructor(dice: Dice) {
@@ -101,15 +101,15 @@ class TwoPairsStrategy implements CategoryScoreStrategy {
   }
 }
 
-class AppearancesScoreStrategy implements CategoryScoreStrategy {
-  private readonly appearances: number;
+class OfAKindScoreStrategy implements CategoryScoreStrategy {
+  private readonly repetitions: number;
 
-  public constructor(appearances: number) {
-    this.appearances = appearances;
+  public constructor(repetitions: number) {
+    this.repetitions = repetitions;
   }
 
   public calculate(roll: Roll): number {
-    return roll.findHighestRepeatedDice(this.appearances) * this.appearances;
+    return roll.findHighestRepeatedDice(this.repetitions) * this.repetitions;
   }
 }
 
@@ -126,26 +126,25 @@ class SpecialStrategy implements CategoryScoreStrategy {
 }
 
 class CategoryScoreStrategyFactory {
-  private readonly simpleCategoryEquivalences = new SimpleCategoryEquivalences();
-  private readonly appearancesCategoryEquivalences = new AppearancesCategoryEquivalences();
+  private readonly numberCategoryEquivalences = new NumberCategoryEquivalences();
+  private readonly ofAKindEquivalences = new OfAKindCategoryEquivalences();
   private readonly specialCategoryEquivalences = new SpecialCategoryEquivalences();
 
   public byCategory(category: Category): CategoryScoreStrategy {
-    const simpleCategoryEquivalence = this.simpleCategoryEquivalences.byCategory(category);
+    const numberCategoryEquivalence = this.numberCategoryEquivalences.byCategory(category);
 
-    if (simpleCategoryEquivalence) {
-      return new SimpleStrategy(simpleCategoryEquivalence);
+    if (numberCategoryEquivalence) {
+      return new NumberStrategy(numberCategoryEquivalence);
     }
 
     if (category.isEqual(new Category('TwoPairs'))) {
       return new TwoPairsStrategy();
     }
 
-    const appearancesCategoryEquivalence =
-      this.appearancesCategoryEquivalences.byCategory(category);
+    const ofAKindEquivalence = this.ofAKindEquivalences.byCategory(category);
 
-    if (appearancesCategoryEquivalence !== undefined) {
-      return new AppearancesScoreStrategy(appearancesCategoryEquivalence);
+    if (ofAKindEquivalence !== undefined) {
+      return new OfAKindScoreStrategy(ofAKindEquivalence);
     }
 
     const specialCategoryEquivalence = this.specialCategoryEquivalences.byCategory(category);
