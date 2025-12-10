@@ -446,4 +446,16 @@ describe('Yahtzee', () => {
       expect(yahtzeeGame.isFinished()).toBe(true);
     });
   });
+
+  describe('When not all the categories have been assigned', () => {
+    it('then the game is not finished', () => {
+      const yahtzeeGame = new YahtzeeGame();
+
+      yahtzeeGame.assignCategory(new Roll(1, 1, 1, 1, 1), new Category('Ones'));
+      yahtzeeGame.assignCategory(new Roll(2, 2, 2, 2, 2), new Category('Twos'));
+      yahtzeeGame.assignCategory(new Roll(3, 3, 3, 3, 3), new Category('Threes'));
+
+      expect(yahtzeeGame.isFinished()).toBe(false);
+    });
+  });
 });

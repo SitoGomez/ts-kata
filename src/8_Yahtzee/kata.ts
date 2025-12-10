@@ -263,8 +263,21 @@ class PlaysScoreCalculator {
   }
 }
 
+class EndGameRules {
+  private readonly TOTAL_CATEGORIES = 13;
+
+  public isFinished(plays: Plays): boolean {
+    if (plays.getFirstPlayForEachCategory().length < this.TOTAL_CATEGORIES) {
+      return false;
+    }
+
+    return true;
+  }
+}
+
 export class YahtzeeGame {
   private plays: Plays = new Plays();
+  private endGameRules: EndGameRules = new EndGameRules();
 
   public assignCategory(roll: Roll, category: Category): void {
     this.plays.addPlay(new Play(roll, category));
@@ -275,6 +288,6 @@ export class YahtzeeGame {
   }
 
   public isFinished(): boolean {
-    return true;
+    return this.endGameRules.isFinished(this.plays);
   }
 }
