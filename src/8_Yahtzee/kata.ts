@@ -31,9 +31,9 @@ class NumberCategoryEquivalences {
     [new Category('Sixes'), 6],
   ]);
 
-  public byCategory(category: Category): Dice | undefined {
+  public byPlay(play: Play): Dice | undefined {
     for (const [numberCategory, valueEquivalence] of this.equivalences) {
-      if (numberCategory.isEqual(category)) {
+      if (play.isOfCategory(numberCategory)) {
         return valueEquivalence;
       }
     }
@@ -49,9 +49,9 @@ class OfAKindCategoryEquivalences {
     [new Category('FourOfAKind'), 4],
   ]);
 
-  public byCategory(category: Category): number | undefined {
+  public byPlay(play: Play): number | undefined {
     for (const [ofAKindCategory, valueEquivalence] of this.equivalences) {
-      if (ofAKindCategory.isEqual(category)) {
+      if (play.isOfCategory(ofAKindCategory)) {
         return valueEquivalence;
       }
     }
@@ -68,9 +68,9 @@ class SpecialCategoryEquivalences {
     [new Category('Yahtzee'), 50],
   ]);
 
-  public byCategory(category: Category): number | undefined {
+  public byPlay(play: Play): number | undefined {
     for (const [specialCategory, valueEquivalence] of this.equivalences) {
-      if (specialCategory.isEqual(category)) {
+      if (play.isOfCategory(specialCategory)) {
         return valueEquivalence;
       }
     }
@@ -80,7 +80,7 @@ class SpecialCategoryEquivalences {
 }
 
 interface CategoryScoreStrategy {
-  calculate(roll: Roll): number;
+  calculate(play: Play): number;
 }
 
 class NumberStrategy implements CategoryScoreStrategy {
@@ -90,14 +90,14 @@ class NumberStrategy implements CategoryScoreStrategy {
     this.dice = dice;
   }
 
-  public calculate(roll: Roll): number {
-    return this.dice * roll.getByDiceCount(this.dice);
+  public calculate(play: Play): number {
+    return this.dice * play.getByDiceCount(this.dice);
   }
 }
 
 class TwoPairsStrategy implements CategoryScoreStrategy {
-  public calculate(roll: Roll): number {
-    return roll.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
+  public calculate(play: Play): number {
+    return play.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
   }
 }
 
@@ -108,8 +108,8 @@ class OfAKindScoreStrategy implements CategoryScoreStrategy {
     this.repetitions = repetitions;
   }
 
-  public calculate(roll: Roll): number {
-    return roll.findHighestRepeatedDice(this.repetitions) * this.repetitions;
+  public calculate(play: Play): number {
+    return play.findHighestRepeatedDice(this.repetitions) * this.repetitions;
   }
 }
 
@@ -120,34 +120,33 @@ class SpecialStrategy implements CategoryScoreStrategy {
     this.score = score;
   }
 
-  public calculate(_roll: Roll): number {
+  public calculate(_play: Play): number {
     return this.score;
   }
 }
 
-class CategoryScoreStrategyFactory {
+class PlayScoreStrategyFactory {
   private readonly numberCategoryEquivalences = new NumberCategoryEquivalences();
   private readonly ofAKindEquivalences = new OfAKindCategoryEquivalences();
   private readonly specialCategoryEquivalences = new SpecialCategoryEquivalences();
 
-  public byCategory(category: Category): CategoryScoreStrategy {
-    const numberCategoryEquivalence = this.numberCategoryEquivalences.byCategory(category);
+  public byPlay(play: Play): CategoryScoreStrategy {
+    const numberCategoryEquivalence = this.numberCategoryEquivalences.byPlay(play);
 
     if (numberCategoryEquivalence) {
       return new NumberStrategy(numberCategoryEquivalence);
     }
 
-    if (category.isEqual(new Category('TwoPairs'))) {
+    if (play.isOfCategory(new Category('TwoPairs'))) {
       return new TwoPairsStrategy();
     }
 
-    const ofAKindEquivalence = this.ofAKindEquivalences.byCategory(category);
-
+    const ofAKindEquivalence = this.ofAKindEquivalences.byPlay(play);
     if (ofAKindEquivalence !== undefined) {
       return new OfAKindScoreStrategy(ofAKindEquivalence);
     }
 
-    const specialCategoryEquivalence = this.specialCategoryEquivalences.byCategory(category);
+    const specialCategoryEquivalence = this.specialCategoryEquivalences.byPlay(play);
 
     if (specialCategoryEquivalence !== undefined) {
       return new SpecialStrategy(specialCategoryEquivalence);
@@ -176,13 +175,13 @@ export class Roll {
     return this.dices.filter((d) => d === dice).length;
   }
 
-  public findHighestRepeatedDice(numberOfRepetitions: number): Dice {
+  public findHighestRepeatedDice(repetitions: number): Dice {
     const uniqueRepeatedDice = new Set(
       this.dices.filter((dice, index) => this.dices.indexOf(dice) !== index),
     );
 
     const matchedDiceWithRepetitions = Array.from(uniqueRepeatedDice).filter((dice) => {
-      return this.dices.filter((n) => n === dice).length === numberOfRepetitions;
+      return this.dices.filter((n) => n === dice).length === repetitions;
     });
 
     return Math.max(...matchedDiceWithRepetitions) as Dice;
@@ -195,18 +194,82 @@ export class Roll {
   }
 }
 
-export class YahtzeeGame {
-  private roll: Roll | undefined = undefined;
-  private category: Category | undefined = undefined;
+class Play {
+  private readonly roll: Roll;
+  private readonly category: Category;
 
-  private readonly categoryScoreStrategyFactory = new CategoryScoreStrategyFactory();
-
-  public assignCategory(roll: Roll, category: Category): void {
+  public constructor(roll: Roll, category: Category) {
     this.roll = roll;
     this.category = category;
   }
 
+  public isOfCategory(otherCategory: Category): boolean {
+    return this.category.isEqual(otherCategory);
+  }
+
+  public sameCategoryAs(otherPlay: Play): boolean {
+    return this.category.isEqual(otherPlay.category);
+  }
+
+  public getByDiceCount(dice: Dice): number {
+    return this.roll.getByDiceCount(dice);
+  }
+
+  public findHighestRepeatedDice(repetitions: number): Dice {
+    return this.roll.findHighestRepeatedDice(repetitions);
+  }
+
+  public getTwoPairs(): [Dice, Dice] {
+    return this.roll.getTwoPairs();
+  }
+}
+
+class Plays {
+  private readonly plays: Play[] = [];
+
+  public addPlay(play: Play): void {
+    this.plays.push(play);
+  }
+
+  public getFirstPlayForEachCategory(): Play[] {
+    const uniquePlays: Play[] = [];
+
+    for (const play of this.plays) {
+      const isCategoryAlreadyAdded = uniquePlays.some((p) => p.sameCategoryAs(play));
+
+      if (!isCategoryAlreadyAdded) {
+        uniquePlays.push(play);
+      }
+    }
+
+    return uniquePlays;
+  }
+}
+
+class PlaysScoreCalculator {
+  private readonly categoryScoreStrategyFactory = new PlayScoreStrategyFactory();
+  private readonly plays: Plays;
+
+  public constructor(plays: Plays) {
+    this.plays = plays;
+  }
+
+  public calculate(): number {
+    return this.plays.getFirstPlayForEachCategory().reduce((totalScore, play) => {
+      const categoryScoreStrategy = this.categoryScoreStrategyFactory.byPlay(play);
+      return totalScore + categoryScoreStrategy.calculate(play);
+    }, 0);
+  }
+}
+
+export class YahtzeeGame {
+  private plays: Plays = new Plays();
+
+  public assignCategory(roll: Roll, category: Category): void {
+    this.plays.addPlay(new Play(roll, category));
+  }
+
   public getScore(): number {
-    return this.categoryScoreStrategyFactory.byCategory(this.category!).calculate(this.roll!);
+    return new PlaysScoreCalculator(this.plays).calculate();
   }
 }

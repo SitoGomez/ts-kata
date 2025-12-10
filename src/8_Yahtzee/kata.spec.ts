@@ -404,4 +404,23 @@ describe('Yahtzee', () => {
       });
     },
   );
+
+  describe('When the same category is assigned twice', () => {
+    it('then the second assignment score should be 0', () => {
+      const yahtzeeGame = new YahtzeeGame();
+
+      const roll1 = new Roll(1, 1, 2, 3, 4);
+      const category = new Category('Ones');
+
+      yahtzeeGame.assignCategory(roll1, category);
+
+      const roll2 = new Roll(1, 1, 1, 4, 5);
+
+      yahtzeeGame.assignCategory(roll2, category);
+
+      const score = yahtzeeGame.getScore();
+
+      expect(score).toBe(2);
+    });
+  });
 });
