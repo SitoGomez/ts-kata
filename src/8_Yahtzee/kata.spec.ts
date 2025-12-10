@@ -503,7 +503,7 @@ describe('Yahtzee', () => {
     });
   });
 
-  describe('When all the categories have been assigned', () => {
+  describe('When all the categories have been assigned by one player', () => {
     it('then the game is finished', () => {
       const yahtzeeGame = new YahtzeeGame();
 
@@ -536,11 +536,12 @@ describe('Yahtzee', () => {
     });
   });
 
-  describe('When not all the categories have been assigned', () => {
+  describe('When not all the categories have been assigned by one player', () => {
     it('then the game is not finished', () => {
       const yahtzeeGame = new YahtzeeGame();
 
       const player = 'One';
+      const playerTwo = 'Two';
 
       yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('Ones', [1, 1, 1, 1, 1], player));
       yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('Twos', [2, 2, 2, 2, 2], player));
@@ -563,6 +564,8 @@ describe('Yahtzee', () => {
         Play.fromPlayerCategoryAndRoll('LargeStraight', [2, 3, 4, 5, 6], player),
       );
       yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('FullHouse', [5, 5, 5, 6, 6], player));
+      yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('Yahtzee', [6, 6, 6, 6, 6], playerTwo));
+
       expect(yahtzeeGame.isFinished()).toBe(false);
     });
   });

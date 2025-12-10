@@ -21,6 +21,7 @@ class Category {
   }
 }
 
+//Como contener las categorías en un único sitio
 class NumberCategoryEquivalences {
   private readonly equivalences = new Map<Category, Dice>([
     [new Category('Ones'), 1],
@@ -256,6 +257,7 @@ export class Play {
   }
 }
 
+//No me termina de convencer tener todas las jugadas de todos los jugadores en el mismo sitio
 class Plays {
   private readonly plays: Play[] = [];
 
@@ -263,7 +265,7 @@ class Plays {
     this.plays.push(play);
   }
 
-  public getFirstPlayForEachCategory(): Play[] {
+  private getFirstPlayForEachCategory(): Play[] {
     const uniquePlays: Play[] = [];
 
     for (const play of this.plays) {
@@ -277,6 +279,7 @@ class Plays {
     return uniquePlays;
   }
 
+  //No sé si que este método devuelva Play rompe la idea general de encapsular el tratamiento de jugadas aquí
   public getFirstPlayForEachCategoryByPlayer(player: PlayerType): Play[] {
     return this.getFirstPlayForEachCategory().filter((play) => play.isPerformedByPlayer(player));
   }
@@ -300,15 +303,10 @@ class PlaysScoreCalculator {
 }
 
 class EndGameRules {
+  //Este número no me gusta tenerlo "hardcodeado" aquí
   private readonly TOTAL_CATEGORIES = 14;
 
-  public isFinished(plays: Plays): boolean {
-    if (plays.getFirstPlayForEachCategory().length < this.TOTAL_CATEGORIES) {
-      return false;
-    }
-
-    return true;
-  }
+  public isFinished(plays: Plays): boolean {}
 }
 
 export class YahtzeeGame {
