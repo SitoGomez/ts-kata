@@ -423,4 +423,27 @@ describe('Yahtzee', () => {
       expect(score).toBe(2);
     });
   });
+
+  describe('When all the categories have been assigned', () => {
+    it('then the game is finished', () => {
+      const yahtzeeGame = new YahtzeeGame();
+
+      yahtzeeGame.assignCategory(new Roll(1, 1, 1, 1, 1), new Category('Ones'));
+      yahtzeeGame.assignCategory(new Roll(2, 2, 2, 2, 2), new Category('Twos'));
+      yahtzeeGame.assignCategory(new Roll(3, 3, 3, 3, 3), new Category('Threes'));
+      yahtzeeGame.assignCategory(new Roll(4, 4, 4, 4, 4), new Category('Fours'));
+      yahtzeeGame.assignCategory(new Roll(5, 5, 5, 5, 5), new Category('Fives'));
+      yahtzeeGame.assignCategory(new Roll(6, 6, 6, 6, 6), new Category('Sixes'));
+      yahtzeeGame.assignCategory(new Roll(1, 1, 2, 2, 3), new Category('Pair'));
+      yahtzeeGame.assignCategory(new Roll(1, 1, 2, 2, 3), new Category('TwoPairs'));
+      yahtzeeGame.assignCategory(new Roll(2, 2, 2, 3, 4), new Category('ThreeOfAKind'));
+      yahtzeeGame.assignCategory(new Roll(2, 2, 2, 2, 5), new Category('FourOfAKind'));
+      yahtzeeGame.assignCategory(new Roll(1, 2, 3, 4, 5), new Category('SmallStraight'));
+      yahtzeeGame.assignCategory(new Roll(2, 3, 4, 5, 6), new Category('LargeStraight'));
+      yahtzeeGame.assignCategory(new Roll(2, 2, 2, 3, 3), new Category('FullHouse'));
+      yahtzeeGame.assignCategory(new Roll(6, 6, 6, 6, 6), new Category('Yahtzee'));
+
+      expect(yahtzeeGame.isFinished()).toBe(true);
+    });
+  });
 });

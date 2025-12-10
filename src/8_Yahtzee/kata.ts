@@ -257,6 +257,7 @@ class PlaysScoreCalculator {
   public calculate(): number {
     return this.plays.getFirstPlayForEachCategory().reduce((totalScore, play) => {
       const categoryScoreStrategy = this.categoryScoreStrategyFactory.byPlay(play);
+
       return totalScore + categoryScoreStrategy.calculate(play);
     }, 0);
   }
@@ -271,5 +272,9 @@ export class YahtzeeGame {
 
   public getScore(): number {
     return new PlaysScoreCalculator(this.plays).calculate();
+  }
+
+  public isFinished(): boolean {
+    return true;
   }
 }
