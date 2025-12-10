@@ -9,7 +9,7 @@ export type CategoryType =
   | OfAKindCategoryType
   | SpecialCategoryType;
 
-export class Category {
+class Category {
   private readonly value: CategoryType;
 
   public constructor(value: CategoryType) {
@@ -158,7 +158,7 @@ class PlayScoreStrategyFactory {
 
 export type Dice = 1 | 2 | 3 | 4 | 5 | 6;
 
-export class Roll {
+class Roll {
   private readonly dices: Dice[];
 
   public constructor(
