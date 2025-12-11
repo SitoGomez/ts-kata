@@ -306,6 +306,7 @@ class EndGameRules {
   //Este número no me gusta tenerlo "hardcodeado" aquí
   private readonly TOTAL_CATEGORIES = 14;
 
+  //TODO
   public isFinished(plays: Plays): boolean {}
 }
 
