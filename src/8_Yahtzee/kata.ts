@@ -21,7 +21,6 @@ class Category {
   }
 }
 
-//Como contener las categorías en un único sitio
 class NumberCategoryEquivalences {
   private readonly equivalences = new Map<Category, Dice>([
     [new Category('Ones'), 1],
@@ -217,7 +216,6 @@ class Player {
 }
 
 //TODO: Evitemos este play - Middle man codesmell
-
 export class Play {
   private readonly roll: Roll;
   private readonly category: Category;
@@ -267,6 +265,7 @@ export class Play {
 }
 
 //No me termina de convencer tener todas las jugadas de todos los jugadores en el mismo sitio
+// Se podría tener separado, esto es simplemente como lo he hecho pero es opinionated
 class Plays {
   private readonly plays: Play[] = [];
 
@@ -288,7 +287,7 @@ class Plays {
     return uniquePlays;
   }
 
-  //TODO: No sé si que este método devuelva Play rompe la idea general de encapsular el tratamiento de jugadas aquí
+  //TODO: Que este método devuelva Play rompe la idea general de encapsular el tratamiento de jugadas aquí
   public getFirstPlayForEachCategoryByPlayer(player: PlayerType): Play[] {
     return this.getFirstPlayForEachCategory().filter((play) => play.isPerformedByPlayer(player));
   }
@@ -312,12 +311,12 @@ class PlaysScoreCalculator {
 }
 
 //TODO: Todos los jugadores tienen que haber terminado sus jugadas
-// Plays o aquí
+// Realmente necesitamos esta clase? Podría estar en Plays o aquí - Pensar
 class EndGameRules {
-  //Este número no me gusta tenerlo "hardcodeado" aquí -> esto ok
+  //Este número no me gusta tenerlo "hardcodeado" aquí -> esto es ok -> connaisance of value
   private readonly TOTAL_CATEGORIES = 14;
 
-  //TODO
+  //TODO: ?
   public isFinished(plays: Plays): boolean {}
 }
 
