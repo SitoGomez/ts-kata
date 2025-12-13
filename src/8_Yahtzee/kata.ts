@@ -9,7 +9,7 @@ export type CategoryType =
   | OfAKindCategoryType
   | SpecialCategoryType;
 
-class Category {
+export class Category {
   private readonly value: CategoryType;
 
   public constructor(value: CategoryType) {
@@ -31,9 +31,9 @@ class NumberCategoryEquivalences {
     [new Category('Sixes'), 6],
   ]);
 
-  public byPlay(play: Play): Dice | undefined {
+  public byPlay(play: PlayType): Dice | undefined {
     for (const [numberCategory, valueEquivalence] of this.equivalences) {
-      if (play.isOfCategory(numberCategory)) {
+      if (play.category.isEqual(numberCategory)) {
         return valueEquivalence;
       }
     }
@@ -49,9 +49,9 @@ class OfAKindCategoryEquivalences {
     [new Category('FourOfAKind'), 4],
   ]);
 
-  public byPlay(play: Play): number | undefined {
+  public byPlay(play: PlayType): number | undefined {
     for (const [ofAKindCategory, valueEquivalence] of this.equivalences) {
-      if (play.isOfCategory(ofAKindCategory)) {
+      if (play.category.isEqual(ofAKindCategory)) {
         return valueEquivalence;
       }
     }
@@ -68,9 +68,9 @@ class SpecialCategoryEquivalences {
     [new Category('Yahtzee'), 50],
   ]);
 
-  public byPlay(play: Play): number | undefined {
+  public byPlay(play: PlayType): number | undefined {
     for (const [specialCategory, valueEquivalence] of this.equivalences) {
-      if (play.isOfCategory(specialCategory)) {
+      if (play.category.isEqual(specialCategory)) {
         return valueEquivalence;
       }
     }
@@ -80,7 +80,7 @@ class SpecialCategoryEquivalences {
 }
 
 interface CategoryScoreStrategy {
-  calculate(play: Play): number;
+  calculate(play: PlayType): number;
 }
 
 class NumberStrategy implements CategoryScoreStrategy {
@@ -90,14 +90,14 @@ class NumberStrategy implements CategoryScoreStrategy {
     this.dice = dice;
   }
 
-  public calculate(play: Play): number {
-    return this.dice * play.getByDiceCount(this.dice);
+  public calculate(play: PlayType): number {
+    return this.dice * play.roll.getByDiceCount(this.dice);
   }
 }
 
 class TwoPairsStrategy implements CategoryScoreStrategy {
-  public calculate(play: Play): number {
-    return play.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
+  public calculate(play: PlayType): number {
+    return play.roll.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
   }
 }
 
@@ -108,8 +108,8 @@ class OfAKindScoreStrategy implements CategoryScoreStrategy {
     this.repetitions = repetitions;
   }
 
-  public calculate(play: Play): number {
-    return play.findHighestRepeatedDice(this.repetitions) * this.repetitions;
+  public calculate(play: PlayType): number {
+    return play.roll.findHighestRepeatedDice(this.repetitions) * this.repetitions;
   }
 }
 
@@ -119,8 +119,7 @@ class SpecialStrategy implements CategoryScoreStrategy {
   public constructor(score: number) {
     this.score = score;
   }
-
-  public calculate(_play: Play): number {
+  public calculate(play: PlayType): number {
     return this.score;
   }
 }
@@ -130,14 +129,14 @@ class PlayScoreStrategyFactory {
   private readonly ofAKindEquivalences = new OfAKindCategoryEquivalences();
   private readonly specialCategoryEquivalences = new SpecialCategoryEquivalences();
 
-  public byPlay(play: Play): CategoryScoreStrategy {
+  public byPlay(play: PlayType): CategoryScoreStrategy {
     const numberCategoryEquivalence = this.numberCategoryEquivalences.byPlay(play);
 
     if (numberCategoryEquivalence) {
       return new NumberStrategy(numberCategoryEquivalence);
     }
 
-    if (play.isOfCategory(new Category('TwoPairs'))) {
+    if (play.category.isEqual(new Category('TwoPairs'))) {
       return new TwoPairsStrategy();
     }
 
@@ -155,6 +154,7 @@ class PlayScoreStrategyFactory {
     throw new Error('Unknown category');
   }
 
+  //TODO: Implementar
   // public static create(play: Play): PlayScoreStrategyFactory {
   //   //Switch con categorías
   //   switch () {
@@ -165,7 +165,7 @@ class PlayScoreStrategyFactory {
 
 export type Dice = 1 | 2 | 3 | 4 | 5 | 6;
 
-class Roll {
+export class Roll {
   private readonly dices: Dice[];
 
   public constructor(
@@ -203,7 +203,7 @@ class Roll {
 
 export type PlayerType = string;
 
-class Player {
+export class Player {
   private readonly type: PlayerType;
 
   public constructor(type: PlayerType) {
@@ -215,69 +215,28 @@ class Player {
   }
 }
 
-//TODO: Evitemos este play - Middle man codesmell
-export class Play {
-  private readonly roll: Roll;
-  private readonly category: Category;
-  private readonly player: Player;
-
-  public constructor(roll: Roll, category: Category, player: Player) {
-    this.roll = roll;
-    this.category = category;
-    this.player = player;
-  }
-
-  public static fromPlayerCategoryAndRoll(
-    category: CategoryType,
-    roll: [Dice, Dice, Dice, Dice, Dice],
-    player: PlayerType,
-  ): Play {
-    return new Play(
-      new Roll(roll[0], roll[1], roll[2], roll[3], roll[4]),
-      new Category(category),
-      new Player(player),
-    );
-  }
-
-  public isOfCategory(otherCategory: Category): boolean {
-    return this.category.isEqual(otherCategory);
-  }
-
-  public sameCategoryAs(otherPlay: Play): boolean {
-    return this.category.isEqual(otherPlay.category);
-  }
-
-  public getByDiceCount(dice: Dice): number {
-    return this.roll.getByDiceCount(dice);
-  }
-
-  public findHighestRepeatedDice(repetitions: number): Dice {
-    return this.roll.findHighestRepeatedDice(repetitions);
-  }
-
-  public getTwoPairs(): [Dice, Dice] {
-    return this.roll.getTwoPairs();
-  }
-
-  public isPerformedByPlayer(player: PlayerType): boolean {
-    return this.player.isEqualType(player);
-  }
+interface PlayType {
+  roll: Roll;
+  category: Category;
+  player: Player;
 }
 
 //No me termina de convencer tener todas las jugadas de todos los jugadores en el mismo sitio
 // Se podría tener separado, esto es simplemente como lo he hecho pero es opinionated
 class Plays {
-  private readonly plays: Play[] = [];
+  private readonly plays: PlayType[] = [];
 
-  public addPlay(play: Play): void {
+  public addPlay(play: PlayType): void {
     this.plays.push(play);
   }
 
-  private getFirstPlayForEachCategory(): Play[] {
-    const uniquePlays: Play[] = [];
+  private getFirstPlayForEachCategory(): PlayType[] {
+    const uniquePlays: PlayType[] = [];
 
     for (const play of this.plays) {
-      const isCategoryAlreadyAdded = uniquePlays.some((p) => p.sameCategoryAs(play));
+      const isCategoryAlreadyAdded = uniquePlays.some((alreadyAddedPlay) =>
+        alreadyAddedPlay.category.isEqual(play.category),
+      );
 
       if (!isCategoryAlreadyAdded) {
         uniquePlays.push(play);
@@ -287,9 +246,9 @@ class Plays {
     return uniquePlays;
   }
 
-  //TODO: Que este método devuelva Play rompe la idea general de encapsular el tratamiento de jugadas aquí
-  public getFirstPlayForEachCategoryByPlayer(player: PlayerType): Play[] {
-    return this.getFirstPlayForEachCategory().filter((play) => play.isPerformedByPlayer(player));
+  //TODO: Que este método devuelva PlayType rompe la idea general de encapsular el tratamiento de jugadas aquí
+  public getFirstPlayForEachCategoryByPlayer(player: PlayerType): PlayType[] {
+    return this.getFirstPlayForEachCategory().filter((play) => play.player.isEqualType(player));
   }
 }
 
@@ -324,7 +283,7 @@ export class YahtzeeGame {
   private plays: Plays = new Plays();
   private endGameRules: EndGameRules = new EndGameRules();
 
-  public assignPlay(play: Play): void {
+  public assignPlay(play: PlayType): void {
     this.plays.addPlay(play);
   }
 
