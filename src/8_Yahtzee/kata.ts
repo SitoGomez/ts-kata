@@ -124,43 +124,54 @@ class SpecialStrategy implements CategoryScoreStrategy {
   }
 }
 
-class PlayScoreStrategyFactory {
+class ScoreStrategyFactory {
   private readonly numberCategoryEquivalences = new NumberCategoryEquivalences();
   private readonly ofAKindEquivalences = new OfAKindCategoryEquivalences();
   private readonly specialCategoryEquivalences = new SpecialCategoryEquivalences();
 
-  public byPlay(play: PlayType): CategoryScoreStrategy {
-    const numberCategoryEquivalence = this.numberCategoryEquivalences.byPlay(play);
+  private readonly numberCategories = [
+    new Category('Ones'),
+    new Category('Twos'),
+    new Category('Threes'),
+    new Category('Fours'),
+    new Category('Fives'),
+    new Category('Sixes'),
+  ];
 
-    if (numberCategoryEquivalence) {
-      return new NumberStrategy(numberCategoryEquivalence);
+  private readonly twoPairsCategory = new Category('TwoPairs');
+
+  private readonly ofAKindCategories = [
+    new Category('Pair'),
+    new Category('ThreeOfAKind'),
+    new Category('FourOfAKind'),
+  ];
+
+  private readonly specialCategories = [
+    new Category('SmallStraight'),
+    new Category('LargeStraight'),
+    new Category('FullHouse'),
+    new Category('Yahtzee'),
+  ];
+
+  public create(play: PlayType): CategoryScoreStrategy {
+    if (this.numberCategories.find((category) => play.category.isEqual(category))) {
+      return new NumberStrategy(this.numberCategoryEquivalences.byPlay(play)!);
     }
 
-    if (play.category.isEqual(new Category('TwoPairs'))) {
+    if (play.category.isEqual(this.twoPairsCategory)) {
       return new TwoPairsStrategy();
     }
 
-    const ofAKindEquivalence = this.ofAKindEquivalences.byPlay(play);
-    if (ofAKindEquivalence !== undefined) {
-      return new OfAKindScoreStrategy(ofAKindEquivalence);
+    if (this.ofAKindCategories.find((category) => play.category.isEqual(category))) {
+      return new OfAKindScoreStrategy(this.ofAKindEquivalences.byPlay(play)!);
     }
 
-    const specialCategoryEquivalence = this.specialCategoryEquivalences.byPlay(play);
-
-    if (specialCategoryEquivalence !== undefined) {
-      return new SpecialStrategy(specialCategoryEquivalence);
+    if (this.specialCategories.find((category) => play.category.isEqual(category))) {
+      return new SpecialStrategy(this.specialCategoryEquivalences.byPlay(play)!);
     }
 
     throw new Error('Unknown category');
   }
-
-  //TODO: Implementar
-  // public static create(play: Play): PlayScoreStrategyFactory {
-  //   //Switch con categorías
-  //   switch () {
-
-  //   }
-  // }
 }
 
 export type Dice = 1 | 2 | 3 | 4 | 5 | 6;
@@ -253,7 +264,7 @@ class Plays {
 }
 
 class PlaysScoreCalculator {
-  private readonly categoryScoreStrategyFactory = new PlayScoreStrategyFactory();
+  private readonly categoryScoreStrategyFactory = new ScoreStrategyFactory();
   private readonly plays: Plays;
 
   public constructor(plays: Plays) {
@@ -262,7 +273,7 @@ class PlaysScoreCalculator {
 
   public calculateByPlayer(player: PlayerType): number {
     return this.plays.getFirstPlayForEachCategoryByPlayer(player).reduce((totalScore, play) => {
-      const categoryScoreStrategy = this.categoryScoreStrategyFactory.byPlay(play);
+      const categoryScoreStrategy = this.categoryScoreStrategyFactory.create(play);
 
       return totalScore + categoryScoreStrategy.calculate(play);
     }, 0);
