@@ -31,9 +31,9 @@ class NumberCategoryEquivalences {
     [new Category('Sixes'), 6],
   ]);
 
-  public byPlay(play: PlayType): Dice | undefined {
+  public byCategory(category: Category): Dice | undefined {
     for (const [numberCategory, valueEquivalence] of this.equivalences) {
-      if (play.category.isEqual(numberCategory)) {
+      if (category.isEqual(numberCategory)) {
         return valueEquivalence;
       }
     }
@@ -49,9 +49,9 @@ class OfAKindCategoryEquivalences {
     [new Category('FourOfAKind'), 4],
   ]);
 
-  public byPlay(play: PlayType): number | undefined {
+  public byCategory(category: Category): number | undefined {
     for (const [ofAKindCategory, valueEquivalence] of this.equivalences) {
-      if (play.category.isEqual(ofAKindCategory)) {
+      if (category.isEqual(ofAKindCategory)) {
         return valueEquivalence;
       }
     }
@@ -68,9 +68,9 @@ class SpecialCategoryEquivalences {
     [new Category('Yahtzee'), 50],
   ]);
 
-  public byPlay(play: PlayType): number | undefined {
+  public byCategory(category: Category): number | undefined {
     for (const [specialCategory, valueEquivalence] of this.equivalences) {
-      if (play.category.isEqual(specialCategory)) {
+      if (category.isEqual(specialCategory)) {
         return valueEquivalence;
       }
     }
@@ -155,7 +155,7 @@ class ScoreStrategyFactory {
 
   public create(play: PlayType): CategoryScoreStrategy {
     if (this.numberCategories.find((category) => play.category.isEqual(category))) {
-      return new NumberStrategy(this.numberCategoryEquivalences.byPlay(play)!);
+      return new NumberStrategy(this.numberCategoryEquivalences.byCategory(play.category)!);
     }
 
     if (play.category.isEqual(this.twoPairsCategory)) {
@@ -163,11 +163,11 @@ class ScoreStrategyFactory {
     }
 
     if (this.ofAKindCategories.find((category) => play.category.isEqual(category))) {
-      return new OfAKindScoreStrategy(this.ofAKindEquivalences.byPlay(play)!);
+      return new OfAKindScoreStrategy(this.ofAKindEquivalences.byCategory(play.category)!);
     }
 
     if (this.specialCategories.find((category) => play.category.isEqual(category))) {
-      return new SpecialStrategy(this.specialCategoryEquivalences.byPlay(play)!);
+      return new SpecialStrategy(this.specialCategoryEquivalences.byCategory(play.category)!);
     }
 
     throw new Error('Unknown category');
