@@ -155,12 +155,12 @@ class PlayScoreStrategyFactory {
     throw new Error('Unknown category');
   }
 
-  public static create(play: Play): PlayScoreStrategyFactory {
-    //Switch con categorías
-    switch () {
+  // public static create(play: Play): PlayScoreStrategyFactory {
+  //   //Switch con categorías
+  //   switch () {
 
-    }
-  }
+  //   }
+  // }
 }
 
 export type Dice = 1 | 2 | 3 | 4 | 5 | 6;
