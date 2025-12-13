@@ -485,6 +485,57 @@ describe('Yahtzee', () => {
     },
   );
 
+  describe.each([
+    {
+      roll: [2, 3, 4, 5, 6],
+      category: 'Ones',
+      player: 'One',
+    },
+    {
+      roll: [1, 3, 4, 5, 6],
+      category: 'Twos',
+      player: 'One',
+    },
+    {
+      roll: [1, 2, 4, 5, 6],
+      category: 'Threes',
+      player: 'One',
+    },
+    {
+      roll: [1, 2, 3, 5, 6],
+      category: 'Fours',
+      player: 'One',
+    },
+    {
+      roll: [1, 2, 3, 4, 6],
+      category: 'Fives',
+      player: 'One',
+    },
+    {
+      roll: [1, 2, 3, 4, 5],
+      category: 'Sixes',
+      player: 'One',
+    },
+  ])('Given an invalid assigment to $category with $roll', ({ roll, category, player }) => {
+    it(`then the score should be 0`, () => {
+      const INVALID_ASSIGNMENT_SCORE = 0;
+
+      const yahtzeeGame = new YahtzeeGame();
+
+      yahtzeeGame.assignPlay(
+        Play.fromPlayerCategoryAndRoll(
+          category as CategoryType,
+          roll as [Dice, Dice, Dice, Dice, Dice],
+          player,
+        ),
+      );
+
+      const score = yahtzeeGame.getScoreByPlayer(player);
+
+      expect(score).toBe(INVALID_ASSIGNMENT_SCORE);
+    });
+  });
+
   //TODO
   describe.skip('When a player tries to assign the same category twice', () => {
     it('then should fail since its not allowed', () => {
