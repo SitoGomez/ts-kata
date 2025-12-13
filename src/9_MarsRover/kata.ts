@@ -1,6 +1,9 @@
-export class Rover {
-  //TODO: Extract first class
-  private readonly directions = new Map<string, string>([
+type Direction = 'N' | 'E' | 'S' | 'W';
+type RotationDirection = 'R' | 'L';
+type RotationMovement = `${Direction}${RotationDirection}`;
+
+class RotationMechanism {
+  private readonly rotationMapping = new Map<RotationMovement, Direction>([
     ['NR', 'E'],
     ['NL', 'W'],
     ['ER', 'S'],
@@ -11,26 +14,66 @@ export class Rover {
     ['WL', 'S'],
   ]);
 
-  //TODO: Split S - SOLID
-  public execute(input: string): string {
-    const [_plateau, position, inputCommands] = input.split('\n');
+  public calculateNewDirection(
+    startingDirection: Direction,
+    rotationMovement: RotationDirection,
+  ): Direction {
+    const key: RotationMovement = `${startingDirection}${rotationMovement}`;
 
-    const [x, y, startingDirection] = position.split(' ');
-    const originalDirection = startingDirection;
+    return this.rotationMapping.get(key)!;
+  }
+}
+
+export class CommandParser {
+  public parse(input: string): {
+    plateau: string;
+    position: string;
+    startingX: string;
+    startingY: string;
+    startingDirection: string;
+    commands: string;
+    command: string;
+  } {
+    const [plateau, position, inputCommands] = input.split('\n');
+
+    const [x, y, originalDirection] = position.split(' ');
     const command = inputCommands?.split('')[0];
 
-    if (!inputCommands) {
-      return position!;
+    return {
+      plateau,
+      position,
+      startingX: x,
+      startingY: y,
+      startingDirection: originalDirection!,
+      commands: inputCommands!,
+      command: command!,
+    };
+  }
+}
+
+export class Rover {
+  private readonly commanParser = new CommandParser();
+  private readonly rotationMechanism = new RotationMechanism();
+
+  public execute(input: string): string {
+    const { position, plateau, startingX, startingY, startingDirection, commands, command } =
+      this.commanParser.parse(input);
+
+    if (!commands) {
+      return position;
     }
 
-    const key = originalDirection! + command!;
+    const anotherFinalDirection = this.rotationMechanism.calculateNewDirection(
+      startingDirection as Direction,
+      command as RotationDirection,
+    );
 
-    const finalDirection = this.directions.get(key)!;
-
-    if (inputCommands?.length > 1) {
-      return this.execute(`${_plateau}\n${x} ${y} ${finalDirection}\n${inputCommands?.slice(1)}`);
+    if (commands?.length > 1) {
+      return this.execute(
+        `${plateau}\n${startingX} ${startingY} ${anotherFinalDirection}\n${commands?.slice(1)}`,
+      );
     }
 
-    return `${x} ${y} ${finalDirection}`;
+    return `${startingX} ${startingY} ${anotherFinalDirection}`;
   }
 }
