@@ -155,6 +155,13 @@ class PlayScoreStrategyFactory {
 
     throw new Error('Unknown category');
   }
+
+  public static create(play: Play): PlayScoreStrategyFactory {
+    //Switch con categorías
+    switch () {
+
+    }
+  }
 }
 
 export type Dice = 1 | 2 | 3 | 4 | 5 | 6;
@@ -208,6 +215,8 @@ class Player {
     return this.type === type;
   }
 }
+
+//TODO: Evitemos este play - Middle man codesmell
 
 export class Play {
   private readonly roll: Roll;
@@ -279,7 +288,7 @@ class Plays {
     return uniquePlays;
   }
 
-  //No sé si que este método devuelva Play rompe la idea general de encapsular el tratamiento de jugadas aquí
+  //TODO: No sé si que este método devuelva Play rompe la idea general de encapsular el tratamiento de jugadas aquí
   public getFirstPlayForEachCategoryByPlayer(player: PlayerType): Play[] {
     return this.getFirstPlayForEachCategory().filter((play) => play.isPerformedByPlayer(player));
   }
@@ -302,8 +311,10 @@ class PlaysScoreCalculator {
   }
 }
 
+//TODO: Todos los jugadores tienen que haber terminado sus jugadas
+// Plays o aquí
 class EndGameRules {
-  //Este número no me gusta tenerlo "hardcodeado" aquí
+  //Este número no me gusta tenerlo "hardcodeado" aquí -> esto ok
   private readonly TOTAL_CATEGORIES = 14;
 
   //TODO
