@@ -605,7 +605,7 @@ describe('Yahtzee', () => {
     });
   });
 
-  describe('When all the categories have been assigned by all the players', () => {
+  describe('When all the plays have been performed by all the players', () => {
     it('then the game is finished', () => {
       const yahtzeeGame = new YahtzeeGame();
 
@@ -758,36 +758,149 @@ describe('Yahtzee', () => {
     });
   });
 
-  //TODO
-  describe.skip('When not all the categories have been assigned by one player', () => {
-    it('then the game is not finished', () => {
+  describe('When NOT all the plays have been performed by all players', () => {
+    it('then the game is NOT finished', () => {
       const yahtzeeGame = new YahtzeeGame();
 
-      const player = 'One';
-      const playerTwo = 'Two';
+      const firstPlayer = 'One';
+      const secondPlayer = 'Two';
 
-      yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('Ones', [1, 1, 1, 1, 1], player));
-      yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('Twos', [2, 2, 2, 2, 2], player));
-      yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('Threes', [3, 3, 3, 3, 3], player));
-      yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('Fours', [4, 4, 4, 4, 4], player));
-      yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('Fives', [5, 5, 5, 5, 5], player));
-      yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('Sixes', [6, 6, 6, 6, 6], player));
-      yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('Pair', [6, 6, 2, 3, 4], player));
-      yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('TwoPairs', [5, 5, 6, 6, 4], player));
-      yahtzeeGame.assignPlay(
-        Play.fromPlayerCategoryAndRoll('ThreeOfAKind', [3, 3, 3, 2, 4], player),
-      );
-      yahtzeeGame.assignPlay(
-        Play.fromPlayerCategoryAndRoll('FourOfAKind', [4, 4, 4, 4, 1], player),
-      );
-      yahtzeeGame.assignPlay(
-        Play.fromPlayerCategoryAndRoll('SmallStraight', [1, 2, 3, 4, 5], player),
-      );
-      yahtzeeGame.assignPlay(
-        Play.fromPlayerCategoryAndRoll('LargeStraight', [2, 3, 4, 5, 6], player),
-      );
-      yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('FullHouse', [5, 5, 5, 6, 6], player));
-      yahtzeeGame.assignPlay(Play.fromPlayerCategoryAndRoll('Yahtzee', [6, 6, 6, 6, 6], playerTwo));
+      yahtzeeGame.assignPlay({
+        category: new Category('Ones'),
+        roll: new Roll(1, 1, 1, 1, 1),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Twos'),
+        roll: new Roll(2, 2, 2, 2, 2),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Threes'),
+        roll: new Roll(3, 3, 3, 3, 3),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Fours'),
+        roll: new Roll(4, 4, 4, 4, 4),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Fives'),
+        roll: new Roll(5, 5, 5, 5, 5),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Sixes'),
+        roll: new Roll(6, 6, 6, 6, 6),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Pair'),
+        roll: new Roll(6, 6, 2, 3, 4),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('TwoPairs'),
+        roll: new Roll(5, 5, 6, 6, 4),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('ThreeOfAKind'),
+        roll: new Roll(3, 3, 3, 2, 4),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('FourOfAKind'),
+        roll: new Roll(4, 4, 4, 4, 1),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('SmallStraight'),
+        roll: new Roll(1, 2, 3, 4, 5),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('LargeStraight'),
+        roll: new Roll(2, 3, 4, 5, 6),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('FullHouse'),
+        roll: new Roll(5, 5, 5, 6, 6),
+        player: new Player(firstPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Yahtzee'),
+        roll: new Roll(6, 6, 6, 6, 6),
+        player: new Player(firstPlayer),
+      });
+
+      yahtzeeGame.assignPlay({
+        category: new Category('Ones'),
+        roll: new Roll(1, 1, 2, 3, 6),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Twos'),
+        roll: new Roll(2, 2, 3, 4, 5),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Threes'),
+        roll: new Roll(3, 3, 4, 5, 6),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Fours'),
+        roll: new Roll(4, 4, 5, 6, 1),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Fives'),
+        roll: new Roll(5, 5, 6, 1, 2),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Sixes'),
+        roll: new Roll(6, 6, 1, 2, 3),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('Pair'),
+        roll: new Roll(5, 5, 2, 3, 4),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('TwoPairs'),
+        roll: new Roll(4, 4, 3, 3, 6),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('ThreeOfAKind'),
+        roll: new Roll(2, 2, 2, 4, 5),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('FourOfAKind'),
+        roll: new Roll(3, 3, 3, 3, 2),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('SmallStraight'),
+        roll: new Roll(1, 2, 3, 4, 5),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('LargeStraight'),
+        roll: new Roll(2, 3, 4, 5, 6),
+        player: new Player(secondPlayer),
+      });
+      yahtzeeGame.assignPlay({
+        category: new Category('FullHouse'),
+        roll: new Roll(4, 4, 4, 5, 5),
+        player: new Player(secondPlayer),
+      });
 
       expect(yahtzeeGame.isFinished()).toBe(false);
     });
