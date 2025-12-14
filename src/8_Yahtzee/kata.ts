@@ -97,7 +97,16 @@ class NumberStrategy implements CategoryScoreStrategy {
 
 class TwoPairsStrategy implements CategoryScoreStrategy {
   public calculate(play: PlayType): number {
-    return play.roll.getTwoPairs().reduce((sum, pair) => sum + pair * 2, 0);
+    const INVALID_ASSIGNMENT_SCORE = 0;
+    const DUPLICATE_MULTIPLIER = 2;
+
+    const uniqueRepeatedNumbers = play.roll.getTwoPairs();
+
+    if (uniqueRepeatedNumbers.length < 2) {
+      return INVALID_ASSIGNMENT_SCORE;
+    }
+
+    return play.roll.getTwoPairs().reduce((sum, pair) => sum + pair * DUPLICATE_MULTIPLIER, 0);
   }
 }
 
@@ -109,7 +118,14 @@ class OfAKindScoreStrategy implements CategoryScoreStrategy {
   }
 
   public calculate(play: PlayType): number {
-    return play.roll.findHighestRepeatedDice(this.repetitions) * this.repetitions;
+    const INVALID_ASSIGNMENT_SCORE = 0;
+    const highestRepeatedDice = play.roll.findHighestRepeatedDice(this.repetitions);
+
+    if (!highestRepeatedDice) {
+      return INVALID_ASSIGNMENT_SCORE;
+    }
+
+    return highestRepeatedDice * this.repetitions;
   }
 }
 
@@ -120,6 +136,21 @@ class SpecialStrategy implements CategoryScoreStrategy {
     this.score = score;
   }
   public calculate(play: PlayType): number {
+    const INVALID_ASSIGNMENT_SCORE = 0;
+
+    if (play.category.isEqual(new Category('SmallStraight')) && !play.roll.isSmallStraight()) {
+      return INVALID_ASSIGNMENT_SCORE;
+    }
+    if (play.category.isEqual(new Category('LargeStraight')) && !play.roll.isLargeStraight()) {
+      return INVALID_ASSIGNMENT_SCORE;
+    }
+    if (play.category.isEqual(new Category('FullHouse')) && !play.roll.isFullHouse()) {
+      return INVALID_ASSIGNMENT_SCORE;
+    }
+    if (play.category.isEqual(new Category('Yahtzee')) && !play.roll.isYahtzee()) {
+      return INVALID_ASSIGNMENT_SCORE;
+    }
+
     return this.score;
   }
 }
@@ -193,22 +224,75 @@ export class Roll {
     return this.dices.filter((d) => d === dice).length;
   }
 
-  public findHighestRepeatedDice(repetitions: number): Dice {
-    const uniqueRepeatedDice = new Set(
-      this.dices.filter((dice, index) => this.dices.indexOf(dice) !== index),
+  public findHighestRepeatedDice(repetitions: number): Dice | undefined {
+    const uniqueRepeatedDice = this.dices.filter(
+      (dice, index) => this.dices.indexOf(dice) !== index,
     );
 
-    const matchedDiceWithRepetitions = Array.from(uniqueRepeatedDice).filter((dice) => {
+    if (uniqueRepeatedDice.length === 0) return undefined;
+
+    const setOfUniqueRepeatedDice = new Set(uniqueRepeatedDice);
+
+    const matchedDiceWithRepetitions = Array.from(setOfUniqueRepeatedDice).filter((dice) => {
       return this.dices.filter((n) => n === dice).length === repetitions;
     });
 
     return Math.max(...matchedDiceWithRepetitions) as Dice;
   }
 
-  public getTwoPairs(): [Dice, Dice] {
+  public getTwoPairs(): Dice[] {
     const duplicates = this.dices.filter((dice, index) => this.dices.indexOf(dice) !== index);
 
-    return duplicates as [Dice, Dice];
+    return duplicates;
+  }
+
+  private isEqual(roll: Roll): boolean {
+    const rollSet = new Set(this.dices);
+    const otherRollSet = new Set(roll.dices);
+
+    if (rollSet.size !== otherRollSet.size) {
+      return false;
+    }
+
+    for (const dice of rollSet) {
+      if (!otherRollSet.has(dice)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  public isSmallStraight(): boolean {
+    const smallStraightSet = new Roll(1, 2, 3, 4, 5);
+
+    return this.isEqual(smallStraightSet);
+  }
+
+  public isLargeStraight(): boolean {
+    const largeStraightSet = new Roll(2, 3, 4, 5, 6);
+
+    return this.isEqual(largeStraightSet);
+  }
+
+  public isFullHouse(): boolean {
+    const TREE_OF_A_KIND_COUNT = 3;
+    const PAIR_COUNT = 2;
+    const counts = new Map<Dice, number>();
+
+    for (const dice of this.dices) {
+      counts.set(dice, (counts.get(dice) ?? 0) + 1);
+    }
+
+    const values = Array.from(counts.values());
+
+    return values.includes(TREE_OF_A_KIND_COUNT) && values.includes(PAIR_COUNT);
+  }
+
+  public isYahtzee(): boolean {
+    const [firstDice] = this.dices;
+
+    return this.dices.every((dice) => dice === firstDice);
   }
 }
 

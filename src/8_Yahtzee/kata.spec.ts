@@ -478,14 +478,6 @@ describe('Yahtzee', () => {
       it(`then the score should be ${expectedScore}`, () => {
         const yahtzeeGame = new YahtzeeGame();
 
-        // yahtzeeGame.assignPlay(
-        //   Play.fromPlayerCategoryAndRoll(
-        //     category as CategoryType,
-        //     roll as [Dice, Dice, Dice, Dice, Dice],
-        //     player,
-        //   ),
-        // );
-
         yahtzeeGame.assignPlay({
           category: new Category(category as CategoryType),
           roll: new Roll(...(roll as [Dice, Dice, Dice, Dice, Dice])),
@@ -528,6 +520,48 @@ describe('Yahtzee', () => {
     {
       roll: [1, 2, 3, 4, 5],
       category: 'Sixes',
+      player: 'One',
+    },
+    {
+      roll: [1, 2, 3, 4, 5],
+      category: 'Pair',
+      player: 'One',
+    },
+    {
+      roll: [2, 3, 4, 5, 6],
+      category: 'ThreeOfAKind',
+      player: 'One',
+      expectedScore: 18,
+    },
+    {
+      roll: [1, 2, 3, 4, 5],
+      category: 'FourOfAKind',
+      player: 'One',
+      expectedScore: 4,
+    },
+    {
+      roll: [1, 2, 2, 4, 5],
+      category: 'TwoPairs',
+      player: 'One',
+    },
+    {
+      roll: [1, 2, 3, 4, 6],
+      category: 'SmallStraight',
+      player: 'One',
+    },
+    {
+      roll: [1, 2, 3, 4, 5],
+      category: 'LargeStraight',
+      player: 'One',
+    },
+    {
+      roll: [3, 1, 2, 6, 3],
+      category: 'FullHouse',
+      player: 'One',
+    },
+    {
+      roll: [2, 1, 3, 2, 2],
+      category: 'Yahtzee',
       player: 'One',
     },
   ])('Given an invalid assigment to $category with $roll', ({ roll, category, player }) => {
