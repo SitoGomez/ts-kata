@@ -362,6 +362,38 @@ class Plays {
   public getFirstPlayForEachCategoryByPlayer(player: PlayerType): PlayType[] {
     return this.getFirstPlayForEachCategory().filter((play) => play.player.isEqualType(player));
   }
+
+  public allPlayersHaveFinished(): boolean {
+    const MAX_DIFFERENT_PLAYS_COUNT_PER_PLAYER = 14;
+
+    const test: {
+      player: Player;
+      count: number;
+    }[] = [];
+
+    for (const play of this.plays) {
+      const playerAlreadyRegistered = test.some((playerPlaysCount) =>
+        playerPlaysCount.player.isEqual(play.player),
+      );
+
+      if (!playerAlreadyRegistered) {
+        test.push({ player: play.player, count: 1 });
+        continue;
+      }
+
+      if (playerAlreadyRegistered) {
+        const playerPlaysCount = test.find((playerPlaysCount) =>
+          playerPlaysCount.player.isEqual(play.player),
+        )!;
+        playerPlaysCount.count += 1;
+        continue;
+      }
+    }
+
+    return test.every(
+      (playerPlaysCount) => playerPlaysCount.count === MAX_DIFFERENT_PLAYS_COUNT_PER_PLAYER,
+    );
+  }
 }
 
 class PlaysScoreCalculator {
@@ -381,26 +413,15 @@ class PlaysScoreCalculator {
   }
 }
 
-//TODO: Todos los jugadores tienen que haber terminado sus jugadas
-// Realmente necesitamos esta clase? Podría estar en Plays o aquí - Pensar
-class EndGameRules {
-  //Este número no me gusta tenerlo "hardcodeado" aquí -> esto es ok -> connaisance of value
-  private readonly TOTAL_CATEGORIES = 14;
-
-  //TODO: ?
-  public isFinished(plays: Plays): boolean {}
-}
-
 export class YahtzeeGame {
   private plays: Plays = new Plays();
-  private endGameRules: EndGameRules = new EndGameRules();
 
   public assignPlay(play: PlayType): void {
     this.plays.addPlay(play);
   }
 
   public isFinished(): boolean {
-    return this.endGameRules.isFinished(this.plays);
+    return this.plays.allPlayersHaveFinished();
   }
 
   public getScoreByPlayer(player: PlayerType): number {
