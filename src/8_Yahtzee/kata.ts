@@ -366,31 +366,31 @@ class Plays {
   public allPlayersHaveFinished(): boolean {
     const MAX_DIFFERENT_PLAYS_COUNT_PER_PLAYER = 14;
 
-    const test: {
+    const playerPlaysCount: {
       player: Player;
       count: number;
     }[] = [];
 
     for (const play of this.plays) {
-      const playerAlreadyRegistered = test.some((playerPlaysCount) =>
+      const playerAlreadyRegistered = playerPlaysCount.some((playerPlaysCount) =>
         playerPlaysCount.player.isEqual(play.player),
       );
 
       if (!playerAlreadyRegistered) {
-        test.push({ player: play.player, count: 1 });
+        playerPlaysCount.push({ player: play.player, count: 1 });
         continue;
       }
 
       if (playerAlreadyRegistered) {
-        const playerPlaysCount = test.find((playerPlaysCount) =>
+        const existingPlayerPlaysCount = playerPlaysCount.find((playerPlaysCount) =>
           playerPlaysCount.player.isEqual(play.player),
         )!;
-        playerPlaysCount.count += 1;
+        existingPlayerPlaysCount.count += 1;
         continue;
       }
     }
 
-    return test.every(
+    return playerPlaysCount.every(
       (playerPlaysCount) => playerPlaysCount.count === MAX_DIFFERENT_PLAYS_COUNT_PER_PLAYER,
     );
   }
