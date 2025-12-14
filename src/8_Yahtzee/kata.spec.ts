@@ -1,4 +1,12 @@
-import { Category, CategoryType, Dice, Player, Roll, YahtzeeGame } from './kata';
+import {
+  Category,
+  CategoryAlreadyAssignedError,
+  CategoryType,
+  Dice,
+  Player,
+  Roll,
+  YahtzeeGame,
+} from './kata';
 
 describe('Yahtzee', () => {
   describe.each([
@@ -540,22 +548,26 @@ describe('Yahtzee', () => {
     });
   });
 
-  //TODO
-  describe.skip('When a player tries to assign the same category twice', () => {
-    it('then should fail since its not allowed', () => {
+  describe('When a player tries to assign the same category twice', () => {
+    it('then should fail', () => {
       const yahtzeeGame = new YahtzeeGame();
 
       const player = 'One';
 
-      const firstPlay = Play.fromPlayerCategoryAndRoll('Ones', [1, 1, 2, 3, 4], player);
-      const secondPlay = Play.fromPlayerCategoryAndRoll('Ones', [1, 1, 1, 1, 1], player);
+      const firstPlay = {
+        category: new Category('Ones'),
+        roll: new Roll(1, 1, 2, 4, 5),
+        player: new Player(player),
+      };
+
+      const secondPlay = {
+        category: new Category('Ones'),
+        roll: new Roll(1, 1, 1, 4, 5),
+        player: new Player(player),
+      };
 
       yahtzeeGame.assignPlay(firstPlay);
-      yahtzeeGame.assignPlay(secondPlay);
-
-      const score = yahtzeeGame.getScoreByPlayer(player);
-
-      expect(score).toBe(2);
+      expect(() => yahtzeeGame.assignPlay(secondPlay)).toThrow(CategoryAlreadyAssignedError);
     });
   });
 

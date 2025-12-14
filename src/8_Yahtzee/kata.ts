@@ -224,6 +224,10 @@ export class Player {
   public isEqualType(type: PlayerType): boolean {
     return this.type === type;
   }
+
+  public isEqual(player: Player): boolean {
+    return this.type === player.type;
+  }
 }
 
 interface PlayType {
@@ -238,7 +242,20 @@ class Plays {
   private readonly plays: PlayType[] = [];
 
   public addPlay(play: PlayType): void {
+    this.guardPlayIsValid(play);
+
     this.plays.push(play);
+  }
+
+  private guardPlayIsValid(play: PlayType) {
+    for (const existingPlay of this.plays) {
+      if (
+        existingPlay.player.isEqual(play.player) &&
+        existingPlay.category.isEqual(play.category)
+      ) {
+        throw new CategoryAlreadyAssignedError();
+      }
+    }
   }
 
   private getFirstPlayForEachCategory(): PlayType[] {
@@ -304,5 +321,12 @@ export class YahtzeeGame {
 
   public getScoreByPlayer(player: PlayerType): number {
     return new PlaysScoreCalculator(this.plays).calculateByPlayer(player);
+  }
+}
+
+export class CategoryAlreadyAssignedError extends Error {
+  public constructor() {
+    super(`Category has already been assigned.`);
+    this.name = 'CategoryAlreadyAssignedError';
   }
 }
