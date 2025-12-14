@@ -184,6 +184,7 @@ class ScoreStrategyFactory {
     new Category('Yahtzee'),
   ];
 
+  //TODO: Al recibir play estoy rompiendo la encapsulación que sucede en Plays
   public create(play: PlayType): CategoryScoreStrategy {
     if (this.numberCategories.find((category) => play.category.isEqual(category))) {
       return new NumberStrategy(this.numberCategoryEquivalences.byCategory(play.category)!);
@@ -276,7 +277,7 @@ export class Roll {
   }
 
   public isFullHouse(): boolean {
-    const TREE_OF_A_KIND_COUNT = 3;
+    const THREE_OF_A_KIND_COUNT = 3;
     const PAIR_COUNT = 2;
     const counts = new Map<Dice, number>();
 
@@ -286,7 +287,7 @@ export class Roll {
 
     const values = Array.from(counts.values());
 
-    return values.includes(TREE_OF_A_KIND_COUNT) && values.includes(PAIR_COUNT);
+    return values.includes(THREE_OF_A_KIND_COUNT) && values.includes(PAIR_COUNT);
   }
 
   public isYahtzee(): boolean {
@@ -305,10 +306,6 @@ export class Player {
     this.type = type;
   }
 
-  public isEqualType(type: PlayerType): boolean {
-    return this.type === type;
-  }
-
   public isEqual(player: Player): boolean {
     return this.type === player.type;
   }
@@ -324,6 +321,7 @@ interface PlayType {
 // Se podría tener separado, esto es simplemente como lo he hecho pero es opinionated
 class Plays {
   private readonly plays: PlayType[] = [];
+  private readonly categoryScoreStrategyFactory = new ScoreStrategyFactory();
 
   public addPlay(play: PlayType): void {
     this.guardPlayIsValid(play);
@@ -340,27 +338,6 @@ class Plays {
         throw new CategoryAlreadyAssignedError();
       }
     }
-  }
-
-  private getFirstPlayForEachCategory(): PlayType[] {
-    const uniquePlays: PlayType[] = [];
-
-    for (const play of this.plays) {
-      const isCategoryAlreadyAdded = uniquePlays.some((alreadyAddedPlay) =>
-        alreadyAddedPlay.category.isEqual(play.category),
-      );
-
-      if (!isCategoryAlreadyAdded) {
-        uniquePlays.push(play);
-      }
-    }
-
-    return uniquePlays;
-  }
-
-  //TODO: Que este método devuelva PlayType rompe la idea general de encapsular el tratamiento de jugadas aquí
-  public getFirstPlayForEachCategoryByPlayer(player: PlayerType): PlayType[] {
-    return this.getFirstPlayForEachCategory().filter((play) => play.player.isEqualType(player));
   }
 
   public allPlayersHaveFinished(): boolean {
@@ -394,18 +371,10 @@ class Plays {
       (playerPlaysCount) => playerPlaysCount.count === MAX_DIFFERENT_PLAYS_COUNT_PER_PLAYER,
     );
   }
-}
 
-class PlaysScoreCalculator {
-  private readonly categoryScoreStrategyFactory = new ScoreStrategyFactory();
-  private readonly plays: Plays;
-
-  public constructor(plays: Plays) {
-    this.plays = plays;
-  }
-
-  public calculateByPlayer(player: PlayerType): number {
-    return this.plays.getFirstPlayForEachCategoryByPlayer(player).reduce((totalScore, play) => {
+  public getScoreByPlayer(player: Player): number {
+    const playsByPlayer = this.plays.filter((play) => play.player.isEqual(player));
+    return playsByPlayer.reduce((totalScore, play) => {
       const categoryScoreStrategy = this.categoryScoreStrategyFactory.create(play);
 
       return totalScore + categoryScoreStrategy.calculate(play);
@@ -424,8 +393,8 @@ export class YahtzeeGame {
     return this.plays.allPlayersHaveFinished();
   }
 
-  public getScoreByPlayer(player: PlayerType): number {
-    return new PlaysScoreCalculator(this.plays).calculateByPlayer(player);
+  public getScoreByPlayer(player: Player): number {
+    return this.plays.getScoreByPlayer(player);
   }
 }
 

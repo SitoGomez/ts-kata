@@ -478,13 +478,15 @@ describe('Yahtzee', () => {
       it(`then the score should be ${expectedScore}`, () => {
         const yahtzeeGame = new YahtzeeGame();
 
+        const playerOne = new Player(player);
+
         yahtzeeGame.assignPlay({
           category: new Category(category as CategoryType),
           roll: new Roll(...(roll as [Dice, Dice, Dice, Dice, Dice])),
-          player: new Player(player),
+          player: playerOne,
         });
 
-        const score = yahtzeeGame.getScoreByPlayer(player);
+        const score = yahtzeeGame.getScoreByPlayer(playerOne);
 
         expect(score).toBe(expectedScore);
       });
@@ -570,13 +572,15 @@ describe('Yahtzee', () => {
 
       const yahtzeeGame = new YahtzeeGame();
 
+      const playerOne = new Player(player);
+
       yahtzeeGame.assignPlay({
         category: new Category(category as CategoryType),
         roll: new Roll(...(roll as [Dice, Dice, Dice, Dice, Dice])),
-        player: new Player(player),
+        player: playerOne,
       });
 
-      const score = yahtzeeGame.getScoreByPlayer(player);
+      const score = yahtzeeGame.getScoreByPlayer(playerOne);
 
       expect(score).toBe(INVALID_ASSIGNMENT_SCORE);
     });
@@ -910,31 +914,31 @@ describe('Yahtzee', () => {
     it('then their scores should be different', () => {
       const yahtzeeGame = new YahtzeeGame();
 
-      const playerOne = 'One';
-      const playerTwo = 'Two';
+      const playerOne = new Player('One');
+      const playerTwo = new Player('Two');
 
       const playerOnePlay = {
         category: new Category('Ones'),
         roll: new Roll(1, 1, 2, 4, 5),
-        player: new Player(playerOne),
+        player: playerOne,
       };
 
       const playerOneSecondPlay = {
         category: new Category('FullHouse'),
         roll: new Roll(5, 5, 5, 3, 3),
-        player: new Player(playerOne),
+        player: playerOne,
       };
 
       const playerTwoPlay = {
         category: new Category('LargeStraight'),
         roll: new Roll(2, 3, 4, 5, 6),
-        player: new Player(playerTwo),
+        player: playerTwo,
       };
 
       const playerTwoSecondPlay = {
         category: new Category('Sixes'),
         roll: new Roll(6, 6, 6, 2, 1),
-        player: new Player(playerTwo),
+        player: playerTwo,
       };
 
       yahtzeeGame.assignPlay(playerOneSecondPlay);
