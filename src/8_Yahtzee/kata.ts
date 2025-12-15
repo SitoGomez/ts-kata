@@ -60,25 +60,6 @@ class OfAKindCategoryEquivalences {
   }
 }
 
-class SpecialCategoryEquivalences {
-  private readonly equivalences = new Map<Category, number>([
-    [new Category('SmallStraight'), 15],
-    [new Category('LargeStraight'), 20],
-    [new Category('FullHouse'), 25],
-    [new Category('Yahtzee'), 50],
-  ]);
-
-  public byCategory(category: Category): number | undefined {
-    for (const [specialCategory, valueEquivalence] of this.equivalences) {
-      if (category.isEqual(specialCategory)) {
-        return valueEquivalence;
-      }
-    }
-
-    return undefined;
-  }
-}
-
 interface CategoryScoreStrategy {
   calculate(play: PlayType): number;
 }
@@ -129,36 +110,61 @@ class OfAKindScoreStrategy implements CategoryScoreStrategy {
   }
 }
 
-class SpecialStrategy implements CategoryScoreStrategy {
-  private readonly score: number;
-
-  public constructor(score: number) {
-    this.score = score;
-  }
+class SmallStraightStrategy implements CategoryScoreStrategy {
   public calculate(play: PlayType): number {
+    const SMALL_STRAIGHT_SCORE = 15;
     const INVALID_ASSIGNMENT_SCORE = 0;
 
-    if (play.category.isEqual(new Category('SmallStraight')) && !play.roll.isSmallStraight()) {
-      return INVALID_ASSIGNMENT_SCORE;
-    }
-    if (play.category.isEqual(new Category('LargeStraight')) && !play.roll.isLargeStraight()) {
-      return INVALID_ASSIGNMENT_SCORE;
-    }
-    if (play.category.isEqual(new Category('FullHouse')) && !play.roll.isFullHouse()) {
-      return INVALID_ASSIGNMENT_SCORE;
-    }
-    if (play.category.isEqual(new Category('Yahtzee')) && !play.roll.isYahtzee()) {
-      return INVALID_ASSIGNMENT_SCORE;
+    if (play.roll.isSmallStraight()) {
+      return SMALL_STRAIGHT_SCORE;
     }
 
-    return this.score;
+    return INVALID_ASSIGNMENT_SCORE;
+  }
+}
+
+class LargeStraightStrategy implements CategoryScoreStrategy {
+  public calculate(play: PlayType): number {
+    const LARGE_STRAIGHT_SCORE = 20;
+    const INVALID_ASSIGNMENT_SCORE = 0;
+
+    if (play.roll.isLargeStraight()) {
+      return LARGE_STRAIGHT_SCORE;
+    }
+
+    return INVALID_ASSIGNMENT_SCORE;
+  }
+}
+
+class FullHouseStrategy implements CategoryScoreStrategy {
+  public calculate(play: PlayType): number {
+    const FULL_HOUSE_SCORE = 25;
+    const INVALID_ASSIGNMENT_SCORE = 0;
+
+    if (play.roll.isFullHouse()) {
+      return FULL_HOUSE_SCORE;
+    }
+
+    return INVALID_ASSIGNMENT_SCORE;
+  }
+}
+
+class YahtzeeStrategy implements CategoryScoreStrategy {
+  public calculate(play: PlayType): number {
+    const YAHTZEE_SCORE = 50;
+    const INVALID_ASSIGNMENT_SCORE = 0;
+
+    if (play.roll.isYahtzee()) {
+      return YAHTZEE_SCORE;
+    }
+
+    return INVALID_ASSIGNMENT_SCORE;
   }
 }
 
 class ScoreStrategyFactory {
   private readonly numberCategoryEquivalences = new NumberCategoryEquivalences();
   private readonly ofAKindEquivalences = new OfAKindCategoryEquivalences();
-  private readonly specialCategoryEquivalences = new SpecialCategoryEquivalences();
 
   private readonly numberCategories = [
     new Category('Ones'),
@@ -169,19 +175,10 @@ class ScoreStrategyFactory {
     new Category('Sixes'),
   ];
 
-  private readonly twoPairsCategory = new Category('TwoPairs');
-
   private readonly ofAKindCategories = [
     new Category('Pair'),
     new Category('ThreeOfAKind'),
     new Category('FourOfAKind'),
-  ];
-
-  private readonly specialCategories = [
-    new Category('SmallStraight'),
-    new Category('LargeStraight'),
-    new Category('FullHouse'),
-    new Category('Yahtzee'),
   ];
 
   //TODO: Al recibir play estoy rompiendo la encapsulación que sucede en Plays
@@ -190,7 +187,7 @@ class ScoreStrategyFactory {
       return new NumberStrategy(this.numberCategoryEquivalences.byCategory(play.category)!);
     }
 
-    if (play.category.isEqual(this.twoPairsCategory)) {
+    if (play.category.isEqual(new Category('TwoPairs'))) {
       return new TwoPairsStrategy();
     }
 
@@ -198,8 +195,20 @@ class ScoreStrategyFactory {
       return new OfAKindScoreStrategy(this.ofAKindEquivalences.byCategory(play.category)!);
     }
 
-    if (this.specialCategories.find((category) => play.category.isEqual(category))) {
-      return new SpecialStrategy(this.specialCategoryEquivalences.byCategory(play.category)!);
+    if (play.category.isEqual(new Category('SmallStraight'))) {
+      return new SmallStraightStrategy();
+    }
+
+    if (play.category.isEqual(new Category('LargeStraight'))) {
+      return new LargeStraightStrategy();
+    }
+
+    if (play.category.isEqual(new Category('FullHouse'))) {
+      return new FullHouseStrategy();
+    }
+
+    if (play.category.isEqual(new Category('Yahtzee'))) {
+      return new YahtzeeStrategy();
     }
 
     throw new Error('Unknown category');
@@ -235,7 +244,7 @@ export class Roll {
     const setOfUniqueRepeatedDice = new Set(uniqueRepeatedDice);
 
     const matchedDiceWithRepetitions = Array.from(setOfUniqueRepeatedDice).filter((dice) => {
-      return this.dices.filter((n) => n === dice).length === repetitions;
+      return this.dices.filter((diceInRoll) => diceInRoll === dice).length === repetitions;
     });
 
     return Math.max(...matchedDiceWithRepetitions) as Dice;
