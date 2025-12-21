@@ -273,6 +273,7 @@ export class Roll {
     return true;
   }
 
+  //TODO: Puede ser más genérico tipo, dame una secuencia ascendente desde x hasta y
   public isSmallStraight(): boolean {
     const smallStraightSet = new Roll(1, 2, 3, 4, 5);
 
@@ -326,7 +327,7 @@ interface PlayType {
   player: Player;
 }
 
-//No me termina de convencer tener todas las jugadas de todos los jugadores en el mismo sitio
+// No me termina de convencer tener todas las jugadas de todos los jugadores en el mismo sitio
 // Se podría tener separado, esto es simplemente como lo he hecho pero es opinionated
 class Plays {
   private readonly plays: PlayType[] = [];
@@ -390,6 +391,13 @@ class Plays {
     }, 0);
   }
 }
+
+//Es como un agregado, el punto de entrada es PLAYS
+// Plays > {
+//   roll,
+//   Category,
+//   player,
+// }[]
 
 export class YahtzeeGame {
   private plays: Plays = new Plays();

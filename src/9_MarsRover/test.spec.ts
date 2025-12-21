@@ -207,4 +207,37 @@ describe('Rover should', () => {
       expect(position).toBe('1 2 E');
     });
   });
+
+  describe('When the rover is facing north and receives a M command', () => {
+    it('Then the rover advance in the north direction', () => {
+      const commands = '5 5\n4 4 N\nM';
+      const rover = new Rover();
+
+      const position = rover.execute(commands);
+
+      expect(position).toBe('4 5 N');
+    });
+  });
+
+  describe('When the rover is facing south and receives a M command', () => {
+    it('Then the rover advance in the south direction', () => {
+      const commands = '5 5\n4 4 S\nM';
+      const rover = new Rover();
+
+      const position = rover.execute(commands);
+
+      expect(position).toBe('4 3 S');
+    });
+  });
+
+  describe('When the rover is facing east and receives a M command', () => {
+    it('Then the rover advance in the east direction', () => {
+      const commands = '5 5\n4 4 E\nM';
+      const rover = new Rover();
+
+      const position = rover.execute(commands);
+
+      expect(position).toBe('5 4 E');
+    });
+  });
 });
