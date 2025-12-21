@@ -1,28 +1,18 @@
-type Direction = 'N' | 'E' | 'S' | 'W';
-type RotationDirection = 'R' | 'L';
-type RotationMovement = `${Direction}${RotationDirection}`;
+const Directions = {
+  N: 'N',
+  E: 'E',
+  S: 'S',
+  W: 'W',
+} as const;
 
-class RotationMechanism {
-  private readonly rotationMapping = new Map<RotationMovement, Direction>([
-    ['NR', 'E'],
-    ['NL', 'W'],
-    ['ER', 'S'],
-    ['EL', 'N'],
-    ['SR', 'W'],
-    ['SL', 'E'],
-    ['WR', 'N'],
-    ['WL', 'S'],
-  ]);
+type Direction = keyof typeof Directions;
 
-  public calculateNewDirection(
-    startingDirection: Direction,
-    rotationMovement: RotationDirection,
-  ): Direction {
-    const key: RotationMovement = `${startingDirection}${rotationMovement}`;
+const RotationDirections = {
+  R: 'R',
+  L: 'L',
+};
 
-    return this.rotationMapping.get(key)!;
-  }
-}
+type RotationDirection = keyof typeof RotationDirections;
 
 export class CommandParser {
   public parse(input: string): {
@@ -81,13 +71,13 @@ class WestMovementStrategy implements MovementStrategy {
 class MovementStrategyFactory {
   public static getStrategy(direction: Direction): MovementStrategy {
     switch (direction) {
-      case 'N':
+      case Directions.N:
         return new NorthMovementStrategy();
-      case 'S':
+      case Directions.S:
         return new SouthMovementStrategy();
-      case 'E':
+      case Directions.E:
         return new EastMovementStrategy();
-      case 'W':
+      case Directions.W:
         return new WestMovementStrategy();
       default:
         throw new Error('Invalid direction');
@@ -102,24 +92,134 @@ class MovementStrategyFactory {
 // Estos patrones es un poco de sobreingeniería. Tenedlo en cuenta porque si esto no cambia
 // esta solución es correcta
 
-// Example of State Pattern
-// interface Direction {
-//   left(): Direction;
-//   right(): Direction;
-// }
+interface IRotationMechanism {
+  rotate(rotationDirection: RotationDirection): IRotationMechanism;
+  direction(): Direction;
+}
 
-// class North implements Direction {
-//   left(): Direction {
-//     return new West();
-//   }
-//   right(): Direction {
-//     return new East();
-//   }
-// }
+class NorthDirection implements IRotationMechanism {
+  public rotate(rotationDirection: RotationDirection): IRotationMechanism {
+    if (rotationDirection === RotationDirections.L) {
+      return this.rotateLeft();
+    }
+
+    if (rotationDirection === RotationDirections.R) {
+      return this.rotateRight();
+    }
+
+    throw new Error('Invalid rotation direction');
+  }
+
+  public direction(): Direction {
+    return Directions.N;
+  }
+
+  private rotateLeft(): IRotationMechanism {
+    return new WestDirection();
+  }
+
+  private rotateRight(): IRotationMechanism {
+    return new EastDirection();
+  }
+}
+
+class EastDirection implements IRotationMechanism {
+  public rotate(rotationDirection: RotationDirection): IRotationMechanism {
+    if (rotationDirection === RotationDirections.L) {
+      return this.rotateLeft();
+    }
+
+    if (rotationDirection === RotationDirections.R) {
+      return this.rotateRight();
+    }
+
+    throw new Error('Invalid rotation direction');
+  }
+
+  public direction(): Direction {
+    return Directions.E;
+  }
+
+  private rotateLeft(): IRotationMechanism {
+    return new NorthDirection();
+  }
+
+  private rotateRight(): IRotationMechanism {
+    return new SouthDirection();
+  }
+}
+
+class SouthDirection implements IRotationMechanism {
+  public rotate(rotationDirection: RotationDirection): IRotationMechanism {
+    if (rotationDirection === RotationDirections.L) {
+      return this.rotateLeft();
+    }
+
+    if (rotationDirection === RotationDirections.R) {
+      return this.rotateRight();
+    }
+
+    throw new Error('Invalid rotation direction');
+  }
+
+  public direction(): Direction {
+    return Directions.S;
+  }
+
+  private rotateLeft(): IRotationMechanism {
+    return new EastDirection();
+  }
+
+  private rotateRight(): IRotationMechanism {
+    return new WestDirection();
+  }
+}
+
+class WestDirection implements IRotationMechanism {
+  public rotate(rotationDirection: RotationDirection): IRotationMechanism {
+    if (rotationDirection === RotationDirections.L) {
+      return this.rotateLeft();
+    }
+
+    if (rotationDirection === RotationDirections.R) {
+      return this.rotateRight();
+    }
+
+    throw new Error('Invalid rotation direction');
+  }
+
+  public direction(): Direction {
+    return Directions.W;
+  }
+
+  private rotateLeft(): IRotationMechanism {
+    return new SouthDirection();
+  }
+
+  private rotateRight(): IRotationMechanism {
+    return new NorthDirection();
+  }
+}
+
+class RotationMechanismFactory {
+  public static getRotationMechanism(direction: Direction): IRotationMechanism {
+    switch (direction) {
+      case Directions.N:
+        return new NorthDirection();
+      case Directions.E:
+        return new EastDirection();
+      case Directions.S:
+        return new SouthDirection();
+      case Directions.W:
+        return new WestDirection();
+      default:
+        throw new Error('Invalid direction');
+    }
+  }
+}
 
 export class Rover {
   private readonly commanParser = new CommandParser();
-  private readonly rotationMechanism = new RotationMechanism();
   private currentRoverDirection: Direction | undefined;
 
   public execute(input: string): string {
@@ -140,17 +240,16 @@ export class Rover {
       return `${finalX} ${finalY} ${this.currentRoverDirection}`;
     }
 
-    const anotherFinalDirection = this.rotationMechanism.calculateNewDirection(
+    const anotherFinalDirection = RotationMechanismFactory.getRotationMechanism(
       startingDirection as Direction,
-      command as RotationDirection,
-    );
+    ).rotate(command as RotationDirection);
 
     if (commands?.length > 1) {
       return this.execute(
-        `${plateau}\n${startingX} ${startingY} ${anotherFinalDirection}\n${commands?.slice(1)}`,
+        `${plateau}\n${startingX} ${startingY} ${anotherFinalDirection.direction()}\n${commands?.slice(1)}`,
       );
     }
 
-    return `${startingX} ${startingY} ${anotherFinalDirection}`;
+    return `${startingX} ${startingY} ${anotherFinalDirection.direction()}`;
   }
 }
