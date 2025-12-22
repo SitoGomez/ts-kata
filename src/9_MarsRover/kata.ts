@@ -248,19 +248,25 @@ export class Rover {
 
       const [finalX, finalY] = movementStrategy.move(Number(startingX), Number(startingY));
 
+      if (commandsSequence?.length > 1) {
+        return this.execute(
+          `${plateau}\n${finalX} ${finalY} ${currentDirection}\n${commandsSequence?.slice(1)}`,
+        );
+      }
+
       return `${finalX} ${finalY} ${currentDirection}`;
     }
 
-    const anotherFinalDirection = RotationMechanismFactory.getRotationMechanism(
-      currentDirection,
-    ).rotate(nextCommand as RotationDirection);
+    const updatedDirection = RotationMechanismFactory.getRotationMechanism(currentDirection).rotate(
+      nextCommand as RotationDirection,
+    );
 
     if (commandsSequence?.length > 1) {
       return this.execute(
-        `${plateau}\n${startingX} ${startingY} ${anotherFinalDirection.direction()}\n${commandsSequence?.slice(1)}`,
+        `${plateau}\n${startingX} ${startingY} ${updatedDirection.direction()}\n${commandsSequence?.slice(1)}`,
       );
     }
 
-    return `${startingX} ${startingY} ${anotherFinalDirection.direction()}`;
+    return `${startingX} ${startingY} ${updatedDirection.direction()}`;
   }
 }
