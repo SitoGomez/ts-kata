@@ -23,10 +23,10 @@ type Command = keyof typeof Commands;
 export class CommandParser {
   public parse(input: string): {
     plateau: string;
-    position: string;
+    currentPosition: string;
     startingX: string;
     startingY: string;
-    startingDirection: Direction;
+    currentDirection: Direction;
     commandsSequence: string;
     nextCommand: Command;
   } {
@@ -37,10 +37,10 @@ export class CommandParser {
 
     return {
       plateau,
-      position,
+      currentPosition: position,
       startingX: x,
       startingY: y,
-      startingDirection: originalDirection!,
+      currentDirection: originalDirection!,
       commandsSequence: inputCommands!,
       nextCommand: command!,
     };
@@ -231,19 +231,19 @@ export class Rover {
 
   public execute(input: string): string {
     const {
-      position,
+      currentPosition,
       plateau,
       startingX,
       startingY,
-      startingDirection,
+      currentDirection,
       commandsSequence,
       nextCommand,
     } = this.commanParser.parse(input);
 
-    this.currentRoverDirection = startingDirection;
+    this.currentRoverDirection = currentDirection;
 
     if (!commandsSequence) {
-      return position;
+      return currentPosition;
     }
 
     if (nextCommand === Commands.M) {
@@ -255,7 +255,7 @@ export class Rover {
     }
 
     const anotherFinalDirection = RotationMechanismFactory.getRotationMechanism(
-      startingDirection,
+      currentDirection,
     ).rotate(nextCommand as RotationDirection);
 
     if (commandsSequence?.length > 1) {
