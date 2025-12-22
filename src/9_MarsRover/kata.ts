@@ -239,8 +239,6 @@ export class Rover {
       nextCommand,
     } = this.commanParser.parse(input);
 
-    this.currentRoverDirection = currentDirection;
-
     if (!commandsSequence) {
       return currentPosition;
     }
