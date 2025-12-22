@@ -227,7 +227,6 @@ class RotationMechanismFactory {
 
 export class Rover {
   private readonly commanParser = new CommandParser();
-  private currentRoverDirection: Direction | undefined;
 
   public execute(input: string): string {
     const {
@@ -247,11 +246,11 @@ export class Rover {
     }
 
     if (nextCommand === Commands.M) {
-      const movementStrategy = MovementStrategyFactory.getStrategy(this.currentRoverDirection);
+      const movementStrategy = MovementStrategyFactory.getStrategy(currentDirection);
 
       const [finalX, finalY] = movementStrategy.move(Number(startingX), Number(startingY));
 
-      return `${finalX} ${finalY} ${this.currentRoverDirection}`;
+      return `${finalX} ${finalY} ${currentDirection}`;
     }
 
     const anotherFinalDirection = RotationMechanismFactory.getRotationMechanism(
