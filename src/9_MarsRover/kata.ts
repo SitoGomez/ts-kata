@@ -14,15 +14,21 @@ const RotationDirections = {
 
 type RotationDirection = keyof typeof RotationDirections;
 
+const Commands = RotationDirections && {
+  M: 'M',
+};
+
+type Command = keyof typeof Commands;
+
 export class CommandParser {
   public parse(input: string): {
     plateau: string;
     position: string;
     startingX: string;
     startingY: string;
-    startingDirection: string;
-    commands: string;
-    command: string;
+    startingDirection: Direction;
+    commandsSequence: string;
+    nextCommand: Command;
   } {
     const [plateau, position, inputCommands] = input.split('\n');
 
@@ -35,11 +41,12 @@ export class CommandParser {
       startingX: x,
       startingY: y,
       startingDirection: originalDirection!,
-      commands: inputCommands!,
-      command: command!,
+      commandsSequence: inputCommands!,
+      nextCommand: command!,
     };
   }
 }
+
 interface MovementStrategy {
   move(x: number, y: number): [number, number];
 }
@@ -223,16 +230,23 @@ export class Rover {
   private currentRoverDirection: Direction | undefined;
 
   public execute(input: string): string {
-    const { position, plateau, startingX, startingY, startingDirection, commands, command } =
-      this.commanParser.parse(input);
+    const {
+      position,
+      plateau,
+      startingX,
+      startingY,
+      startingDirection,
+      commandsSequence,
+      nextCommand,
+    } = this.commanParser.parse(input);
 
-    this.currentRoverDirection = startingDirection as Direction;
+    this.currentRoverDirection = startingDirection;
 
-    if (!commands) {
+    if (!commandsSequence) {
       return position;
     }
 
-    if (command === 'M') {
+    if (nextCommand === Commands.M) {
       const movementStrategy = MovementStrategyFactory.getStrategy(this.currentRoverDirection);
 
       const [finalX, finalY] = movementStrategy.move(Number(startingX), Number(startingY));
@@ -241,12 +255,12 @@ export class Rover {
     }
 
     const anotherFinalDirection = RotationMechanismFactory.getRotationMechanism(
-      startingDirection as Direction,
-    ).rotate(command as RotationDirection);
+      startingDirection,
+    ).rotate(nextCommand as RotationDirection);
 
-    if (commands?.length > 1) {
+    if (commandsSequence?.length > 1) {
       return this.execute(
-        `${plateau}\n${startingX} ${startingY} ${anotherFinalDirection.direction()}\n${commands?.slice(1)}`,
+        `${plateau}\n${startingX} ${startingY} ${anotherFinalDirection.direction()}\n${commandsSequence?.slice(1)}`,
       );
     }
 
