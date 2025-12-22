@@ -94,18 +94,18 @@ class MovementStrategyFactory {
 
 //TODO: COMMAND PATTERN M | R | L
 //TODO: STATE PATTERN FOR ROTATION
-//TODO: Una estrategia es un algoritmo que puede variar
+//TODO: Una estrategia es un algoritmo (ex: calcular score) que puede tener diferentes implementaciones pero al final del día, todos cumplen la misma función
 //TODO: Head first design patterns
 // Estos patrones es un poco de sobreingeniería. Tenedlo en cuenta porque si esto no cambia
 // esta solución es correcta
 
-interface IRotationMechanism {
-  rotate(rotationDirection: RotationDirection): IRotationMechanism;
+interface RotationMechanism {
+  rotate(rotationDirection: RotationDirection): RotationMechanism;
   direction(): Direction;
 }
 
-class NorthDirection implements IRotationMechanism {
-  public rotate(rotationDirection: RotationDirection): IRotationMechanism {
+class NorthDirection implements RotationMechanism {
+  public rotate(rotationDirection: RotationDirection): RotationMechanism {
     if (rotationDirection === RotationDirections.L) {
       return this.rotateLeft();
     }
@@ -121,17 +121,17 @@ class NorthDirection implements IRotationMechanism {
     return Directions.N;
   }
 
-  private rotateLeft(): IRotationMechanism {
+  private rotateLeft(): RotationMechanism {
     return new WestDirection();
   }
 
-  private rotateRight(): IRotationMechanism {
+  private rotateRight(): RotationMechanism {
     return new EastDirection();
   }
 }
 
-class EastDirection implements IRotationMechanism {
-  public rotate(rotationDirection: RotationDirection): IRotationMechanism {
+class EastDirection implements RotationMechanism {
+  public rotate(rotationDirection: RotationDirection): RotationMechanism {
     if (rotationDirection === RotationDirections.L) {
       return this.rotateLeft();
     }
@@ -147,17 +147,17 @@ class EastDirection implements IRotationMechanism {
     return Directions.E;
   }
 
-  private rotateLeft(): IRotationMechanism {
+  private rotateLeft(): RotationMechanism {
     return new NorthDirection();
   }
 
-  private rotateRight(): IRotationMechanism {
+  private rotateRight(): RotationMechanism {
     return new SouthDirection();
   }
 }
 
-class SouthDirection implements IRotationMechanism {
-  public rotate(rotationDirection: RotationDirection): IRotationMechanism {
+class SouthDirection implements RotationMechanism {
+  public rotate(rotationDirection: RotationDirection): RotationMechanism {
     if (rotationDirection === RotationDirections.L) {
       return this.rotateLeft();
     }
@@ -173,17 +173,17 @@ class SouthDirection implements IRotationMechanism {
     return Directions.S;
   }
 
-  private rotateLeft(): IRotationMechanism {
+  private rotateLeft(): RotationMechanism {
     return new EastDirection();
   }
 
-  private rotateRight(): IRotationMechanism {
+  private rotateRight(): RotationMechanism {
     return new WestDirection();
   }
 }
 
-class WestDirection implements IRotationMechanism {
-  public rotate(rotationDirection: RotationDirection): IRotationMechanism {
+class WestDirection implements RotationMechanism {
+  public rotate(rotationDirection: RotationDirection): RotationMechanism {
     if (rotationDirection === RotationDirections.L) {
       return this.rotateLeft();
     }
@@ -199,17 +199,17 @@ class WestDirection implements IRotationMechanism {
     return Directions.W;
   }
 
-  private rotateLeft(): IRotationMechanism {
+  private rotateLeft(): RotationMechanism {
     return new SouthDirection();
   }
 
-  private rotateRight(): IRotationMechanism {
+  private rotateRight(): RotationMechanism {
     return new NorthDirection();
   }
 }
 
 class RotationMechanismFactory {
-  public static getRotationMechanism(direction: Direction): IRotationMechanism {
+  public static getRotationMechanism(direction: Direction): RotationMechanism {
     switch (direction) {
       case Directions.N:
         return new NorthDirection();
