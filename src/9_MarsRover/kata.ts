@@ -7,39 +7,36 @@ const Directions = {
 
 type Direction = keyof typeof Directions;
 
-const RotationDirections = {
+export const RotationDirections = {
   R: 'R',
   L: 'L',
-};
+} as const;
 
 type RotationDirection = keyof typeof RotationDirections;
 
-const Commands = RotationDirections && {
+const Commands = {
+  ...RotationDirections,
   M: 'M',
-};
+} as const;
 
 type Command = keyof typeof Commands;
 
 export class CommandParser {
   public parse(input: string): {
-    plateau: string;
-    currentPosition: string;
-    startingX: string;
-    startingY: string;
+    startingX: number;
+    startingY: number;
     currentDirection: Direction;
     commandsSequence: string;
     nextCommand: Command;
   } {
-    const [plateau, position, inputCommands] = input.split('\n');
+    const [_, position, inputCommands] = input.split('\n');
 
     const [x, y, originalDirection] = position.split(' ');
     const command = inputCommands?.split('')[0];
 
     return {
-      plateau,
-      currentPosition: position,
-      startingX: x,
-      startingY: y,
+      startingX: Number(x),
+      startingY: Number(y),
       currentDirection: originalDirection!,
       commandsSequence: inputCommands!,
       nextCommand: command!,
@@ -225,48 +222,94 @@ class RotationMechanismFactory {
   }
 }
 
-export class Rover {
+interface RoverCommand {
+  execute(rover: Rover): void;
+}
+
+class MoveCommand implements RoverCommand {
+  public execute(rover: Rover): void {
+    rover.move();
+  }
+}
+
+class RotateCommand implements RoverCommand {
+  private readonly rotationDirection: RotationDirection;
+
+  public constructor(rotationDirection: RotationDirection) {
+    this.rotationDirection = rotationDirection;
+  }
+
+  public execute(rover: Rover): void {
+    rover.rotate(this.rotationDirection);
+  }
+}
+
+class RoverCommandFactory {
+  public static getCommand(command: Command): RoverCommand {
+    if (command === Commands.M) {
+      return new MoveCommand();
+    }
+
+    if (command === Commands.L || command === Commands.R) {
+      return new RotateCommand(command);
+    }
+
+    throw new Error('Invalid command');
+  }
+}
+
+class Rover {
+  private startingX: number;
+  private startingY: number;
+  private currentDirection: Direction;
+
+  public constructor(
+    startingX: number,
+    startingY: number,
+    currentDirection: Direction = Directions.N,
+  ) {
+    this.startingX = startingX;
+    this.startingY = startingY;
+    this.currentDirection = currentDirection;
+  }
+
+  public rotate(rotationDirection: RotationDirection): void {
+    const updatedDirection = RotationMechanismFactory.getRotationMechanism(
+      this.currentDirection,
+    ).rotate(rotationDirection);
+
+    this.currentDirection = updatedDirection.direction();
+  }
+
+  public move(): void {
+    const movementStrategy = MovementStrategyFactory.getStrategy(this.currentDirection);
+
+    const [finalX, finalY] = movementStrategy.move(Number(this.startingX), Number(this.startingY));
+
+    this.startingX = finalX;
+    this.startingY = finalY;
+  }
+
+  public currentCoordinates(): string {
+    return `${this.startingX} ${this.startingY} ${this.currentDirection}`;
+  }
+}
+
+export class RoverController {
   private readonly commanParser = new CommandParser();
+  private rover: Rover | undefined;
 
   public execute(input: string): string {
-    const {
-      currentPosition,
-      plateau,
-      startingX,
-      startingY,
-      currentDirection,
-      commandsSequence,
-      nextCommand,
-    } = this.commanParser.parse(input);
+    const { startingX, startingY, currentDirection, commandsSequence } =
+      this.commanParser.parse(input);
 
-    if (!commandsSequence) {
-      return currentPosition;
-    }
+    this.rover = new Rover(startingX, startingY, currentDirection);
 
-    if (nextCommand === Commands.M) {
-      const movementStrategy = MovementStrategyFactory.getStrategy(currentDirection);
+    commandsSequence.split('').forEach((command: Command) => {
+      const roverCommand = RoverCommandFactory.getCommand(command);
+      roverCommand.execute(this.rover!);
+    });
 
-      const [finalX, finalY] = movementStrategy.move(Number(startingX), Number(startingY));
-
-      if (commandsSequence?.length > 1) {
-        return this.execute(
-          `${plateau}\n${finalX} ${finalY} ${currentDirection}\n${commandsSequence?.slice(1)}`,
-        );
-      }
-
-      return `${finalX} ${finalY} ${currentDirection}`;
-    }
-
-    const updatedDirection = RotationMechanismFactory.getRotationMechanism(currentDirection).rotate(
-      nextCommand as RotationDirection,
-    );
-
-    if (commandsSequence?.length > 1) {
-      return this.execute(
-        `${plateau}\n${startingX} ${startingY} ${updatedDirection.direction()}\n${commandsSequence?.slice(1)}`,
-      );
-    }
-
-    return `${startingX} ${startingY} ${updatedDirection.direction()}`;
+    return this.rover.currentCoordinates();
   }
 }
