@@ -36,7 +36,7 @@ export class TennisGame implements ITennisGame {
     } else if (anyPlayerWonOrIsInAdvantage) {
       const playersScoreDifference: number = this.playerOneScore - this.playerTwoScore;
 
-      score = this.calculateAdvantageAndWinner(playersScoreDifference, score);
+      score = this.calculateAdvantageAndWinner(playersScoreDifference);
     } else {
       score = this.getPlayerScore(this.playerOneScore, score);
       score += '-';
@@ -65,20 +65,19 @@ export class TennisGame implements ITennisGame {
     return score;
   }
 
-  private calculateAdvantageAndWinner(playersScoreDifference: number, score: string) {
+  private calculateAdvantageAndWinner(playersScoreDifference: number) {
     if (playersScoreDifference === 1) {
-      score = 'Advantage player1';
+      return 'Advantage player1';
     }
     else if (playersScoreDifference === -1) {
-      score = 'Advantage player2';
+      return 'Advantage player2';
     }
     else if (playersScoreDifference >= 2) {
-      score = 'Win for player1';
+      return 'Win for player1';
     }
     else {
-      score = 'Win for player2';
+      return 'Win for player2';
     }
-    return score;
   }
 
   private determineDrawScore() {
