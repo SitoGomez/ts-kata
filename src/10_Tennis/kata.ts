@@ -29,7 +29,6 @@ export class TennisGame implements ITennisGame {
 
   public getScore(): string {
     let score = '';
-    let tempScore = 0;
 
     const anyPlayerWonOrIsInAdvantage = this.playerOneScore >= 4 || this.playerTwoScore >= 4;
     if (this.playerOneScore === this.playerTwoScore) {
@@ -39,17 +38,10 @@ export class TennisGame implements ITennisGame {
 
       score = this.calculateAdvantageAndWinner(playersScoreDifference, score);
     } else {
-      for (let i = 1; i < 3; i++) {
-        if (i === 1) {
-          tempScore = this.playerOneScore;
-        }
-        else {
-          score += '-';
-          tempScore = this.playerTwoScore;
-        }
 
-        score = this.test(tempScore, score);
-      }
+      score = this.test(this.playerOneScore, score);
+      score += '-';
+      score = this.test(this.playerTwoScore, score);
     }
 
     return score;
