@@ -32,20 +32,7 @@ export class TennisGame implements ITennisGame {
     let tempScore = 0;
 
     if (this.playerOneScore === this.playerTwoScore) {
-      switch (this.playerOneScore) {
-        case 0:
-          score = 'Love-All';
-          break;
-        case 1:
-          score = 'Fifteen-All';
-          break;
-        case 2:
-          score = 'Thirty-All';
-          break;
-        default:
-          score = 'Deuce';
-          break;
-      }
+      score = this.determineDrawScore(score);
     } else if (this.playerOneScore >= 4 || this.playerTwoScore >= 4) {
       const minusResult: number = this.playerOneScore - this.playerTwoScore;
 
@@ -88,6 +75,24 @@ export class TennisGame implements ITennisGame {
       }
     }
 
+    return score;
+  }
+
+  private determineDrawScore(score: string) {
+    switch (this.playerOneScore) {
+      case 0:
+        score = 'Love-All';
+        break;
+      case 1:
+        score = 'Fifteen-All';
+        break;
+      case 2:
+        score = 'Thirty-All';
+        break;
+      default:
+        score = 'Deuce';
+        break;
+    }
     return score;
   }
 }
