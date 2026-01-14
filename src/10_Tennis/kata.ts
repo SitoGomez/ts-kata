@@ -50,6 +50,8 @@ export class TennisGame implements ITennisGame {
         return 'Thirty';
       case 3:
         return 'Forty';
+      default:
+        return '';
     }
   }
 
