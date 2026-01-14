@@ -18,12 +18,12 @@ export class TennisGame1 implements TennisGame {
     this.player2Name = player2Name;
   }
 
-  wonPoint(playerName: string): void {
+  public wonPoint(playerName: string): void {
     if (playerName === 'player1') this.m_score1 += 1;
     else this.m_score2 += 1;
   }
 
-  getScore(): string {
+  public getScore(): string {
     let score = '';
     let tempScore = 0;
     if (this.m_score1 === this.m_score2) {
