@@ -36,18 +36,7 @@ export class TennisGame implements ITennisGame {
     } else if (this.playerOneScore >= 4 || this.playerTwoScore >= 4) {
       const playersScoreDifference: number = this.playerOneScore - this.playerTwoScore;
 
-      if (playersScoreDifference === 1) {
-        score = 'Advantage player1'
-      }
-      else if (playersScoreDifference === -1) {
-        score = 'Advantage player2';
-      }
-      else if (playersScoreDifference >= 2) {
-        score = 'Win for player1';
-      }
-      else {
-        score = 'Win for player2';
-      }
+      score = this.calculateAdvantageAndWinner(playersScoreDifference, score);
     } else {
       for (let i = 1; i < 3; i++) {
         if (i === 1) {
@@ -75,6 +64,22 @@ export class TennisGame implements ITennisGame {
       }
     }
 
+    return score;
+  }
+
+  private calculateAdvantageAndWinner(playersScoreDifference: number, score: string) {
+    if (playersScoreDifference === 1) {
+      score = 'Advantage player1';
+    }
+    else if (playersScoreDifference === -1) {
+      score = 'Advantage player2';
+    }
+    else if (playersScoreDifference >= 2) {
+      score = 'Win for player1';
+    }
+    else {
+      score = 'Win for player2';
+    }
     return score;
   }
 
