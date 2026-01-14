@@ -38,31 +38,25 @@ export class TennisGame implements ITennisGame {
 
       score = this.calculateAdvantageAndWinner(playersScoreDifference);
     } else {
-      score = this.getPlayerScore(this.playerOneScore, score);
+      score += this.getPlayerScore(this.playerOneScore);
       score += '-';
-      score = this.getPlayerScore(this.playerTwoScore, score);
+      score += this.getPlayerScore(this.playerTwoScore);
     }
 
     return score;
   }
 
-  private getPlayerScore(playerCurrentScore: number, score: string) {
+  private getPlayerScore(playerCurrentScore: number) {
     switch (playerCurrentScore) {
       case 0:
-        score += 'Love';
-        break;
+        return 'Love';
       case 1:
-        score += 'Fifteen';
-        break;
+        return 'Fifteen';
       case 2:
-        score += 'Thirty';
-        break;
+        return 'Thirty';
       case 3:
-        score += 'Forty';
-        break;
+        return 'Forty';
     }
-
-    return score;
   }
 
   private calculateAdvantageAndWinner(playersScoreDifference: number) {
