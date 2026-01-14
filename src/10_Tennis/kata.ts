@@ -9,13 +9,13 @@ export class TennisGame implements ITennisGame {
   private playerOneScore = 0;
   private playerTwoScore = 0;
   //@ts-ignore
-  private player1Name: string;
+  private playerOneName: string;
   //@ts-ignore
-  private player2Name: string;
+  private playerTwoName: string;
 
-  constructor(player1Name: string, player2Name: string) {
-    this.player1Name = player1Name;
-    this.player2Name = player2Name;
+  constructor(playerOneName: string, playerTwoName: string) {
+    this.playerOneName = playerOneName;
+    this.playerTwoName = playerTwoName;
   }
 
   public wonPoint(playerName: string): void {
