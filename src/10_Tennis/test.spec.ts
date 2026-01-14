@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { TennisGame, TennisGame1 } from './kata';
+import { ITennisGame, TennisGame } from './kata';
 
 function getAllScores(): Array<[number, number, string]> {
   const testCases = path.resolve(__dirname, 'scores.json');
@@ -15,7 +15,7 @@ function getAllScores(): Array<[number, number, string]> {
 const scores: Array<[number, number, string]> = getAllScores();
 
 function checkScore(
-  game: TennisGame,
+  game: ITennisGame,
   player1Score: number,
   player2Score: number,
   expectedScore: string
@@ -37,7 +37,7 @@ describe('TennisGame', () => {
     scores.forEach(([player1Score, player2Score, expectedScore]) => {
       it(`scores ${player1Score}:${player2Score} as ${expectedScore}`, () => {
         checkScore(
-          new TennisGame1('player1', 'player2'),
+          new TennisGame('player1', 'player2'),
           player1Score,
           player2Score,
           expectedScore

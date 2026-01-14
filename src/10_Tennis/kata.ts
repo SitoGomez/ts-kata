@@ -1,11 +1,11 @@
 /* eslint-disable */
 
-export interface TennisGame {
+export interface ITennisGame {
   wonPoint(playerName: string): void;
   getScore(): string;
 }
 
-export class TennisGame1 implements TennisGame {
+export class TennisGame implements ITennisGame {
   private m_score1 = 0;
   private m_score2 = 0;
   //@ts-ignore
