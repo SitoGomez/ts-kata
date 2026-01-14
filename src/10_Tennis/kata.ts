@@ -38,9 +38,7 @@ export class TennisGame implements ITennisGame {
 
       score = this.calculateAdvantageAndWinner(playersScoreDifference);
     } else {
-      score += this.getPlayerScore(this.playerOneScore);
-      score += '-';
-      score += this.getPlayerScore(this.playerTwoScore);
+      score += `${this.getPlayerScore(this.playerOneScore)}-${this.getPlayerScore(this.playerTwoScore)}`;
     }
 
     return score;
