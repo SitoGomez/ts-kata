@@ -6,8 +6,8 @@ export interface ITennisGame {
 }
 
 export class TennisGame implements ITennisGame {
-  private m_score1 = 0;
-  private m_score2 = 0;
+  private playerOneScore = 0;
+  private playerTwoScore = 0;
   //@ts-ignore
   private player1Name: string;
   //@ts-ignore
@@ -20,10 +20,10 @@ export class TennisGame implements ITennisGame {
 
   public wonPoint(playerName: string): void {
     if (playerName === 'player1') {
-      this.m_score1 += 1;
+      this.playerOneScore += 1;
     }
     else {
-      this.m_score2 += 1;
+      this.playerTwoScore += 1;
     }
   }
 
@@ -31,8 +31,8 @@ export class TennisGame implements ITennisGame {
     let score = '';
     let tempScore = 0;
 
-    if (this.m_score1 === this.m_score2) {
-      switch (this.m_score1) {
+    if (this.playerOneScore === this.playerTwoScore) {
+      switch (this.playerOneScore) {
         case 0:
           score = 'Love-All';
           break;
@@ -46,8 +46,8 @@ export class TennisGame implements ITennisGame {
           score = 'Deuce';
           break;
       }
-    } else if (this.m_score1 >= 4 || this.m_score2 >= 4) {
-      const minusResult: number = this.m_score1 - this.m_score2;
+    } else if (this.playerOneScore >= 4 || this.playerTwoScore >= 4) {
+      const minusResult: number = this.playerOneScore - this.playerTwoScore;
 
       if (minusResult === 1) {
         score = 'Advantage player1'
@@ -64,11 +64,11 @@ export class TennisGame implements ITennisGame {
     } else {
       for (let i = 1; i < 3; i++) {
         if (i === 1) {
-          tempScore = this.m_score1;
+          tempScore = this.playerOneScore;
         }
         else {
           score += '-';
-          tempScore = this.m_score2;
+          tempScore = this.playerTwoScore;
         }
 
         switch (tempScore) {
@@ -87,7 +87,7 @@ export class TennisGame implements ITennisGame {
         }
       }
     }
-    
+
     return score;
   }
 }
