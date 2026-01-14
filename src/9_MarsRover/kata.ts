@@ -101,6 +101,13 @@ interface RotationMechanism {
   direction(): Direction;
 }
 
+/**
+ * clase VendingMachine
+ * state: Idle | HasMoney | Dispensing | ProductDoesntExist | ProductSelected
+ *
+ * methods: insertMoney(Coin), selectProduct, dispenseProduct, refundMoney
+ */
+
 class NorthDirection implements RotationMechanism {
   public rotate(rotationDirection: RotationDirection): RotationMechanism {
     if (rotationDirection === RotationDirections.L) {
@@ -295,6 +302,9 @@ class Rover {
   }
 }
 
+/**
+ * DI
+ */
 export class RoverController {
   private readonly commanParser = new CommandParser();
   private rover: Rover | undefined;
