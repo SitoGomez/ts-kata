@@ -28,20 +28,16 @@ export class TennisGame implements ITennisGame {
   }
 
   public getScore(): string {
-    let score = '';
-
     const anyPlayerWonOrIsInAdvantage = this.playerOneScore >= 4 || this.playerTwoScore >= 4;
     if (this.playerOneScore === this.playerTwoScore) {
-      score = this.determineDrawScore();
+      return this.determineDrawScore();
     } else if (anyPlayerWonOrIsInAdvantage) {
       const playersScoreDifference: number = this.playerOneScore - this.playerTwoScore;
 
-      score = this.calculateAdvantageAndWinner(playersScoreDifference);
+      return this.calculateAdvantageAndWinner(playersScoreDifference);
     } else {
-      score += `${this.getPlayerScore(this.playerOneScore)}-${this.getPlayerScore(this.playerTwoScore)}`;
+      return `${this.getPlayerScore(this.playerOneScore)}-${this.getPlayerScore(this.playerTwoScore)}`;
     }
-
-    return score;
   }
 
   private getPlayerScore(playerCurrentScore: number) {
