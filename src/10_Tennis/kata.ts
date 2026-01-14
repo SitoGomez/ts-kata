@@ -34,15 +34,15 @@ export class TennisGame implements ITennisGame {
     if (this.playerOneScore === this.playerTwoScore) {
       score = this.determineDrawScore(score);
     } else if (this.playerOneScore >= 4 || this.playerTwoScore >= 4) {
-      const minusResult: number = this.playerOneScore - this.playerTwoScore;
+      const playersScoreDifference: number = this.playerOneScore - this.playerTwoScore;
 
-      if (minusResult === 1) {
+      if (playersScoreDifference === 1) {
         score = 'Advantage player1'
       }
-      else if (minusResult === -1) {
+      else if (playersScoreDifference === -1) {
         score = 'Advantage player2';
       }
-      else if (minusResult >= 2) {
+      else if (playersScoreDifference >= 2) {
         score = 'Win for player1';
       }
       else {
