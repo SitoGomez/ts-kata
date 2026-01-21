@@ -1,5 +1,5 @@
 export interface ITennisGame {
-  wonPoint(playerName: string): void;
+  incrementScoreToPlayer(playerName: string): void;
   getScore(): string;
 }
 
@@ -10,7 +10,7 @@ export class TennisGame implements ITennisGame {
   private playerOneScore = 0;
   private playerTwoScore = 0;
 
-  public wonPoint(playerName: string): void {
+  public incrementScoreToPlayer(playerName: string): void {
     if (playerName === this.PLAYER_ONE_NAME) {
       this.playerOneScore += 1;
     }

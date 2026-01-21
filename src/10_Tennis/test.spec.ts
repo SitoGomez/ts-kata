@@ -23,10 +23,10 @@ function checkScore(
   const highestScore: number = Math.max(player1Score, player2Score);
   for (let i = 0; i < highestScore; i++) {
     if (i < player1Score) {
-      game.wonPoint('player1');
+      game.incrementScoreToPlayer('player1');
     }
     if (i < player2Score) {
-      game.wonPoint('player2');
+      game.incrementScoreToPlayer('player2');
     }
   }
   expect(game.getScore()).toEqual(expectedScore);
