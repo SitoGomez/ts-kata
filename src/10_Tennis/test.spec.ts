@@ -18,7 +18,7 @@ function checkScore(
   game: ITennisGame,
   player1Score: number,
   player2Score: number,
-  expectedScore: string
+  expectedScore: string,
 ): void {
   const highestScore: number = Math.max(player1Score, player2Score);
   for (let i = 0; i < highestScore; i++) {
@@ -36,12 +36,7 @@ describe('TennisGame', () => {
   describe('TennisGame1', () => {
     scores.forEach(([player1Score, player2Score, expectedScore]) => {
       it(`scores ${player1Score}:${player2Score} as ${expectedScore}`, () => {
-        checkScore(
-          new TennisGame('player1', 'player2'),
-          player1Score,
-          player2Score,
-          expectedScore
-        );
+        checkScore(new TennisGame(), player1Score, player2Score, expectedScore);
       });
     });
   });

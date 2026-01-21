@@ -1,5 +1,3 @@
-/* eslint-disable */
-
 export interface ITennisGame {
   wonPoint(playerName: string): void;
   getScore(): string;
@@ -8,21 +6,11 @@ export interface ITennisGame {
 export class TennisGame implements ITennisGame {
   private playerOneScore = 0;
   private playerTwoScore = 0;
-  //@ts-ignore
-  private playerOneName: string;
-  //@ts-ignore
-  private playerTwoName: string;
-
-  constructor(playerOneName: string, playerTwoName: string) {
-    this.playerOneName = playerOneName;
-    this.playerTwoName = playerTwoName;
-  }
 
   public wonPoint(playerName: string): void {
     if (playerName === 'player1') {
       this.playerOneScore += 1;
-    }
-    else {
+    } else {
       this.playerTwoScore += 1;
     }
   }
@@ -58,14 +46,11 @@ export class TennisGame implements ITennisGame {
   private calculateAdvantageAndWinner(playersScoreDifference: number) {
     if (playersScoreDifference === 1) {
       return 'Advantage player1';
-    }
-    else if (playersScoreDifference === -1) {
+    } else if (playersScoreDifference === -1) {
       return 'Advantage player2';
-    }
-    else if (playersScoreDifference >= 2) {
+    } else if (playersScoreDifference >= 2) {
       return 'Win for player1';
-    }
-    else {
+    } else {
       return 'Win for player2';
     }
   }
@@ -79,7 +64,7 @@ export class TennisGame implements ITennisGame {
       case 2:
         return 'Thirty-All';
       default:
-        return 'Deuce'; 
+        return 'Deuce';
     }
   }
 }
