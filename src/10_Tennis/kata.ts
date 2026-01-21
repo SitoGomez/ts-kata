@@ -4,13 +4,18 @@ export interface ITennisGame {
 }
 
 export class TennisGame implements ITennisGame {
+  private readonly PLAYER_ONE_NAME: string = 'player1';
+  private readonly PLAYER_TWO_NAME: string = 'player2';
+
   private playerOneScore = 0;
   private playerTwoScore = 0;
 
   public wonPoint(playerName: string): void {
-    if (playerName === 'player1') {
+    if (playerName === this.PLAYER_ONE_NAME) {
       this.playerOneScore += 1;
-    } else {
+    }
+
+    if (playerName === this.PLAYER_TWO_NAME) {
       this.playerTwoScore += 1;
     }
   }
