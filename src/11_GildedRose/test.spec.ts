@@ -37,12 +37,11 @@ describe('Gilded Rose inventary update should', () => {
     '&R&T/(T/OYGIBV',
   ])('Item name tests', (itemName) => {
     test(`Given a name \`${itemName}\`, the item name doesn\`t change after update`, () => {
-      const gildedRose = new GildedRose([new Item(itemName, 0, 0)]);
+      const gildedRose = new GildedRose([new Item(itemName!, 0, 0)]);
 
       gildedRose.updateQuality();
 
-      const expectedResult = new Item(itemName, -1, 0);
-
+      const expectedResult = new Item(itemName!, -1, 0);
       expect(gildedRose.items[0]).toEqual(expectedResult);
     });
   });

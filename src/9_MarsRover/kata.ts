@@ -29,17 +29,22 @@ export class CommandParser {
     commandsSequence: string;
     nextCommand: Command;
   } {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, position, inputCommands] = input.split('\n');
 
-    const [x, y, originalDirection] = position.split(' ');
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const [x, y, originalDirection] = position!.split(' ');
     const command = inputCommands?.split('')[0];
 
     return {
       startingX: Number(x),
       startingY: Number(y),
-      currentDirection: originalDirection!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      currentDirection: originalDirection! as Direction,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       commandsSequence: inputCommands!,
-      nextCommand: command!,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      nextCommand: command! as Command,
     };
   }
 }
@@ -72,6 +77,7 @@ class WestMovementStrategy implements MovementStrategy {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class MovementStrategyFactory {
   public static getStrategy(direction: Direction): MovementStrategy {
     switch (direction) {
@@ -212,6 +218,7 @@ class WestDirection implements RotationMechanism {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class RotationMechanismFactory {
   public static getRotationMechanism(direction: Direction): RotationMechanism {
     switch (direction) {
@@ -251,6 +258,7 @@ class RotateCommand implements RoverCommand {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-extraneous-class
 class RoverCommandFactory {
   public static getCommand(command: Command): RoverCommand {
     if (command === Commands.M) {
@@ -315,8 +323,9 @@ export class RoverController {
 
     this.rover = new Rover(startingX, startingY, currentDirection);
 
-    commandsSequence.split('').forEach((command: Command) => {
-      const roverCommand = RoverCommandFactory.getCommand(command);
+    commandsSequence.split('').forEach((command: string) => {
+      const roverCommand = RoverCommandFactory.getCommand(command as Command);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       roverCommand.execute(this.rover!);
     });
 

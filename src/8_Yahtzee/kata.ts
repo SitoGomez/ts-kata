@@ -184,6 +184,7 @@ class ScoreStrategyFactory {
   //TODO: Al recibir play estoy rompiendo la encapsulación que sucede en Plays
   public create(play: PlayType): CategoryScoreStrategy {
     if (this.numberCategories.find((category) => play.category.isEqual(category))) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return new NumberStrategy(this.numberCategoryEquivalences.byCategory(play.category)!);
     }
 
@@ -192,6 +193,7 @@ class ScoreStrategyFactory {
     }
 
     if (this.ofAKindCategories.find((category) => play.category.isEqual(category))) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return new OfAKindScoreStrategy(this.ofAKindEquivalences.byCategory(play.category)!);
     }
 
@@ -369,6 +371,7 @@ class Plays {
       }
 
       if (playerAlreadyRegistered) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const existingPlayerPlaysCount = playerPlaysCount.find((playerPlaysCount) =>
           playerPlaysCount.player.isEqual(play.player),
         )!;

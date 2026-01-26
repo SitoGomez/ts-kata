@@ -1,6 +1,6 @@
 //TODO: Pragmatic vs Purist approaches
 
-type PlayerToken = 'X' | 'O';
+export type PlayerToken = 'X' | 'O';
 
 export class Player {
   private readonly ALLOWED_TOKENS: PlayerToken[] = ['X', 'O'];
@@ -28,7 +28,7 @@ export class Player {
   }
 }
 
-type RowValue = 1 | 2 | 3;
+export type RowValue = 1 | 2 | 3;
 
 export class Row {
   private readonly row: RowValue;
@@ -49,7 +49,7 @@ export class Row {
   }
 }
 
-type ColumnValue = 1 | 2 | 3;
+export type ColumnValue = 1 | 2 | 3;
 
 export class Column {
   private readonly column: ColumnValue;

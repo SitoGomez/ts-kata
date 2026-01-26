@@ -1,8 +1,10 @@
 import {
+  ColumnValue,
   GameResult,
   InvalidStartingPlayerError,
   Play,
   Player,
+  RowValue,
   SamePlayerPlaysTwiceError,
   SquareAlreadyFulfilledError,
   SquareOutOfBoundsError,
@@ -54,6 +56,7 @@ describe('Given a game in Tic Tac Toe', () => {
     [1, 5],
   ])('When the player tries to play in square %i,%i', (row, column) => {
     it('Then the play is invalid', () => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       expect(() => Play.byPlayer('X', row as RowValue, column as ColumnValue)).toThrow(
         SquareOutOfBoundsError,
       );
