@@ -100,7 +100,7 @@ describe('Gilded Rose inventary update should', () => {
         'Backstage passes to a TAFKAL80ETC concert',
         'Sulfuras, Hand of Ragnaros',
       ],
-      [-1, 0, 1, 11],
+      [-1, 0, 1,6, 11],
       [0, 1, 2, 49, 50],
     );
   });
@@ -145,8 +145,3 @@ describe('Gilded Rose property-based tests', () => {
   });
 });
 });
-
-
-//TODO
-//Hacer testing y posteriormente refactor -> Yatsy kata emilyBache
-//Instalar extensión de coverage gutter
