@@ -21,6 +21,8 @@ export class TicTacToe {
   }
 }
 
+//TODO
+
 export class InvalidFirstPlayError extends Error {
   public constructor() {
     super("Invalid first play: The first move must be made by player 'X'.");
