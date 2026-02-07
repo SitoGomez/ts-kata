@@ -21,7 +21,7 @@ export class TicTacToe {
   }
 }
 
-//TODO
+//TODO: test
 
 export class InvalidFirstPlayError extends Error {
   public constructor() {
